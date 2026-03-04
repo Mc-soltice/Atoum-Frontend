@@ -5,7 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "kecia-orthostyle-dayna.ngrok-free.dev",
-        pathname: "/**",
+        pathname: "/storage/**",
       },
     ],
     qualities: [60, 70, 75, 80],
