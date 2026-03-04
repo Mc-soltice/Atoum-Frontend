@@ -28,26 +28,21 @@ export default function ProductImage({
     );
   }
 
-  const isLocalhost =
-    typeof window !== "undefined" &&
-    ["localhost", "127.0.0.1"].includes(window.location.hostname);
-
-  const isLocalhostImage =
-    src.startsWith("http://localhost") ||
-    src.startsWith("http://127.0.0.1");
+const isNgrokImage = src.includes("ngrok-free.dev") || src.includes("ngrok.io");
 
   return (
     <div className="relative w-full h-full">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        className={className}
-        unoptimized={isLocalhost && isLocalhostImage}
-        onError={() => setHasError(true)}
-        loading="lazy"
-        quality={75}
-      />
+
+<Image
+  src={src}
+  alt={alt}
+  fill
+  className={className}
+  unoptimized={isNgrokImage}
+  onError={() => setHasError(true)}
+  loading="lazy"
+  quality={75}
+/>
     </div>
   );
 }
