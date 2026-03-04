@@ -2,14 +2,6 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      // 🔹 Local dev
-      {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8000",
-        pathname: "/**",
-      },
-      // 🔹 Production via ngrok
       {
         protocol: "https",
         hostname: "kecia-orthostyle-dayna.ngrok-free.dev",
