@@ -3,7 +3,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "kecia-orthostyle-dayna.ngrok-free.dev",
         pathname: "/storage/**",
       },
