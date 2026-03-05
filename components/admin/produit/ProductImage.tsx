@@ -28,21 +28,24 @@ export default function ProductImage({
     );
   }
 
-const isNgrokImage = src.includes("ngrok-free.dev") || src.includes("ngrok.io");
+// Version avec configuration centralisée
+const TUNNEL_DOMAINS = [
+  "trycloudflare.com",
+];
 
-  return (
-    <div className="relative w-full h-full">
+const isTunnelImage = TUNNEL_DOMAINS.some(domain => src.includes(domain));
 
-<Image
-  src={src}
-  alt={alt}
-  fill
-  className={className}
-  unoptimized={isNgrokImage}
-  onError={() => setHasError(true)}
-  loading="lazy"
-  quality={75}
-/>
-    </div>
-  );
-}
+return (
+  <div className="relative w-full h-full">
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      className={className}
+      unoptimized={isTunnelImage}
+      onError={() => setHasError(true)}
+      loading="lazy"
+      quality={75}
+    />
+  </div>
+);
