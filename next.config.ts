@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "kecia-orthostyle-dayna.ngrok-free.dev",
+        hostname: "https://cover-avon-newspaper-doctor.trycloudflare.com",
         pathname: "/storage/**",
       },
     ],
