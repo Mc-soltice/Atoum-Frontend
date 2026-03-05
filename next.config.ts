@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+        domains: [
+      'cover-avon-newspaper-doctor.trycloudflare.com',
+    ],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "https://cover-avon-newspaper-doctor.trycloudflare.com",
+        hostname: '**.trycloudflare.com',
         pathname: "/storage/**",
       },
     ],
