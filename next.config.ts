@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
         domains: [
-      'cover-avon-newspaper-doctor.trycloudflare.com',
+      'unsubscribe-allergy-turned-inspection.trycloudflare.com',
     ],
     remotePatterns: [
       {
