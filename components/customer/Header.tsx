@@ -255,7 +255,7 @@ export default function Header() {
                           </Link>
                           <div className="border-t border-gray-100 my-1"></div>
                           <Link
-                            href="/register"
+                            href="/login?mode=register"
                             onClick={closeAllMenus}
                             className="block px-4 py-2 text-sm text-stone-600 hover:bg-stone-50 transition-colors text-center"
                           >
@@ -398,7 +398,7 @@ export default function Header() {
                     Se connecter
                   </Link>
                   <Link
-                    href="/register"
+                    href="/login?mode=register"
                     onClick={closeAllMenus}
                     className="block px-4 py-3.5 rounded-lg text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors"
                   >
