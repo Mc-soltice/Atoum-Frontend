@@ -14,10 +14,16 @@ interface ProductImageProps {
 export default function ProductImage({
   src,
   alt,
-
   className = "object-cover rounded",
 }: ProductImageProps) {
   const [hasError, setHasError] = useState(false);
+
+  // Configuration centralisée des domaines qui nécessitent unoptimized=true
+  const UNOPTIMIZED_DOMAINS = [
+    "trycloudflare.com",
+    "localhost",
+    "127.0.0.1"
+  ];
 
   // Image absente
   if (!src || hasError) {
@@ -28,25 +34,23 @@ export default function ProductImage({
     );
   }
 
-// Version avec configuration centralisée
-const TUNNEL_DOMAINS = [
-  "trycloudflare.com",
-];
+  // Vérification si l'image provient d'un domaine nécessitant unoptimized
+  const needsUnoptimized = UNOPTIMIZED_DOMAINS.some(domain =>
+    src.includes(domain)
+  );
 
-const isTunnelImage = TUNNEL_DOMAINS.some(domain => src.includes(domain));
-
-return (
-  <div className="relative w-full h-full">
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      className={className}
-      unoptimized={isTunnelImage}
-      onError={() => setHasError(true)}
-      loading="lazy"
-      quality={75}
-    />
-  </div>
-);
+  return (
+    <div className="relative w-full h-full">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={className}
+        unoptimized={needsUnoptimized}
+        onError={() => setHasError(true)}
+        loading="lazy"
+        quality={75}
+      />
+    </div>
+  );
 }

@@ -2,12 +2,10 @@
 
 import {
   Facebook,
-  Instagram,
-  Linkedin,
-  Mail,
+  Instagram, Mail,
   MapPin,
   Phone,
-  X,
+  X
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,14 +13,12 @@ import Link from "next/link";
 const Footer = () => {
   const contactInfo = {
     address: "Akwa Nord à côté de Santa Lucia, Douala, Cameroon",
-    phone: "+237 691 814 168",
-    email: "sales@royalluxmeuble.com",
+    phone: "+237 6 59  08 95 24",
+    email: "atoummbianga.si.forever@gmail.com",
     social: {
-      facebook: "https://www.facebook.com/profile.php?id=61576672472086",
-      twitter: "https://x.com/UmbrellaINDUS_S",
-      instagram: "https://instagram.com",
-      linkedin:
-        "https://www.linkedin.com/in/umbrella-industrial-services-979046366",
+      facebook: "",
+      twitter: "",
+      instagram: "",
     },
   };
 
@@ -98,9 +94,7 @@ const Footer = () => {
                 <SocialLink href={contactInfo.social.instagram} label="Instagram" ariaLabel="Instagram">
                   <Instagram size={18} />
                 </SocialLink>
-                <SocialLink href={contactInfo.social.linkedin} label="LinkedIn" ariaLabel="LinkedIn">
-                  <Linkedin size={18} />
-                </SocialLink>
+
               </div>
 
               {/* Contacts compacts mais visibles */}

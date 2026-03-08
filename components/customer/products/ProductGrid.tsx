@@ -1,39 +1,31 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useProducts } from "@/contexte/ProductContext";
+import { useMemo, useState } from "react";
 import ProductCard from "./ProductCard";
 import { Sparkles, Tag } from "lucide-react";
-import ProductCardSkeleton from "./ProductCardSkeleton";
 import Link from "next/link";
+import { Product } from "@/types/product";
 
-export default function ProductGrid() {
-  const { products, fetchProducts, loading } = useProducts();
+interface Props {
+  initialProducts: Product[];
+}
+
+export default function ProductGrid({ initialProducts }: Props) {
+
+  const products = (initialProducts);
   const [currentPage, setCurrentPage] = useState(1);
+
   const productsPerPage = 10;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  // 🔹 Mélanger les produits aléatoirement
-  const shuffledProducts = useMemo(() => {
-    const productsCopy = [...products];
-    for (let i = productsCopy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [productsCopy[i], productsCopy[j]] = [productsCopy[j], productsCopy[i]];
-    }
-    return productsCopy;
-  }, [products]);
 
   // 🔹 Pagination
   const paginatedProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * productsPerPage;
-    return shuffledProducts.slice(startIndex, startIndex + productsPerPage);
-  }, [shuffledProducts, currentPage]);
+    return products.slice(startIndex, startIndex + productsPerPage);
+  }, [products, currentPage]);
 
   // 🔹 Calcul du nombre total de pages
-  const totalPages = Math.ceil(shuffledProducts.length / productsPerPage);
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
   const handleCartClick = () => {
     console.log("Ouvrir le panier");
@@ -44,27 +36,7 @@ export default function ProductGrid() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (loading && products.length === 0) {
-    return (
-      <div className="space-y-8">
-        {/* Skeletons des bulles de navigation */}
-        <div className="flex justify-center gap-4 md:gap-6">
-          {[1, 2].map((i) => (
-            <div key={i} className="relative">
-              <div className="flex items-center gap-3 px-6 py-3 bg-gray-200 rounded-full shadow-lg w-40 h-12 animate-pulse"></div>
-            </div>
-          ))}
-        </div>
 
-        {/* Grille de skeletons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <ProductCardSkeleton key={index} />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8 mb-5">
@@ -194,7 +166,7 @@ export default function ProductGrid() {
       )}
 
       {/* Message si aucun produit */}
-      {paginatedProducts.length === 0 && !loading && (
+      {paginatedProducts.length === 0 && (
         <div className="text-center py-12">
           <p className="text-gray-500">Aucun produit disponible</p>
         </div>

@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-        domains: [
-      'unsubscribe-allergy-turned-inspection.trycloudflare.com',
-    ],
     remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/storage/**',
+      },
       {
         protocol: "https",
         hostname: '**.trycloudflare.com',
@@ -14,16 +17,6 @@ const nextConfig = {
     qualities: [60, 70, 75, 80],
   },
 
-  experimental: {
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
-      },
-    },
-  },
 };
 
 module.exports = nextConfig;

@@ -1,25 +1,17 @@
-"use client";
 
 import Hero from "@/components/customer/Hero";
 import ProductGrid from "@/components/customer/products/ProductGrid";
+import ProductGridSkeleton from "@/components/customer/products/ProductGridSkeleton";
 import Carousel3D from "@/components/customer/PromoCarousel";
-import { useProducts } from "@/contexte/ProductContext";
-import { useEffect, useMemo } from "react";
+import { getProducts } from "@/server/product.server";
+import { Suspense } from "react";
 
-export default function Home() {
-  const { products, fetchProducts } = useProducts();
+export default async function Home() {
+  const products = await getProducts();
 
-  // Charger les produits au montage
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  // Filtrer les produits en promotion
-  const promoProducts = useMemo(() => {
-    return products.filter(
-      (product) => product.is_promotional || product.is_is_promotional,
-    );
-  }, [products]);
+  const promoProducts = products.filter(
+    (product) => product.is_promotional || product.is_is_promotional
+  );
 
   return (
     <>
@@ -42,7 +34,9 @@ export default function Home() {
 
           {/* PRODUITS */}
           <section className="w-full">
-            <ProductGrid />
+            <Suspense fallback={<ProductGridSkeleton />}>
+              <ProductGrid initialProducts={products} />
+            </Suspense>
           </section>
         </div>
       </main>
