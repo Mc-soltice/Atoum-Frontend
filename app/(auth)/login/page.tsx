@@ -1,6 +1,6 @@
-// app/(auth)/login/page.tsx
-export const dynamic = "force-dynamic";
 "use client";
+export const dynamic = "force-dynamic";
+
 
 import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import Image from "next/image";
