@@ -1,17 +1,18 @@
 // components/CarouselSurMesure.tsx
 "use client";
 
-import { useProducts } from "@/contexte/ProductContext";
 import { ProductPromo } from "@/types/product";
 import { Waveform } from "ldrs/react";
 import "ldrs/react/Waveform.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TouchEvent, useCallback, useEffect, useRef, useState } from "react";
 import PromoCard from "./products/promotions/PromoCard";
+
 interface CarouselProps {
   products: ProductPromo[];
   autoPlay?: boolean;
   interval?: number;
+  isLoading?: boolean; // Ajout d'une prop pour gérer le chargement
 }
 
 function cn(...classes: (string | boolean | undefined | null)[]) {
@@ -22,6 +23,7 @@ export default function CarouselSurMesure({
   products,
   autoPlay = false,
   interval = 5000,
+  isLoading = false,
 }: CarouselProps) {
   const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -35,6 +37,11 @@ export default function CarouselSurMesure({
   const dragThreshold = 50;
   const timeThreshold = 300;
 
+  // Reset active quand les produits changent
+  useEffect(() => {
+    setActive(0);
+  }, [products]);
+
   // Détection mobile
   useEffect(() => {
     const checkMobile = () => {
@@ -47,11 +54,11 @@ export default function CarouselSurMesure({
   }, []);
 
   const handlePrevious = useCallback(() => {
-    setActive((prev) => (prev === products.length - 1 ? 0 : prev + 1));
+    setActive((prev) => (prev === 0 ? products.length - 1 : prev - 1));
   }, [products.length]);
 
   const handleNext = useCallback(() => {
-    setActive((prev) => (prev === 0 ? products.length - 1 : prev - 1));
+    setActive((prev) => (prev === products.length - 1 ? 0 : prev + 1));
   }, [products.length]);
 
   // Touch handlers
@@ -132,9 +139,8 @@ export default function CarouselSurMesure({
 
   // Calcul du décalage pour le drag
   const dragOffset = isDragging ? startX - currentX : 0;
-  const { loading: productsLoading } = useProducts();
 
-  if (productsLoading && products.length === 0) {
+  if (isLoading && products.length === 0) {
     return (
       <div className="flex justify-center items-center h-64">
         <Waveform size="35" stroke="3.5" speed="1" color="#f59e0b" />
@@ -142,6 +148,11 @@ export default function CarouselSurMesure({
       </div>
     );
   }
+
+  if (products.length === 0) {
+    return null; // Ne rien afficher s'il n'y a pas de produits
+  }
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-1">
       {/* Header avec navigation */}
@@ -168,10 +179,10 @@ export default function CarouselSurMesure({
           <div className="flex gap-2">
             <button
               onClick={handlePrevious}
-              disabled={active === 0}
+              disabled={products.length <= 1}
               className={cn(
                 "p-3 rounded-full border transition-all duration-300",
-                active === 0
+                products.length <= 1
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:scale-105 active:scale-95",
               )}
@@ -181,10 +192,10 @@ export default function CarouselSurMesure({
             </button>
             <button
               onClick={handleNext}
-              disabled={active === products.length - 1}
+              disabled={products.length <= 1}
               className={cn(
                 "p-3 rounded-full border transition-all duration-300",
-                active === products.length - 1
+                products.length <= 1
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:scale-105 active:scale-95",
               )}
@@ -207,7 +218,7 @@ export default function CarouselSurMesure({
         onMouseLeave={() => setIsPaused(false)}
       >
         {/* Indicateur de swipe pour mobile */}
-        {isMobile && (
+        {isMobile && products.length > 1 && (
           <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20">
             <div className="flex items-center gap-1 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm border border-gray-200">
               <ChevronLeft className="w-3 h-3 text-gray-500" />
@@ -261,21 +272,23 @@ export default function CarouselSurMesure({
         </div>
 
         {/* Points indicateurs */}
-        <div className="flex justify-center gap-2 mt-8">
-          {products.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActive(index)}
-              className={cn(
-                "rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
-                index === active
-                  ? "w-8 h-2 bg-linear-to-r from-red-500 to-orange-500"
-                  : "w-2 h-2 bg-gray-300 hover:bg-gray-400",
-              )}
-              aria-label={`Aller au produit ${index + 1}`}
-            />
-          ))}
-        </div>
+        {products.length > 1 && (
+          <div className="flex justify-center gap-2 mt-8">
+            {products.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActive(index)}
+                className={cn(
+                  "rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2",
+                  index === active
+                    ? "w-8 h-2 bg-linear-to-r from-red-500 to-orange-500"
+                    : "w-2 h-2 bg-gray-300 hover:bg-gray-400",
+                )}
+                aria-label={`Aller au produit ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

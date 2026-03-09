@@ -1,4 +1,4 @@
-
+// app/page.tsx (ou votre page d'accueil)
 import Hero from "@/components/customer/Hero";
 import ProductGrid from "@/components/customer/products/ProductGrid";
 import ProductGridSkeleton from "@/components/customer/products/ProductGridSkeleton";
@@ -22,15 +22,15 @@ export default async function Home() {
       <main className="w-full flex justify-center px-4">
         {/* COLONNE MAÎTRESSE */}
         <div className="w-full max-w-7xl flex flex-col gap-15">
-          {/* HERO */}
-          <section className="w-full mt-2">
-
-          </section>
-
           {/* CAROUSEL PROMO - affiché uniquement s'il y a des produits en promotion */}
           {promoProducts.length > 0 && (
             <section className="w-full">
-              <Carousel3D products={promoProducts} autoPlay interval={4000} />
+              {/* Passage direct des produits sans contexte */}
+              <Carousel3D
+                products={promoProducts}
+                autoPlay
+                interval={4000}
+              />
             </section>
           )}
 
