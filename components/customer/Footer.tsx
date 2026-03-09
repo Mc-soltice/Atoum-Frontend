@@ -16,7 +16,7 @@ const Footer = () => {
     phone: "+237 6 59  08 95 24",
     email: "atoummbianga.si.forever@gmail.com",
     social: {
-      facebook: "",
+      facebook: "https://www.facebook.com/profile.php?id=100082171230403",
       twitter: "",
       instagram: "",
     },
@@ -81,7 +81,7 @@ const Footer = () => {
               </div>
 
               <p className="text-amber-100/90 text-sm leading-relaxed max-w-sm drop-shadow">
-                Solutions professionnelles de transformation et construction en bois pour des espaces impeccables et performants.
+                Solutions naturelles de guérison et d’harmonie spirituelle inspirées des plantes médicinales, de la mémoire ancestrale et de l’énergie sacrée.
               </p>
 
               <div className="flex space-x-2">

@@ -23,7 +23,9 @@ export default async function Home() {
         {/* COLONNE MAÎTRESSE */}
         <div className="w-full max-w-7xl flex flex-col gap-15">
           {/* HERO */}
-          <section className="w-full mt-2"></section>
+          <section className="w-full mt-2">
+
+          </section>
 
           {/* CAROUSEL PROMO - affiché uniquement s'il y a des produits en promotion */}
           {promoProducts.length > 0 && (

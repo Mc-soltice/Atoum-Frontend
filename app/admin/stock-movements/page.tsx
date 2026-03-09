@@ -188,7 +188,7 @@ export default function StockMovementsPage() {
           const productName = m.product?.name || 'N/A';
 
           // ✅ Gestion sécurisée du type de mouvement
-          const movementType = m.movement_type === 'in' ? '📥 Entrée' : '📤 Sortie';
+          const movementType = m.movement_type === 'in' ? 'Entrée' : 'Sortie';
 
           // ✅ Gestion sécurisée de la quantité
           const quantity = m.quantity?.toString() || '0';
@@ -344,8 +344,8 @@ export default function StockMovementsPage() {
             onClick={exportToPDF}
             disabled={filteredMovements.length === 0}
             className={`relative flex items-center justify-center gap-2 px-6 py-2 rounded-lg font-medium overflow-hidden group ${filteredMovements.length === 0
-                ? 'bg-gray-400 cursor-not-allowed text-white'
-                : 'text-gray-700 bg-gray-100 hover:text-white transition-colors duration-300'
+              ? 'bg-gray-400 cursor-not-allowed text-white'
+              : 'text-gray-700 bg-gray-100 hover:text-white transition-colors duration-300'
               }`}
             aria-label="Exporter en PDF"
             title={

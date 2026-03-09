@@ -5,6 +5,7 @@ import { useCategories } from "@/contexte/CategoryContext";
 import { useOrders } from "@/contexte/OrderContext";
 import { useProducts } from "@/contexte/ProductContext";
 import { useUsers } from "@/contexte/UserContext";
+import { shouldCountAmount } from "@/utils/orderStatusFlow";
 import { DotSpinner } from "ldrs/react";
 import "ldrs/react/DotSpinner.css";
 import {
@@ -226,7 +227,14 @@ export default function DashboardPage() {
   }, [products]);
 
   // Statistiques calculées
-  const totalRevenue = getTotalRevenue();
+  const totalRevenue = useMemo(() => {
+    return orders.reduce((sum, order) => {
+      // Utilise la même fonction shouldCountAmount que sur la page commande
+      return shouldCountAmount(order.status.value)
+        ? sum + order.total_amount
+        : sum;
+    }, 0);
+  }, [orders]);
   const pendingOrders = orders.filter(
     (order) => order.status.value === "pending",
   ).length;
@@ -291,7 +299,6 @@ export default function DashboardPage() {
           title="Revenu total"
           value={`${totalRevenue.toFixed(2)} €`}
           icon={<DollarSign className="h-6 w-6" />}
-          trend="+12% ce mois"
           color="green"
         />
 

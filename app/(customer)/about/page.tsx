@@ -18,10 +18,8 @@ import {
   Phone,
   Shield,
   Sparkle,
-  Sparkles,
-  Star,
-  Sun,
-  Trees,
+  Sparkles, Sun,
+  Trees
 } from "lucide-react";
 import { useState } from "react";
 
@@ -155,44 +153,74 @@ export default function AboutPage() {
       <div className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-16 relative z-10">
           {/* En-tête principal */}
+
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            className="bg-linear-to-br from-amber-50 via-stone-50 to-rose-50"
           >
-            <div className="inline-flex items-center justify-center mb-6">
-              <Sparkle className="h-8 w-8 text-amber-500 mr-3" />
-              <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-amber-700 via-orange-600 to-rose-700 bg-clip-text text-transparent">
-                Atoum-Râ Mbianga
-              </h1>
-              <Sparkle className="h-8 w-8 text-rose-500 ml-3" />
+            <div className="hero-content flex-col lg:flex-row gap-12 px-4 max-w-7xl mx-auto">
+              {/* Image - 1/3 de la largeur avec animations */}
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="lg:w-1/3 relative group"
+              >
+                {/* Effet de glow autour de l'image */}
+                <div className="absolute -inset-1 bg-linear-to-r from-amber-500 via-orange-500 to-rose-500 rounded-2xl opacity-40 group-hover:opacity-60 blur transition duration-500"></div>
+                <img
+                  src="/images/atoum.jpeg"
+                  alt="Atoum-Râ Mbianga"
+                  className="relative rounded-2xl shadow-2xl w-full object-cover border-4 border-white/50 group-hover:scale-105 transition-transform duration-500"
+                />
+              </motion.div>
+
+              {/* Contenu texte - 2/3 de la largeur */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="lg:w-2/3 space-y-6"
+              >
+                {/* Titre avec étincelles */}
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="inline-flex items-center justify-center gap-3 mb-4"
+                >
+                  <Sparkle className="h-6 w-6 text-amber-500" />
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-linear-to-r from-amber-700 via-orange-600 to-rose-700 bg-clip-text text-transparent">
+                    Atoum-Râ Mbianga
+                  </h1>
+                  <Sparkle className="h-6 w-6 text-rose-500" />
+                </motion.div>
+
+                {/* Phrase d'accroche */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-xl md:text-2xl text-amber-800/80 italic font-serif"
+                >
+                  "La vérité n'a pas peur d'être vérifiée"
+                </motion.p>
+
+                {/* Description avec fond dégradé et animation */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="bg-linear-to-r from-amber-400/10 to-rose-400/10 backdrop-blur-sm rounded-xl p-6 border border-amber-300/30"
+                >
+                  <p className="text-lg text-amber-900/90 leading-relaxed">
+                    Tout Ankh Mbianga Animisce traditionnelle lumière en conscience majestueuse une guérisseuse soignante en thérapie Élémentaux médicinale aux multiples faveur radical les malaise qui justifier que l'on s'arrête un instant pour l'observer écouter sous le soleil levant au rythme du souffle l'universel. Les plantes méritent ce considérations ! Pierre précieuse naturelle aux couleurs de l'arc en ciel, ses fleurs qui fane annoncent en quelque sorte la fin de l'été. La verge nous fait offrande de ses propriétés et nous gagnons fortement à l'adopter dans notre Pharma~Copée verte puisqu'elle s'avère assez polyvalente. Retour de la tradition authentique depuis la nuit de temps. par des plantes existence de notre âme et cœur haty bienveillant. Je vie pour la lumière immortel et tout ma reconnaissance au Seigneur de ma destinée guidé par sa volonté je suis la totalité … Gratitude à l'univers pour cette cycle nouvelle l'ampire de la souveraineté terre floraison reçois avec ma maison les bénédiction des mânes supérieurs aujourd'hui demain dans éternité immortel.
+                  </p>
+                </motion.div>
+              </motion.div>
             </div>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl md:text-2xl text-amber-800/80 mb-6 max-w-3xl mx-auto font-serif italic"
-            >
-              La vérité n&apos;a pas peur d&apos;être vérifiée
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-              className="bg-linear-to-r from-amber-400/20 to-rose-400/20 backdrop-blur-sm rounded-2xl p-6 max-w-4xl mx-auto border border-amber-300/30"
-            >
-              <p className="text-lg text-amber-900/90 leading-relaxed">
-                Dans cette réincarnation, l&apos;honnêteté en conscience et
-                l&apos;amour sont le socle de ma devise terrienne.
-                <span className="block mt-4 text-amber-700 font-semibold">
-                  Que la lumière engendre éternellement la lumière pure sur
-                  vous.
-                </span>
-              </p>
-            </motion.div>
           </motion.div>
 
           {/* Galerie de cartes */}
@@ -437,27 +465,37 @@ export default function AboutPage() {
             transition={{ delay: 1.2 }}
             className="text-center"
           >
-            <div className="bg-linear-to-r from-amber-400 to-rose-500 rounded-2xl p-8 shadow-xl">
+            <div className="bg-linear-to-r from-amber-400 to-rose-500 rounded-2xl p-8 shadow-xl text-center">
               <h2 className="text-3xl font-bold text-white mb-4">
                 Rejoignez Notre Communauté Lumineuse
               </h2>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+              <p className="text-white/90 mb-8 max-w-2xl mx-auto">
                 Abonnez-vous à notre page professionnelle ésotérique pour
                 découvrir les puissantes vertus des plantes médicinales
                 biologiques
               </p>
 
-              <div className="flex flex-wrap gap-4 justify-center">
-                <button className="btn bg-white text-amber-700 hover:bg-amber-50 border-none px-8">
-                  <Star className="h-5 w-5 mr-2" />
-                  Voir les Avis Clients
-                </button>
-
-                <button className="btn bg-amber-900 text-white hover:bg-amber-800 border-none px-8">
-                  <Sparkles className="h-5 w-5 mr-2" />
-                  Découvrir les Produits
-                </button>
-              </div>
+              {/* Lien vers Facebook avec icône */}
+              <a
+                href="https://www.facebook.com/profile.php?id=100082171230403" // Remplacez par l'URL de votre page Facebook
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 bg-white text-amber-700 hover:text-rose-700 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Suivez-nous sur Facebook
+              </a>
             </div>
           </motion.div>
         </div>

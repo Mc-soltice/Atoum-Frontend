@@ -153,7 +153,13 @@ const StockMovementsTable = forwardRef<{ getFilteredData: () => StockMovement[] 
                       </div>
                     </td>
                     <td>
-                      <span className={`badge ${movement.movement_type === 'in' ? 'badge-success' : 'badge-error'} text-white`}>
+                      <span className={`
+    inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+    ${movement.movement_type === 'in'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                        }
+  `}>
                         {movement.movement_type === 'in' ? 'Entrée' : 'Sortie'}
                       </span>
                     </td>

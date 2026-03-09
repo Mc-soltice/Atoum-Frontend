@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" data-theme="caramellate">
+    <html lang="fr" data-theme="cupcake">
       <body>
         <div className="min-h-screen flex flex-col">
           <AuthProvider>

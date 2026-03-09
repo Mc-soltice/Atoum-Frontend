@@ -1,21 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Star, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
   const benefits = [
     {
-      icon: Star,
       title: "Qualité Traditionnelle",
       desc: "Plantes 100% naturelles sans additifs, récoltées dans le respect des traditions ancestrales.",
     },
     {
-      icon: ShieldCheck,
       title: "Sagesse Ancestrale",
       desc: "Retour à la tradition authentique depuis la nuit des temps, guidé par la lumière immortelle.",
     },
     {
-      icon: Zap,
       title: "Énergie Guérisseuse",
       desc: "Propriétés médicinales aux multiples faveurs pour un bien-être radical et conscient.",
     },
@@ -30,11 +27,11 @@ export default function Hero() {
 
         {/* Image de fond */}
         <Image
-          src="/images/Hero.jpg"
+          src="/images/Hero2.png"
           alt="Collection Atoum-ra - Essence de la Nature"
           fill
           priority
-          className="absolute inset-0 w-full h-full object-cover scale-105"
+          className=" absolute inset-0 w-full h-full object-cover scale-105"
         />
 
         {/* Contenu principal */}
@@ -63,28 +60,45 @@ export default function Hero() {
       </section>
 
       {/* Section Avantages */}
-      <section className="container mx-auto px-4 grid md:grid-cols-3 gap-6 -mt-14 relative z-30">
+      <section className="container mx-auto px-4 grid md:grid-cols-3 gap-8 -mt-20 relative z-30">
         {benefits.map((benefit, index) => (
           <div
             key={index}
-            className="bg-white/95 backdrop-blur-sm px-8 py-2 rounded-2xl shadow-2xl shadow-stone-200/70 border border-amber-100 group hover:-translate-y-3 transition-all duration-300 hover:shadow-2xl"
+            className="group relative"
           >
-            <div className="w-14 h-14 bg-linear-to-br from-amber-50 to-emerald-50 rounded-xl flex items-center justify-center mb-6 group-hover:from-amber-500 group-hover:to-emerald-500 transition-all duration-500">
-              <benefit.icon className="w-7 h-7 text-amber-700 group-hover:text-white transition-colors" />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-stone-800">
-              {benefit.title}
-            </h3>
-            <p className="text-stone-600 leading-relaxed">{benefit.desc}</p>
+            {/* Effet de glow au survol */}
+            <div className="absolute -inset-0.5 bg-linear-to-r from-amber-500 to-stone-500 rounded-2xl opacity-0 group-hover:opacity-30 blur transition duration-500"></div>
 
-            {/* Séparateur décoratif */}
-            <div className="mt-3 pt-3 border-t border-amber-100 group-hover:border-amber-300 transition-colors">
-              <p className="text-sm text-stone-500 italic">
-                {index === 0 &&
-                  "Par des plantes, existence de notre âme et cœur"}
-                {index === 1 && "Guidé par la volonté de l'universel"}
-                {index === 2 && "Adoptons la pharmacopée verte et polyvalente"}
+            {/* Carte principale */}
+            <div className="relative bg-linear-to-br from-amber-50/90 to-stone-50/90 backdrop-blur-md px-8 py-6 rounded-2xl shadow-xl shadow-stone-300/30 border border-white/40 group-hover:-translate-y-2 transition-all duration-500 hover:shadow-2xl hover:shadow-amber-200/30">
+
+              {/* Icône décorative (optionnelle) */}
+              <div className="absolute top-4 right-4 text-amber-200/50 group-hover:text-amber-300/70 transition-colors duration-500">
+                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </div>
+
+              <h3 className="text-xl font-bold mb-3 text-stone-800 relative z-10">
+                {benefit.title}
+              </h3>
+
+              <p className="text-stone-600 leading-relaxed relative z-10">
+                {benefit.desc}
               </p>
+
+              {/* Séparateur décoratif avec gradient */}
+              <div className="mt-4 pt-4 border-t border-gradient-to-r from-transparent via-amber-200/50 to-transparent">
+                <p className="text-sm text-stone-500 italic text-center">
+                  {index === 0 &&
+                    "✨ Par des plantes, existence de notre âme et cœur"}
+                  {index === 1 && "🌿 Guidé par la volonté de l'universel"}
+                  {index === 2 && "🌸 Adoptons la pharmacopée verte et polyvalente"}
+                </p>
+              </div>
+
+              {/* Petite décoration en bas */}
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-amber-200/0 group-hover:bg-amber-300/50 rounded-full transition-all duration-500 group-hover:w-16"></div>
             </div>
           </div>
         ))}

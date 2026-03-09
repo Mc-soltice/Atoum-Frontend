@@ -103,13 +103,28 @@ export default function OrdersPage() {
         return;
       }
 
-      const doc = new jsPDF();
+      // ✅ Configuration avec support UTF-8
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        putOnlyUsedFonts: true,
+        compress: true,
+        precision: 16 // Pour améliorer la qualité du texte
+      });
+
+      // ✅ Définir la police pour les accents (Helvetica supporte l'UTF-8)
+      doc.setFont('helvetica', 'normal');
 
       // Titre
       doc.setFontSize(16);
       doc.text("Commandes", 14, 15);
+
       doc.setFontSize(10);
-      doc.text(`Exporté le ${new Date().toLocaleDateString()} à ${new Date().toLocaleTimeString()}`, 14, 22);
+      // Utiliser toLocaleDateString avec le locale français
+      const exportDate = new Date().toLocaleDateString('fr-FR');
+      const exportTime = new Date().toLocaleTimeString('fr-FR');
+      doc.text(`Exporté le ${exportDate} à ${exportTime}`, 14, 22);
       doc.text(`Total: ${dataToExport.length} commande(s)`, 14, 28);
 
       // Indicateur de filtrage
@@ -125,50 +140,122 @@ export default function OrdersPage() {
           ? sum + order.total_amount
           : sum;
       }, 0);
+
       const pendingOrders = dataToExport.filter(o => o.status.value === "pending").length;
       const processingOrders = dataToExport.filter(o => o.status.value === "processing").length;
       const deliveredOrders = dataToExport.filter(o => o.status.value === "delivered").length;
       const cancelledOrders = dataToExport.filter(o => o.status.value === "cancelled").length;
 
-      // Résumé statistique
+      // Résumé statistique avec gestion des nombres
       doc.setFontSize(9);
-      doc.text(`Montant total: ${totalAmount.toLocaleString()} €`, 14, 40);
+      doc.text(`Montant total: ${totalAmount.toLocaleString('fr-FR')} €`, 14, 40);
       doc.text(`En attente: ${pendingOrders}`, 14, 46);
       doc.text(`En traitement: ${processingOrders}`, 14, 52);
       doc.text(`Livrées: ${deliveredOrders}`, 14, 58);
       doc.text(`Annulées: ${cancelledOrders}`, 14, 64);
 
-      // Préparation des données pour le tableau
-      const tableData = dataToExport.map(order => [
-        order.reference || order.id.substring(0, 8),
-        order.items.length.toString(),
-        order.items.reduce((sum, item) => sum + item.quantity, 0).toString(),
-        new Date(order.created_at).toLocaleDateString('fr-FR'),
-        order.total_amount.toLocaleString(),
-        order.status.label,
-      ]);
+      // ✅ Fonction utilitaire pour nettoyer le texte
+      const sanitizeText = (text: string): string => {
+        if (!text) return '-';
 
-      // Configuration du tableau
+        // Solution 1: Garder les accents (recommandée)
+        return text
+          .normalize('NFC') // Normalisation Unicode
+          .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Enlever les caractères de contrôle
+          .trim();
+
+        // Solution 2: Enlever les accents (si les problèmes persistent)
+        // return text
+        //   .normalize('NFD')
+        //   .replace(/[\u0300-\u036f]/g, '') // Enlève les accents
+        //   .replace(/[^a-zA-Z0-9\s\-_,.:;]/g, '') // Garde seulement les caractères sûrs
+        //   .trim();
+      };
+
+      // ✅ Préparation des données avec gestion UTF-8
+      const tableData = dataToExport.map(order => {
+        return [
+          sanitizeText(order.reference || order.id.substring(0, 8)),
+          order.items.length.toString(),
+          order.items.reduce((sum, item) => sum + item.quantity, 0).toString(),
+          new Date(order.created_at).toLocaleDateString('fr-FR'),
+          order.total_amount.toLocaleString('fr-FR'),
+          sanitizeText(order.status.label),
+        ];
+      });
+
+      // Configuration du tableau avec support UTF-8
       autoTable(doc, {
         startY: 71,
-        head: [['Référence', 'Articles', 'Qté totale', 'Date', 'Total (€)', 'Statut']],
+        head: [
+          [
+            sanitizeText('Référence'),
+            sanitizeText('Articles'),
+            sanitizeText('Qté totale'),
+            sanitizeText('Date'),
+            sanitizeText('Total (€)'),
+            sanitizeText('Statut')
+          ]
+        ],
         body: tableData,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [41, 37, 36] },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        margin: { top: 71 },
+        styles: {
+          fontSize: 8,
+          font: 'helvetica',
+          fontStyle: 'normal',
+          cellPadding: 2,
+          overflow: 'linebreak',
+          halign: 'left',
+          valign: 'middle',
+          textColor: [0, 0, 0],
+          lineColor: [200, 200, 200],
+          lineWidth: 0.1
+        },
+        headStyles: {
+          fillColor: [41, 37, 36],
+          textColor: 255,
+          fontStyle: 'bold',
+          halign: 'center'
+        },
+        alternateRowStyles: {
+          fillColor: [245, 245, 245]
+        },
+        margin: { top: 71, left: 10, right: 10 },
         columnStyles: {
-          0: { cellWidth: 30 },
-          1: { cellWidth: 20 },
-          2: { cellWidth: 20 },
-          3: { cellWidth: 25 },
-          4: { cellWidth: 30 },
-          5: { cellWidth: 25 },
+          0: { cellWidth: 30, halign: 'left' },
+          1: { cellWidth: 20, halign: 'center' },
+          2: { cellWidth: 20, halign: 'center' },
+          3: { cellWidth: 25, halign: 'center' },
+          4: { cellWidth: 30, halign: 'right' },
+          5: { cellWidth: 25, halign: 'center' },
+        },
+        // ✅ Hook pour traiter les cellules avant affichage
+        didParseCell: (data) => {
+          // S'assurer que le texte est bien encodé
+          if (data.cell.raw && typeof data.cell.raw === 'string') {
+            // Utiliser le texte tel quel, il sera correctement affiché
+            data.cell.text = [data.cell.raw];
+          }
+        },
+        // ✅ Hook après génération pour vérifier
+        didDrawPage: (data) => {
+          // Numéro de page
+          doc.setFontSize(8);
+          doc.setTextColor(100, 100, 100);
+          doc.text(
+            `Page ${data.pageNumber}`,
+            data.settings.margin.left,
+            doc.internal.pageSize.height - 10
+          );
         }
       });
 
-      doc.save(`commandes-${new Date().toISOString().split('T')[0]}.pdf`);
+      // ✅ Nom du fichier sans caractères spéciaux
+      const dateStr = new Date().toISOString().split('T')[0];
+      const fileName = `commandes-${dateStr}.pdf`;
+
+      doc.save(fileName);
       toast.success(`✅ PDF exporté avec ${dataToExport.length} commande(s)`);
+
     } catch (error) {
       console.error("❌ Erreur lors de l'export PDF:", error);
       toast.error("Erreur lors de l'export PDF");
