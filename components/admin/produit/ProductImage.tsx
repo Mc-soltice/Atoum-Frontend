@@ -35,9 +35,10 @@ export default function ProductImage({
   }
 
   // Vérification si l'image provient d'un domaine nécessitant unoptimized
-  const needsUnoptimized = UNOPTIMIZED_DOMAINS.some(domain =>
-    src.includes(domain)
-  );
+  const needsUnoptimized =
+    src.startsWith("http://localhost") ||
+    src.startsWith("http://127.0.0.1") ||
+    src.includes("trycloudflare.com");
 
   return (
     <div className="relative w-full h-full">

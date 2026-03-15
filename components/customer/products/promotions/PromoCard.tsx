@@ -1,5 +1,6 @@
-// components/prodcuts/ProductCard.tsx
+
 "use client";
+
 import ProductImage from "@/components/admin/produit/ProductImage";
 import { useCart } from "@/contexte/panier/CartContext";
 import { ProductPromo } from "@/types/product";
@@ -13,13 +14,17 @@ interface Props {
 
 export default function PromoCard({ product, onCartClick }: Props) {
   const isAvailable = product.stock > 0;
+
   const hasDiscount =
     product.original_price && product.original_price > product.price;
+
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
     if (!isAvailable) return;
+
     addToCart(product, 1);
+
     if (onCartClick) {
       onCartClick();
     }
@@ -46,9 +51,10 @@ export default function PromoCard({ product, onCartClick }: Props) {
         border-gray-100
       "
     >
-      {/* PREMIÈRE LIGNE : Deux colonnes (image + info) */}
+      {/* Ligne principale : Image + Infos */}
       <div className="flex flex-row p-4 gap-4">
-        {/* Colonne gauche : Image - AGRANDIE */}
+
+        {/* Image produit */}
         <div className="shrink-0">
           <Link
             href={`/produits/${product.id}`}
@@ -69,7 +75,12 @@ export default function PromoCard({ product, onCartClick }: Props) {
             <ProductImage
               src={product.main_image}
               alt={product.name}
-              className="object-cover transition-opacity duration-300 group-hover:opacity-90"
+              className="
+                object-cover
+                transition-opacity
+                duration-300
+                group-hover:opacity-90
+              "
             />
 
             {/* Badge promotion */}
@@ -97,7 +108,7 @@ export default function PromoCard({ product, onCartClick }: Props) {
           </Link>
         </div>
 
-        {/* Colonne droite : Informations */}
+        {/* Informations produit */}
         <div className="flex-1 min-w-0">
           <h2 className="text-base font-semibold text-gray-900 mb-1 line-clamp-1">
             {product.name}
@@ -107,15 +118,16 @@ export default function PromoCard({ product, onCartClick }: Props) {
             {product.description}
           </p>
 
-          {/* AFFICHAGE DES PRIX */}
+          {/* Prix */}
           <div className="space-y-1">
             {hasDiscount ? (
               <>
-                {/* Prix original barré */}
+                {/* Prix original */}
                 <div className="flex flex-wrap items-center gap-1">
                   <span className="text-sm text-gray-500 line-through">
                     {product.original_price?.toLocaleString()} €
                   </span>
+
                   <span className="text-xs font-semibold px-1.5 py-0.5 bg-red-100 text-red-600 rounded">
                     -
                     {(
@@ -126,13 +138,13 @@ export default function PromoCard({ product, onCartClick }: Props) {
                     %
                   </span>
                 </div>
+
                 {/* Prix promo */}
                 <div className="text-lg font-bold text-red-600">
                   {product.price.toLocaleString()} €
                 </div>
               </>
             ) : (
-              /* Prix normal */
               <div className="text-base font-bold text-gray-900">
                 {product.price.toLocaleString()} €
               </div>
@@ -141,7 +153,7 @@ export default function PromoCard({ product, onCartClick }: Props) {
         </div>
       </div>
 
-      {/* DEUXIÈME LIGNE : Bouton full width */}
+      {/* Bouton Ajouter au panier */}
       <div className="px-4 pb-4">
         <button
           onClick={handleAddToCart}
@@ -170,7 +182,9 @@ export default function PromoCard({ product, onCartClick }: Props) {
           `}
         >
           <ShoppingBag className="h-4 w-4" />
-          <span>{isAvailable ? "Ajouter au panier" : "Indisponible"}</span>
+          <span>
+            {isAvailable ? "Ajouter au panier" : "Indisponible"}
+          </span>
         </button>
       </div>
     </div>

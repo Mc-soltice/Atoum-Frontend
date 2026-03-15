@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import ProductCard from "./ProductCard";
-import { Sparkles, Tag } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import { Product } from "@/types/product";
 
@@ -15,7 +15,7 @@ export default function ProductGrid({ initialProducts }: Props) {
   const products = (initialProducts);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const productsPerPage = 10;
+  const productsPerPage = 15;
 
 
   // 🔹 Pagination
@@ -61,42 +61,12 @@ export default function ProductGrid({ initialProducts }: Props) {
 
               {/* Texte */}
               <span className="font-semibold text-gray-800 group-hover:text-amber-600 transition-colors duration-300">
-                Nos produits
+                Decouvrez notre grande variete de produits
               </span>
 
               {/* Petit indicateur de quantité */}
               <div className="absolute -top-2 -right-2 bg-amber-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
                 {products.length}
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Bulle "Nos promotions" */}
-        <Link
-          href="/promotions"
-          className="group relative"
-        >
-          <div className="relative">
-            {/* Effet de glow */}
-            <div className="absolute inset-0 bg-emerald-500 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
-
-            {/* Bulle principale */}
-            <div className="relative flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-lg border border-gray-100 hover:border-emerald-500 transition-all duration-300 hover:shadow-xl hover:scale-105">
-              {/* Icône animée */}
-              <div className="relative">
-                <Tag className="h-5 w-5 text-emerald-500" />
-                <div className="absolute inset-0 bg-emerald-500 rounded-full blur-md opacity-0 group-hover:opacity-50 animate-ping" />
-              </div>
-
-              {/* Texte */}
-              <span className="font-semibold text-gray-800 group-hover:text-emerald-600 transition-colors duration-300">
-                Nos promotions
-              </span>
-
-              {/* Petit indicateur "Nouveau" */}
-              <div className="absolute -top-2 -right-2 bg-linear-to-r from-amber-500 to-emerald-500 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow-lg animate-pulse">
-                🔥
               </div>
             </div>
           </div>
