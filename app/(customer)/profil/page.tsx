@@ -71,7 +71,7 @@ export default function ModernProfilePage() {
 
   useEffect(() => {
     if (activeTab === "orders" && user) {
-      fetchMyOrders({ user_id: user.id });
+      fetchMyOrders();
     }
   }, [activeTab, user, fetchMyOrders]);
 

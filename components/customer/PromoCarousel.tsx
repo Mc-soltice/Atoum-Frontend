@@ -123,8 +123,8 @@ export default function CarouselSplit({ slides, onCartClick }: Props) {
   const headlineL2 = words.slice(1).join(" ");
 
   const description =
-    slide?.description?.length > 130
-      ? slide.description.substring(0, 127) + "..."
+    (slide?.description?.length ?? 0) > 130
+      ? slide.description?.substring(0, 127) + "..."
       : slide?.description || "";
 
   const priceDisplay = hasDiscount
