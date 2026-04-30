@@ -3,6 +3,7 @@
 import ProductImage from "@/components/admin/produit/ProductImage";
 import { useCart } from "@/contexte/panier/CartContext";
 import { useProducts } from "@/contexte/ProductContext";
+import { Product } from "@/types/product";
 import { Waveform } from "ldrs/react";
 import "ldrs/react/Waveform.css";
 import { Heart, Share2, Shield, ShoppingCart, Truck } from "lucide-react";
@@ -14,17 +15,32 @@ interface ProductClientProps {
 }
 
 export default function ProductClient({ productId }: ProductClientProps) {
-  const { fetchProductById, currentProduct, loading } = useProducts();
+  const { fetchProductById, fetchProducts, currentProduct, products, loading } = useProducts();
   const { addToCart } = useCart();
 
   // Déclarez tous les hooks en haut
   const [hasFetched, setHasFetched] = useState(false);
   const [showShareSuccess, setShowShareSuccess] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     fetchProductById(productId).finally(() => setHasFetched(true));
-  }, [productId, fetchProductById]);
+    fetchProducts(); // Charger tous les produits
+  }, [productId, fetchProductById, fetchProducts]);
+
+  // Calculer les produits similaires
+  useEffect(() => {
+    if (currentProduct && products.length > 0) {
+      const similar = products
+        .filter(
+          (p) =>
+            p.category?.id === currentProduct.category?.id && p.id !== currentProduct.id
+        )
+        .slice(0, 6); // Limiter à 6 produits
+      setSimilarProducts(similar);
+    }
+  }, [currentProduct, products]);
 
   if (loading) {
     return (
@@ -112,8 +128,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
                 key={index}
                 onClick={() => setSelectedImage(index)}
                 className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${selectedImage === index
-                    ? "border-amber-400 ring-2 ring-amber-200"
-                    : "border-amber-100 hover:border-amber-300"
+                  ? "border-amber-400 ring-2 ring-amber-200"
+                  : "border-amber-100 hover:border-amber-300"
                   }`}
               >
                 <ProductImage
@@ -332,6 +348,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
           </div>
         </div>
       </div>
+
+
     </>
   );
 }

@@ -1,5 +1,6 @@
 import Breadcrumbs, { BreadcrumbItem } from "@/components/ui/Breadcrumbs";
 import ProductClient from "./ProductClient";
+import SimilarProductsWrapper from "./SimilarProductsWrapper";
 
 interface PageProps {
   params: Promise<{
@@ -30,6 +31,9 @@ export default async function ProductDetail({ params }: PageProps) {
             {/* On passe JUSTE l'id */}
             <ProductClient productId={id} />
           </div>
+
+          {/* Produits similaires - Composant client séparé */}
+          <SimilarProductsWrapper productId={id} />
         </section>
       </div>
     </main>

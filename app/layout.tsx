@@ -5,6 +5,7 @@ import { OrderProvider } from "@/contexte/OrderContext";
 import { ProductProvider } from "@/contexte/ProductContext";
 import { CategoryProvider } from "@/contexte/CategoryContext";
 import { DeliveryProvider } from "@/contexte/DeliveryContext";
+import SessionProviderWrapper from "@/components/customer/users/SessionProviderWrapper";
 
 export const metadata = {
   title: "Mon site e-commerce",
@@ -17,20 +18,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" data-theme="cupcake">
+    <html lang="fr" data-theme="lemonade">
       <body>
         <div className="min-h-screen flex flex-col">
-          <AuthProvider>
-            <UserProvider>
-              <CategoryProvider>
-                <ProductProvider>
-                  <DeliveryProvider>
-                    <OrderProvider>{children}</OrderProvider>
-                  </DeliveryProvider>
-                </ProductProvider>
-              </CategoryProvider>
-            </UserProvider>
-          </AuthProvider>
+          <SessionProviderWrapper>
+            <AuthProvider>
+              <UserProvider>
+                <CategoryProvider>
+                  <ProductProvider>
+                    <DeliveryProvider>
+                      <OrderProvider>{children}</OrderProvider>
+                    </DeliveryProvider>
+                  </ProductProvider>
+                </CategoryProvider>
+              </UserProvider>
+            </AuthProvider>
+          </SessionProviderWrapper>
         </div>
       </body>
     </html>

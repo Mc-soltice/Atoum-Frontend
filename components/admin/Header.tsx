@@ -7,10 +7,9 @@ import {
   ChevronDown,
   LogOut,
   Menu,
-  Search,
-  Settings,
-  Store,
-  User
+  Search, Store,
+  User,
+  UserCircle
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -190,8 +189,8 @@ export default function Header() {
                       onClick={closeAllMenus}
                       className="flex items-center gap-3 w-full px-4 py-2 text-sm hover:bg-gray-50"
                     >
-                      <Settings className="w-4 h-4" />
-                      Paramètres
+                      <UserCircle className="w-4 h-4" />
+                      Profil
                     </Link>
 
                     <div className="border-t border-gray-100 my-1"></div>

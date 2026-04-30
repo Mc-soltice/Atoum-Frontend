@@ -2,6 +2,7 @@
 
 import { authService } from "@/services/auth.service";
 import type { CreateUserPayload, User } from "@/types/user";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -19,36 +20,29 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { data: session, status } = useSession();  // ← ajout
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   const isAdmin = user?.role?.includes("admin") ?? false;
 
-  /**
-   * Charger l'utilisateur au refresh
-   */
   useEffect(() => {
-    const init = async () => {
-      try {
-        const token = localStorage.getItem("auth_token");
+    if (status === "loading") return;
 
-        if (!token) {
-          setUser(null);
-          return;
-        }
-
-        const me = await authService.me();
-        setUser(me);
-      } catch {
-        localStorage.removeItem("auth_token");
-        setUser(null);
-      } finally {
-        setLoading(false);
+    if (status === "authenticated" && session?.user) {
+      // Connecté via NextAuth
+      setUser(session.user as User);
+      if (session.accessToken) {
+        localStorage.setItem("auth_token", session.accessToken as string);
       }
-    };
+    } else {
+      // Non connecté — pas d'erreur, juste user null
+      setUser(null);
+      localStorage.removeItem("auth_token");
+    }
 
-    init();
-  }, []);
+    setLoading(false); // ← dans tous les cas, on arrête le loading
+  }, [session, status]);
 
   const redirectAfterAuth = (user: User) => {
     const redirect = localStorage.getItem("redirect_after_login");

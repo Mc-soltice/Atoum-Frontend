@@ -36,15 +36,15 @@ export const authService = {
     }
   },
 
-  async me(): Promise<User> {
-    try {
-      const { data } = await api.get<User>("users/me");
-      return data;
-    } catch (error) {
-      console.error("Get user error:", error);
-      throw error;
-    }
-  },
+  // async me(): Promise<User> {
+  //   try {
+  //     const { data } = await api.get<User>("users/me");
+  //     return data;
+  //   } catch (error) {
+  //     console.error("Get user error:", error);
+  //     throw error;
+  //   }
+  // },
 
   async logout(): Promise<void> {
     try {

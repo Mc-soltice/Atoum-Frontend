@@ -27,7 +27,7 @@ export default function ProductCard({ product, onCartClick }: Props) {
   };
 
   return (
-    <div className="group relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl active:scale-[0.99] flex flex-col">
+    <div className="group relative bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl active:scale-[0.99] flex flex-col">
 
       {/* Barre de progression au scroll */}
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gray-100 z-20">
@@ -84,10 +84,10 @@ export default function ProductCard({ product, onCartClick }: Props) {
         {/* Prix avec compteur */}
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-1 overflow-hidden">
-            <span className="text-2xl font-bold text-amber-600 tabular-nums">
+            <span className="text-xl font-bold text-amber-600 tabular-nums">
               {product.price.toLocaleString()}
             </span>
-            <span className="text-xs text-gray-400">€</span>
+            <span className="text-xl text-gray-400">€</span>
           </div>
 
           {/* Bouton avec effet de remplissage */}

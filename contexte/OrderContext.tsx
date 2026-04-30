@@ -33,6 +33,7 @@ interface OrderContextType {
 
   // 🔹 Actions principales
   fetchOrders: (filters?: OrderFilters) => Promise<void>;
+  fetchMyOrders: (filters?: OrderFilters) => Promise<void>;
   fetchOrderById: (id: string) => Promise<FullOrder>;
   createOrder: (payload: CreateOrderPayload) => Promise<Order>;
   createOrderFromCart: (payload: CreateOrderFromCartPayload) => Promise<Order>;
@@ -76,6 +77,23 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       toast.success(`✅ ${data.length} commande(s) chargée(s) avec succès`);
     } catch (error) {
       console.error("❌ Erreur fetchOrders:", error);
+      toast.error("Erreur lors du chargement des commandes");
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  /**
+   * 🔹 Charger toutes les commandes de l'utilisateur connecter avec filtres optionnels
+   */
+  const fetchMyOrders = useCallback(async (filters?: OrderFilters) => {
+    setLoading(true);
+    try {
+      const data = await orderService.getMyOrders(filters);
+      setOrders(data);
+      toast.success(`✅ ${data.length} commande(s) chargée(s) avec succès`);
+    } catch (error) {
+      console.error("❌ Erreur fetchMyOrders:", error);
       toast.error("Erreur lors du chargement des commandes");
       setOrders([]);
     } finally {
@@ -351,6 +369,7 @@ export function OrderProvider({ children }: { children: ReactNode }) {
         // 🔹 Actions principales
         fetchOrders,
         fetchOrderById,
+        fetchMyOrders,
         createOrder,
         createOrderFromCart,
         updateOrderStatus,

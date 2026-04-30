@@ -37,6 +37,16 @@ class OrderService {
   }
 
   /**
+   * Récupérer une commande par ID de l'utilisateur connecter
+   */
+  async getMyOrders(filters?: OrderFilters): Promise<FullOrder[]> {
+    const response = await api.get(`/me/orders`, {
+      params: filters,
+    });
+
+    return response.data.data;
+  }
+  /**
    * Récupérer une commande par son ID
    */
   async getById(id: string): Promise<FullOrder> {

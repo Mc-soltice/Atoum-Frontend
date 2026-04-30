@@ -1,8 +1,9 @@
-// app/page.tsx (ou votre page d'accueil)
-import Hero from "@/components/customer/Hero";
+// app/(customer)/home/page.tsx
+import BaniereCarousel from "@/components/customer/BanieresCariusel";
 import ProductGrid from "@/components/customer/products/ProductGrid";
 import ProductGridSkeleton from "@/components/customer/products/ProductGridSkeleton";
-import Carousel3D from "@/components/customer/PromoCarousel";
+import PromoBanner from "@/components/customer/products/promotions/PromoBanner";
+import CarouselP from "@/components/customer/PromoCarousel";
 import { getProducts } from "@/server/product.server";
 import { Suspense } from "react";
 
@@ -15,26 +16,18 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero masqué sur mobile, visible sur desktop */}
-      <div className="hidden md:block">
-        <Hero />
-      </div>
       <main className="w-full flex justify-center px-4">
-        {/* COLONNE MAÎTRESSE */}
-        <div className="w-full max-w-7xl flex flex-col gap-15">
-          {/* CAROUSEL PROMO - affiché uniquement s'il y a des produits en promotion */}
+        <div className="w-full max-w-7xl flex flex-col gap-8">
+
+          <BaniereCarousel />
+
           {promoProducts.length > 0 && (
             <section className="w-full">
-              {/* Passage direct des produits sans contexte */}
-              <Carousel3D
-                products={promoProducts}
-                autoPlay
-                interval={4000}
-              />
+              <PromoBanner />
+              <CarouselP slides={promoProducts} />
             </section>
           )}
 
-          {/* PRODUITS */}
           <section className="w-full">
             <Suspense fallback={<ProductGridSkeleton />}>
               <ProductGrid initialProducts={products} />

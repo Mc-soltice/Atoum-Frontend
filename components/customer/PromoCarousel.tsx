@@ -1,698 +1,951 @@
 "use client";
 
+import { useCart } from "@/contexte/panier/CartContext";
 import { ProductPromo } from "@/types/product";
-import { Waveform } from "ldrs/react";
-import "ldrs/react/Waveform.css";
-import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
-import { TouchEvent, useCallback, useEffect, useRef, useState } from "react";
-import ProductImage from "@/components/admin/produit/ProductImage";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-interface CarouselProps {
-  products: ProductPromo[];
-  autoPlay?: boolean;
-  interval?: number;
-  isLoading?: boolean;
-  showControls?: boolean;
-  showIndicators?: boolean;
-  infiniteScroll?: boolean;
+interface Props {
+  slides: ProductPromo[];
+  onCartClick?: () => void;
 }
 
-interface VisibleIndex {
-  index: number;
-  type: "reflection-left" | "reflection-right" | "active";
-  distance: number;
-}
+const AUTO_PLAY_DELAY = 5000;
+const DRAG_THRESHOLD = 50;
 
-// Fonction utilitaire pour combiner les classes
-function cn(...classes: (string | boolean | undefined | null)[]) {
-  return classes.filter(Boolean).join(" ");
-}
+const PALETTES = [
+  { accent: "#FF3B00", badgeColor: "#fff" },
+  { accent: "#3B82F6", badgeColor: "#fff" },
+  { accent: "#D4A853", badgeColor: "#1C1410" },
+  { accent: "#7F77DD", badgeColor: "#fff" },
+];
 
-export default function PromoCarousel({
-  products,
-  autoPlay = true,
-  interval = 4000,
-  isLoading = false,
-  showControls = true,
-  showIndicators = true,
-  infiniteScroll = true,
-}: CarouselProps) {
-  const [active, setActive] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductPromo | null>(
-    null
-  );
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [touchStartTime, setTouchStartTime] = useState(0);
+// Fonction pour obtenir les dimensions d'une image
+const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      resolve({ width: img.width, height: img.height });
+    };
+    img.onerror = () => {
+      resolve({ width: 800, height: 600 });
+    };
+    img.src = url;
+  });
+};
+
+export default function CarouselSplit({ slides, onCartClick }: Props) {
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [animState, setAnimState] = useState<"idle" | "exit" | "enter">("idle");
+  const [isHovered, setIsHovered] = useState(false);
+  const [imageRatios, setImageRatios] = useState<number[]>([]);
+  const [currentRatio, setCurrentRatio] = useState<number>(1);
   const [isMobile, setIsMobile] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const [isFirstLoad, setIsFirstLoad] = useState(true); // 👈 NOUVEAU : gère le premier chargement
+  const [isReady, setIsReady] = useState(false); // 👈 NOUVEAU : attend que les images soient prêtes
+  const [carouselHeight, setCarouselHeight] = useState<string>('50vh'); // 👈 FIXÉ : hauteur par défaut
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-  const dragThreshold = 50;
-  const timeThreshold = 300;
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragStartRef = useRef<number | null>(null);
+  const animatingRef = useRef(false);
 
-  // Reset active quand les produits changent
-  useEffect(() => {
-    setActive(0);
-  }, [products]);
+  const { addToCart } = useCart();
+  const slide = slides[current];
+  const palette = PALETTES[current % PALETTES.length];
 
-  // Détection mobile
+  // Détection mobile et calcul de la hauteur (côté client uniquement)
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      setCarouselHeight(mobile ? 'auto' : 'calc(100vh / 2)');
     };
-
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const validProductCount = products.length;
+  // ── Chargement des ratios d'images ──────────────────────────────────
+  useEffect(() => {
+    const loadRatios = async () => {
+      const ratios = await Promise.all(
+        slides.map(async (slide) => {
+          const dimensions = await getImageDimensions(slide.main_image);
+          return dimensions.height / dimensions.width;
+        })
+      );
+      setImageRatios(ratios);
+      setIsReady(true); // 👈 Toutes les images sont chargées
+    };
 
-  const handlePrevious = useCallback(() => {
-    if (validProductCount === 0) return;
-    setDragOffset(0);
-
-    if (infiniteScroll) {
-      setActive((prev) => (prev === 0 ? validProductCount - 1 : prev - 1));
-    } else {
-      setActive((prev) => (prev > 0 ? prev - 1 : prev));
+    if (slides.length > 0) {
+      loadRatios();
     }
-  }, [infiniteScroll, validProductCount]);
+  }, [slides]);
 
-  const handleNext = useCallback(() => {
-    if (validProductCount === 0) return;
-    setDragOffset(0);
-
-    if (infiniteScroll) {
-      setActive((prev) => (prev === validProductCount - 1 ? 0 : prev + 1));
-    } else {
-      setActive((prev) => (prev < validProductCount - 1 ? prev + 1 : prev));
+  // Mise à jour du ratio courant
+  useEffect(() => {
+    if (imageRatios[current]) {
+      setCurrentRatio(imageRatios[current]);
     }
-  }, [infiniteScroll, validProductCount]);
+  }, [current, imageRatios]);
 
-  // Touch handlers pour mobile
-  const handleTouchStart = (e: TouchEvent) => {
-    setIsPaused(true);
-    setIsDragging(true);
-    setDragStartX(e.touches[0].clientX);
-    setTouchStartTime(Date.now());
+  // ── Animation d'entrée au premier chargement ───────────────────────
+  useEffect(() => {
+    if (isReady && isFirstLoad && slides.length > 0) {
+      // Petit délai pour que le DOM soit complètement prêt
+      const timer = setTimeout(() => {
+        setAnimState("enter");
+        setTimeout(() => {
+          setAnimState("idle");
+          setIsFirstLoad(false);
+        }, 550);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isReady, isFirstLoad, slides.length]);
+
+  // ── Champs dérivés ──────────────────────────────────────────────────
+  const isAvailable = slide?.stock > 0;
+  const hasDiscount = slide?.original_price && slide.original_price > slide.price;
+
+  const discountPercent = hasDiscount
+    ? Math.round(((slide.original_price! - slide.price) / slide.original_price!) * 100)
+    : null;
+
+  const badge = hasDiscount ? `−${discountPercent}%` : "Nouveauté";
+
+  const words = slide?.name?.split(" ") || [""];
+  const headlineL1 = words[0] ?? "";
+  const headlineL2 = words.slice(1).join(" ");
+
+  const description =
+    slide?.description?.length > 130
+      ? slide.description.substring(0, 127) + "..."
+      : slide?.description || "";
+
+  const priceDisplay = hasDiscount
+    ? `${slide.price.toLocaleString()} € · était ${slide.original_price?.toLocaleString()} €`
+    : `À partir de ${slide.price.toLocaleString()} €`;
+
+  // ── Navigation ──────────────────────────────────────────────────────
+  const goTo = useCallback(
+    (index: number, dir?: 1 | -1) => {
+      if (animatingRef.current || index === current || !isReady) return;
+      const d = dir ?? (index > current ? 1 : -1);
+      animatingRef.current = true;
+
+      setAnimState("exit");
+      setTimeout(() => {
+        setDirection(d);
+        setCurrent(index);
+        setAnimState("enter");
+        setTimeout(() => {
+          setAnimState("idle");
+          animatingRef.current = false;
+        }, 550);
+      }, 300);
+    },
+    [current, isReady]
+  );
+
+  const next = useCallback(
+    () => goTo((current + 1) % slides.length, 1),
+    [current, slides.length, goTo]
+  );
+  const prev = useCallback(
+    () => goTo((current - 1 + slides.length) % slides.length, -1),
+    [current, slides.length, goTo]
+  );
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(next, AUTO_PLAY_DELAY);
+  }, [next]);
+
+  useEffect(() => {
+    if (!isHovered && !isFirstLoad) resetTimer();
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [current, isHovered, resetTimer, isFirstLoad]);
+
+  // ── Drag / swipe (souris) ──────────────────────────────────────────
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (isMobile) return;
+    dragStartRef.current = e.clientX;
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging || validProductCount <= 1) return;
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (isMobile) return;
+    if (dragStartRef.current === null) return;
+    const dx = e.clientX - dragStartRef.current;
+    dragStartRef.current = null;
+    if (dx < -DRAG_THRESHOLD) next();
+    else if (dx > DRAG_THRESHOLD) prev();
+  };
 
-    const currentX = e.touches[0].clientX;
-    const deltaX = currentX - dragStartX;
+  // ── Touch events pour mobile ───────────────────────────────────────
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+  };
 
-    // Limiter le déplacement pour éviter de trop tirer
-    const maxDrag = window.innerWidth * 0.3;
-    const limitedDeltaX = Math.min(Math.max(deltaX, -maxDrag), maxDrag);
-
-    setDragOffset(limitedDeltaX);
-
-    // Empêcher le défilement vertical pendant le swipe horizontal
-    e.preventDefault();
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.touches[0].clientX);
   };
 
   const handleTouchEnd = () => {
-    if (!isDragging || validProductCount <= 1) {
-      setDragOffset(0);
-      setIsDragging(false);
-      return;
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > DRAG_THRESHOLD;
+    const isRightSwipe = distance < -DRAG_THRESHOLD;
+
+    if (isLeftSwipe) {
+      next();
+    } else if (isRightSwipe) {
+      prev();
     }
 
-    const deltaX = dragOffset;
-    const timeElapsed = Date.now() - touchStartTime;
-    const isQuickSwipe = timeElapsed < timeThreshold;
-    const isSignificantSwipe = Math.abs(deltaX) > dragThreshold;
-
-    if ((isQuickSwipe && isSignificantSwipe) || Math.abs(deltaX) > dragThreshold) {
-      if (deltaX < 0) {
-        // Swipe vers la gauche -> suivant
-        handleNext();
-      } else {
-        // Swipe vers la droite -> précédent
-        handlePrevious();
-      }
-    }
-
-    setDragOffset(0);
-    setIsDragging(false);
+    setTouchStart(null);
+    setTouchEnd(null);
   };
 
-  // Auto-play
-  useEffect(() => {
-    if (!autoPlay || isPaused || validProductCount <= 1 || isLoading || isDragging) {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-        autoPlayRef.current = null;
-      }
-      return;
-    }
-
-    autoPlayRef.current = setInterval(handleNext, interval);
-
-    return () => {
-      if (autoPlayRef.current) {
-        clearInterval(autoPlayRef.current);
-        autoPlayRef.current = null;
-      }
-    };
-  }, [autoPlay, handleNext, interval, isPaused, validProductCount, isLoading, isDragging]);
-
-  // Navigation clavier
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") handlePrevious();
-      if (e.key === "ArrowRight") handleNext();
-      if (e.key === "Escape") setSelectedProduct(null);
-      if (e.key === " ") {
-        e.preventDefault();
-        setIsPaused((prev) => !prev);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handlePrevious, handleNext]);
-
-  // Mouse wheel pour desktop
-  const handleWheel = useCallback(
-    (e: WheelEvent) => {
-      if (isMobile) return; // Désactivé sur mobile
-
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        e.preventDefault();
-        if (e.deltaX > 0) {
-          handleNext();
-        } else {
-          handlePrevious();
-        }
-      }
-    },
-    [handleNext, handlePrevious, isMobile]
-  );
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    return () => container.removeEventListener("wheel", handleWheel);
-  }, [handleWheel]);
-
-  const openLightbox = (product: ProductPromo) => {
-    setSelectedProduct(product);
+  // ── Panier ──────────────────────────────────────────────────────────
+  const handleAddToCart = () => {
+    if (!isAvailable) return;
+    addToCart(slide, 1);
+    if (onCartClick) onCartClick();
   };
 
-  // Calcul des indices pour les reflets (uniquement desktop)
-  const getVisibleIndices = useCallback((): VisibleIndex[] => {
-    if (isMobile) return []; // Pas de reflets sur mobile
+  // ── Classes d'animation ─────────────────────────────────────────────
+  const contentClass =
+    animState === "exit"
+      ? direction > 0
+        ? "anim-exit-left"
+        : "anim-exit-right"
+      : animState === "enter"
+        ? direction > 0
+          ? "anim-enter-left"
+          : "anim-enter-right"
+        : "";
 
-    const indices: VisibleIndex[] = [];
-    const maxReflections = 4;
+  const imgClass = animState === "enter" ? "anim-img-in" : "";
+  const showContent = !isFirstLoad || animState === "enter"; // 👈 Affiche uniquement après l'animation initiale
 
-    if (validProductCount === 0) return indices;
+  if (!slides.length) return null;
 
-    // Reflets à gauche
-    for (let i = 1; i <= maxReflections; i++) {
-      const index = (active - i + validProductCount) % validProductCount;
-      indices.unshift({
-        index,
-        type: "reflection-left",
-        distance: i,
-      });
-    }
-
-    // Image active
-    indices.push({
-      index: active,
-      type: "active",
-      distance: 0,
-    });
-
-    // Reflets à droite
-    for (let i = 1; i <= maxReflections; i++) {
-      const index = (active + i) % validProductCount;
-      indices.push({
-        index,
-        type: "reflection-right",
-        distance: i,
-      });
-    }
-
-    return indices;
-  }, [active, validProductCount, isMobile]);
-
-  // Calcul des indices des cartes principales
-  const getMainCardsIndices = useCallback((): number[] => {
-    if (validProductCount === 0) return [];
-
-    if (isMobile) {
-      // Sur mobile, on ne montre qu'une carte à la fois
-      return [active];
-    }
-
-    // Desktop: 3 cartes
-    if (validProductCount === 1) return [active];
-    if (validProductCount === 2) {
-      return [active, (active + 1) % validProductCount];
-    }
-
-    return [
-      (active - 1 + validProductCount) % validProductCount,
-      active,
-      (active + 1) % validProductCount,
-    ];
-  }, [active, validProductCount, isMobile]);
-
-  const visibleIndices = getVisibleIndices();
-  const mainCardsIndices = getMainCardsIndices();
-
-  if (isLoading && products.length === 0) {
+  // 👈 Pendant le premier chargement, on montre un placeholder sans contenu
+  if (isFirstLoad && !isReady) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Waveform size="35" stroke="3.5" speed="1" color="#f59e0b" />
-        <p className="ml-3 text-gray-600">Chargement des promotions...</p>
+      <div
+        className="cr-root cr-loading"
+        style={{ height: carouselHeight }}
+      >
+        <div className="cr-left">
+          <div className="cr-accent-bar" style={{ background: palette.accent }} />
+          <div className="cr-mist-effect"></div>
+        </div>
+        <div className="cr-right" />
       </div>
     );
   }
 
-  if (products.length === 0) {
-    return null;
-  }
-
   return (
-    <>
-      <div className="w-full max-w-7xl mx-auto px-4">
-        {/* Header avec titre */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
-          <div className="text-center sm:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Nos <span className="text-red-600">Promotions</span>
-            </h2>
-            <p className="text-gray-600 mt-2">
-              Découvrez nos offres spéciales à prix réduits
-            </p>
-          </div>
-        </div>
-
-        {/* Conteneur principal du carrousel */}
+    <div
+      className="cr-root"
+      style={{ height: carouselHeight }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* ── Panneau gauche : contenu avec effet de brume ── */}
+      <div className="cr-left">
+        {/* Barre d'accent verticale */}
         <div
-          ref={containerRef}
-          className={cn(
-            "relative w-full overflow-hidden rounded-3xl bg-linear-to-br from-gray-100 to-white border border-gray-200 shadow-xl",
-            isMobile ? "h-[70vh] min-h-125" : "h-[80vh] min-h-150 max-h-225"
-          )}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          {/* Zone de reflets (uniquement desktop) */}
-          {!isMobile && (
-            <div className="absolute inset-0 z-0 flex items-center justify-center">
-              <div className="relative w-full h-full flex items-center justify-center">
-                {visibleIndices.map((item, idx) => {
-                  if (item.type === "active") return null;
+          className="cr-accent-bar"
+          style={{ background: palette.accent, transition: "background 0.5s ease" }}
+        />
 
-                  const product = products[item.index];
-                  if (!product) return null;
+        {/* Effet de brume qui déborde sur l'image */}
+        <div className="cr-mist-effect"></div>
 
-                  const opacity = Math.max(0.15, 0.5 - item.distance * 0.1);
-                  const scale = 1 - item.distance * 0.15;
-                  const blur = item.distance * 4;
-                  const translateX =
-                    item.type === "reflection-left"
-                      ? `-${120 + item.distance * 60}%`
-                      : `${120 + item.distance * 60}%`;
+        {showContent && (
+          <>
+            <div className={`cr-top ${contentClass}`}>
+              {/* Badge */}
+              <span
+                className="cr-badge"
+                style={{ background: palette.accent, color: palette.badgeColor }}
+              >
+                {badge}
+              </span>
 
-                  return (
-                    <div
-                      key={`${item.type}-${item.index}-${idx}`}
-                      className="absolute w-[25%] h-[50%] transition-all duration-700 ease-out rounded-xl overflow-hidden"
-                      style={{
-                        transform: `translateX(${translateX}) scale(${scale})`,
-                        opacity: opacity,
-                        filter: `blur(${blur}px) brightness(0.8)`,
-                        zIndex: 10 - item.distance,
-                      }}
-                    >
-                      <div className="relative w-full h-full">
-                        <ProductImage
-                          src={product.main_image}
-                          alt={product.name}
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-linear-to-r from-white/60 via-transparent to-white/60" />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              {/* Catégorie */}
+              <p className="cr-label">{slide?.name?.toUpperCase()}</p>
+
+              {/* Titre */}
+              <h2 className="cr-headline">
+                {headlineL1}
+                {headlineL2 && <><br />{headlineL2}</>}
+              </h2>
+
+              {/* Description */}
+              <p className="cr-desc">{description}</p>
+
+              {/* Prix */}
+              <p className="cr-price" style={{ color: palette.accent }}>
+                {priceDisplay}
+              </p>
             </div>
-          )}
 
-          {/* Boutons de navigation (cachés sur mobile) */}
-          {showControls && validProductCount > 1 && !isMobile && (
-            <>
-              <button
-                onClick={handlePrevious}
-                className={cn(
-                  "absolute left-4 top-1/2 -translate-y-1/2 z-40",
-                  "p-4 rounded-full bg-white/80 backdrop-blur-lg border border-gray-200",
-                  "text-amber-600 hover:text-amber-700 hover:bg-white/90 transition-all duration-300",
-                  "shadow-lg hover:shadow-xl hover:scale-110",
-                  "group"
-                )}
-                aria-label="Produit précédent"
-              >
-                <ChevronLeft className="w-8 h-8 md:w-10 md:h-10 group-hover:-translate-x-1 transition-transform" />
-              </button>
-
-              <button
-                onClick={handleNext}
-                className={cn(
-                  "absolute right-4 top-1/2 -translate-y-1/2 z-40",
-                  "p-4 rounded-full bg-white/80 backdrop-blur-lg border border-gray-200",
-                  "text-amber-600 hover:text-amber-700 hover:bg-white/90 transition-all duration-300",
-                  "shadow-lg hover:shadow-xl hover:scale-110",
-                  "group"
-                )}
-                aria-label="Produit suivant"
-              >
-                <ChevronRight className="w-8 h-8 md:w-10 md:h-10 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </>
-          )}
-
-          {/* Indicateurs de progression */}
-          {showIndicators && validProductCount > 1 && (
-            <div className={cn(
-              "absolute z-40",
-              isMobile
-                ? "bottom-4 left-1/2 -translate-x-1/2"
-                : "bottom-8 left-1/2 -translate-x-1/2"
-            )}>
-              <div className={cn(
-                "flex items-center gap-2 bg-white/90 backdrop-blur-lg rounded-full border border-gray-200 shadow-lg",
-                isMobile ? "px-4 py-2" : "px-6 py-3"
-              )}>
-                <span className="text-amber-600 text-sm font-medium">
-                  {active + 1} / {validProductCount}
-                </span>
-                <div className="h-4 w-px bg-gray-300" />
-                {Array.from({ length: Math.min(isMobile ? 5 : 7, validProductCount) }).map(
-                  (_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActive(index)}
-                      className={cn(
-                        "transition-all duration-300",
-                        isMobile ? "w-1.5 h-1.5" : "w-2 h-2",
-                        index === active
-                          ? cn("bg-amber-500", isMobile ? "w-4" : "w-6 scale-125")
-                          : "bg-gray-300 hover:bg-gray-400 hover:scale-110"
-                      )}
-                      aria-label={`Aller au produit ${index + 1}`}
-                    />
-                  )
-                )}
-                {validProductCount > (isMobile ? 5 : 7) && (
-                  <span className="text-amber-600/60 text-xs px-2">
-                    +{validProductCount - (isMobile ? 5 : 7)}
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Indicateur de swipe pour mobile */}
-          {isMobile && validProductCount > 1 && !isDragging && dragOffset === 0 && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 animate-pulse">
-              <div className="flex items-center gap-1 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full shadow-sm border border-gray-200">
-                <ChevronLeft className="w-3 h-3 text-gray-500" />
-                <span className="text-xs text-gray-600">Glisser</span>
-                <ChevronRight className="w-3 h-3 text-gray-500" />
-              </div>
-            </div>
-          )}
-
-          {/* Conteneur des cartes */}
-          {validProductCount > 0 && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden">
-              <div
-                ref={scrollContainerRef}
-                className={cn(
-                  "relative w-full h-full flex items-center justify-center",
-                  isMobile && "transition-none"
-                )}
-              >
-                {mainCardsIndices.map((index, positionIndex) => {
-                  const product = products[index];
-                  if (!product) return null;
-
-                  const isActive = index === active;
-                  const dragStyle = isMobile && isDragging ? {
-                    transform: `translateX(calc(${dragOffset}px))`,
-                    transition: 'none',
-                  } : {};
-
-                  // Styles pour mobile
-                  const mobileStyles = {
-                    width: '85%',
-                    height: '70%',
-                    transform: `translateX(0)`,
-                    transition: isDragging ? 'none' : 'all 0.3s ease-out',
-                    ...dragStyle,
-                  };
-
-                  // Styles pour desktop
-                  const desktopStyles = {
-                    width: isActive ? "40%" : "30%",
-                    height: isActive ? "75%" : "60%",
-                    transform: isActive
-                      ? "translateX(0) scale(1) rotateY(0deg)"
-                      : positionIndex === 0
-                        ? "translateX(-110%) scale(0.85) rotateY(-15deg)"
-                        : "translateX(110%) scale(0.85) rotateY(15deg)",
-                    opacity: isActive ? 1 : 0.9,
-                    filter: isActive
-                      ? "drop-shadow(0 20px 20px rgba(0, 0, 0, 0.15))"
-                      : "brightness(0.95) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.1))",
-                  };
-
-                  // Calcul du prix promotionnel
-                  const discount = product.discount_percentage || 0;
-                  const promoPrice = product.original_price
-                    ? product.original_price * (1 - discount / 100)
-                    : product.price;
-
-                  return (
-                    <div
-                      key={product.id}
-                      className={cn(
-                        "absolute rounded-3xl shadow-xl border-2 overflow-hidden",
-                        "group cursor-pointer transform-gpu bg-white",
-                        isMobile ? "transition-all" : "",
-                        isActive && !isMobile && "shadow-amber-400/30 border-amber-400",
-                        !isActive && !isMobile && "border-gray-200"
-                      )}
-                      style={isMobile ? mobileStyles : desktopStyles}
-                      onClick={() => openLightbox(product)}
-                    >
-                      <div className="relative w-full h-full">
-                        {/* Image de fond */}
-                        <ProductImage
-                          src={product.main_image}
-                          alt={product.name}
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-
-                        {/* Overlay dégradé pour thème clair */}
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent" />
-
-                        {/* Contenu de la carte */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 text-white">
-                          {discount > 0 && (
-                            <div className="mb-2">
-                              <span className="inline-block px-2 md:px-3 py-1 bg-red-600 text-white text-xs md:text-sm font-semibold rounded-full">
-                                -{discount}%
-                              </span>
-                            </div>
-                          )}
-                          <h3 className="text-lg md:text-xl font-bold mb-1 md:mb-2 line-clamp-1 text-white">
-                            {product.name}
-                          </h3>
-                          <p className="text-xs md:text-sm text-gray-200 mb-2 md:mb-3 line-clamp-2">
-                            {product.description}
-                          </p>
-                          <div className="flex items-center gap-2 md:gap-3">
-                            <span className="text-xl md:text-2xl font-bold text-amber-400">
-                              {promoPrice.toFixed(2)}€
-                            </span>
-                            {product.original_price &&
-                              product.original_price > product.price && (
-                                <span className="text-xs md:text-sm text-gray-300 line-through">
-                                  {product.original_price.toFixed(2)}€
-                                </span>
-                              )}
-                          </div>
-                        </div>
-
-                        {/* Effet de brillance */}
-                        <div className="absolute inset-0 bg-linear-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                        {/* Bouton zoom (caché sur mobile) */}
-                        {isActive && !isMobile && (
-                          <div className="absolute top-6 right-6 transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                            <div className="p-3 bg-amber-400 backdrop-blur-md rounded-full shadow-lg hover:scale-110 transition-transform duration-300">
-                              <ZoomIn className="w-6 h-6 text-gray-900" />
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Effet de bokeh en arrière-plan pour thème clair */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
-            {Array.from({ length: isMobile ? 4 : 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="absolute rounded-full bg-amber-400/20 animate-pulse"
-                style={{
-                  width: `${Math.random() * (isMobile ? 50 : 100) + (isMobile ? 30 : 50)}px`,
-                  height: `${Math.random() * (isMobile ? 50 : 100) + (isMobile ? 30 : 50)}px`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  filter: "blur(40px)",
-                  animationDuration: `${Math.random() * 10 + 5}s`,
-                  animationDelay: `${Math.random() * 5}s`,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Lightbox (inchangée) */}
-      {selectedProduct && (
-        <div
-          className="fixed inset-0 z-50 bg-white/95 flex items-center justify-center p-4 animate-in fade-in duration-300"
-          onClick={() => setSelectedProduct(null)}
-        >
-          <button
-            className="absolute top-6 right-6 text-amber-600 hover:text-amber-700 transition-colors z-50"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedProduct(null);
-            }}
-            aria-label="Fermer"
-          >
-            <X className="w-10 h-10" />
-          </button>
-
-          {/* Navigation dans la lightbox */}
-          {validProductCount > 1 && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePrevious();
-                  setSelectedProduct(
-                    products[active === 0 ? validProductCount - 1 : active - 1]
-                  );
-                }}
-                className="absolute left-6 top-1/2 -translate-y-1/2 text-amber-600 hover:text-amber-700 transition-colors z-50"
-                aria-label="Produit précédent"
-              >
-                <ChevronLeft className="w-12 h-12" />
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleNext();
-                  setSelectedProduct(
-                    products[active === validProductCount - 1 ? 0 : active + 1]
-                  );
-                }}
-                className="absolute right-6 top-1/2 -translate-y-1/2 text-amber-600 hover:text-amber-700 transition-colors z-50"
-                aria-label="Produit suivant"
-              >
-                <ChevronRight className="w-12 h-12" />
-              </button>
-            </>
-          )}
-
-          {/* Contenu de la lightbox */}
-          <div className="relative max-w-5xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl">
-            <div className="relative h-[60vh]">
-              <ProductImage
-                src={selectedProduct.main_image}
-                alt={selectedProduct.name}
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
-
-              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
-                {selectedProduct.discount_percentage &&
-                  selectedProduct.discount_percentage > 0 && (
-                    <div className="mb-3">
-                      <span className="inline-block px-4 py-1.5 bg-red-600 text-white text-lg font-bold rounded-full">
-                        -{selectedProduct.discount_percentage}%
-                      </span>
-                    </div>
-                  )}
-                <h2 className="text-3xl font-bold mb-3 text-white">
-                  {selectedProduct.name}
-                </h2>
-                <p className="text-gray-200 mb-4 max-w-2xl">
-                  {selectedProduct.description}
-                </p>
-                <div className="flex items-center gap-4">
-                  <span className="text-4xl font-bold text-amber-400">
-                    {(
-                      selectedProduct.original_price
-                        ? selectedProduct.original_price *
-                        (1 - (selectedProduct.discount_percentage || 0) / 100)
-                        : selectedProduct.price
-                    ).toFixed(2)}
-                    €
-                  </span>
-                  {selectedProduct.original_price &&
-                    selectedProduct.original_price >
-                    selectedProduct.price && (
-                      <span className="text-xl text-gray-300 line-through">
-                        {selectedProduct.original_price.toFixed(2)}€
-                      </span>
-                    )}
-                </div>
-                <button className="mt-6 px-8 py-3 bg-amber-400 text-gray-900 rounded-full font-semibold hover:bg-amber-500 transition-colors">
-                  Voir l&apos;offre
+            {/* ── Bas : CTAs + navigation ── */}
+            <div className={`cr-bottom ${contentClass}`}>
+              <div className="cr-ctas">
+                <Link href={`/produits/${slide.id}`} aria-label={`Voir ${slide.name}`}>
+                  <button
+                    className="cr-btn-primary"
+                    style={{ background: palette.accent, color: palette.badgeColor }}
+                  >
+                    En savoir plus
+                  </button>
+                </Link>
+                <button
+                  className="cr-btn-ghost"
+                  onClick={handleAddToCart}
+                  disabled={!isAvailable}
+                >
+                  {isAvailable ? "Acheter" : "Indisponible"}
                 </button>
               </div>
-            </div>
-          </div>
 
-          {/* Info produit */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md rounded-full px-6 py-3 border border-gray-200 shadow-lg">
-            <span className="text-amber-600 font-medium">
-              Produit {active + 1} sur {validProductCount}
-            </span>
+              {/* Alerte stock faible */}
+              {slide.stock > 0 && slide.stock <= 5 && (
+                <p className="cr-stock-warn">⚠ Plus que {slide.stock} en stock</p>
+              )}
+
+              {/* Navigation */}
+              <div className="cr-nav">
+                <div className="cr-dots">
+                  {slides.map((_, i) => (
+                    <button
+                      key={i}
+                      className={`cr-dot${i === current ? " active" : ""}`}
+                      style={{
+                        background:
+                          i === current ? palette.accent : "var(--cr-border)",
+                        width: i === current ? "22px" : "6px",
+                      }}
+                      onClick={() => goTo(i)}
+                      aria-label={`Slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <div className="cr-arrows">
+                  <button className="cr-arrow" onClick={prev} aria-label="Précédent">
+                    ←
+                  </button>
+                  <button className="cr-arrow" onClick={next} aria-label="Suivant">
+                    →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* ── Panneau droit : image ── */}
+      <div className="cr-right">
+        {/* Tags superposés */}
+        {showContent && (
+          <div className="cr-tag-strip">
+            {hasDiscount && (
+              <span
+                className="cr-tag"
+                style={{ background: palette.accent, color: palette.badgeColor }}
+              >
+                {badge}
+              </span>
+            )}
+            {!isAvailable && (
+              <span className="cr-tag cr-tag-out">Épuisé</span>
+            )}
+          </div>
+        )}
+
+        {/* Indicateur de swipe mobile */}
+        {isMobile && showContent && (
+          <div className="cr-swipe-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M7 12L12 7L17 12M12 7L12 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </div>
+        )}
+
+        {/* Conteneur image */}
+        <div className="cr-image-container">
+          <div className={`cr-img-slot ${imgClass}`}>
+            <img
+              src={slide.main_image}
+              alt={slide.name}
+              className="cr-img"
+              style={{
+                width: 'auto',
+                height: '100%',
+                maxWidth: 'none',
+                objectFit: 'contain',
+              }}
+            />
           </div>
         </div>
-      )}
-    </>
+
+        {/* Compteur */}
+        {showContent && (
+          <div className="cr-counter">
+            {String(current + 1).padStart(2, "0")} /{" "}
+            {String(slides.length).padStart(2, "0")}
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        /* ── Variables ── */
+        .cr-root {
+          --cr-border: rgba(0, 0, 0, 0.12);
+          --mist-color: rgba(255, 255, 255, 0);
+          border-radius: 16px;
+          overflow: hidden;
+        }
+        @media (prefers-color-scheme: dark) {
+          .cr-root { 
+            --cr-border: rgba(255, 255, 255, 0.18);
+            --mist-color: rgba(0, 0, 0, 0);
+          }
+        }
+
+        /* ── Root avec hauteur fixe 1/2 écran (PC) ── */
+        .cr-root {
+          position: relative;
+          display: flex;
+          height: 50vh;
+          min-height: 400px;
+          overflow: hidden;
+          font-family: 'Outfit', sans-serif;
+          background: #fff;
+          border: 0.5px solid rgba(0, 0, 0, 0.09);
+          user-select: none;
+          cursor: grab;
+          border-radius: 24px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+        }
+        .cr-root:active { cursor: grabbing; }
+
+        /* État de chargement - pas d'interaction */
+        .cr-root.cr-loading {
+          cursor: default;
+        }
+        .cr-root.cr-loading:active {
+          cursor: default;
+        }
+
+        /* ── Panneau gauche ── */
+        .cr-left {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 2rem 2rem 1.5rem;
+          position: relative;
+          overflow: hidden;
+          gap: 1.5rem;
+          background: transparent;
+          z-index: 2;
+        }
+
+        /* ── Effet de fondu amélioré qui empiète sur l'image ── */
+        .cr-mist-effect {
+          position: absolute;
+          right: -20px;
+          top: 0;
+          width: 45%;
+          height: 100%;
+          background: linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(255, 255, 255, 0.85) 20%,
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0.15) 80%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          pointer-events: none;
+          z-index: 1;
+          backdrop-filter: blur(4px);
+          mask: linear-gradient(to right, black 0%, black 50%, transparent 100%);
+          -webkit-mask: linear-gradient(to right, black 0%, black 50%, transparent 100%);
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .cr-mist-effect {
+            background: linear-gradient(
+              to right,
+              rgba(17, 17, 19, 0.98) 0%,
+              rgba(17, 17, 19, 0.85) 20%,
+              rgba(17, 17, 19, 0.5) 50%,
+              rgba(17, 17, 19, 0.15) 80%,
+              rgba(17, 17, 19, 0) 100%
+            );
+          }
+        }
+
+        .cr-accent-bar {
+          width: 3px;
+          height: 100%;
+          position: absolute;
+          left: 0;
+          top: 0;
+          border-radius: 0 2px 2px 0;
+          z-index: 2;
+        }
+
+        /* ── Contenu texte ── */
+        .cr-top {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          position: relative;
+          z-index: 2;
+        }
+
+        .cr-badge {
+          display: inline-flex;
+          align-self: flex-start;
+          font-size: 10px;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          padding: 4px 12px;
+          border-radius: 6px;
+        }
+
+        .cr-label {
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: #888;
+          margin: 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .cr-headline {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+          font-weight: 800;
+          line-height: 1;
+          letter-spacing: -0.02em;
+          margin: 0;
+          color: #0A0A0A;
+        }
+
+        .cr-desc {
+          font-size: 12px;
+          line-height: 1.6;
+          color: #666;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .cr-price {
+          font-size: 1.95rem;
+          font-weight: 600;
+          margin: 0;
+          letter-spacing: 0.01em;
+        }
+
+        /* ── Bas ── */
+        .cr-bottom {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          position: relative;
+          z-index: 2;
+        }
+
+        .cr-ctas {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .cr-btn-primary {
+          font-family: 'Outfit', sans-serif;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 8px 18px;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: transform 0.15s, opacity 0.15s;
+        }
+        .cr-btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+        .cr-btn-primary:active { transform: scale(0.97); }
+
+        .cr-btn-ghost {
+          font-family: 'Outfit', sans-serif;
+          font-size: 11px;
+          font-weight: 500;
+          padding: 8px 16px;
+          background: transparent;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          border-radius: 8px;
+          cursor: pointer;
+          color: #0A0A0A;
+          transition: border-color 0.15s, transform 0.15s;
+        }
+        .cr-btn-ghost:hover { border-color: rgba(0,0,0,0.35); transform: translateY(-1px); }
+        .cr-btn-ghost:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+        .cr-stock-warn {
+          font-size: 10px;
+          color: #F59E0B;
+          font-weight: 500;
+          margin: 0;
+        }
+
+        /* ── Navigation ── */
+        .cr-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .cr-dots { display: flex; gap: 6px; align-items: center; }
+
+        .cr-dot {
+          height: 6px;
+          border-radius: 3px;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          transition: width 0.3s ease, background 0.3s ease;
+        }
+
+        .cr-arrows { display: flex; gap: 6px; }
+
+        .cr-arrow {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          background: transparent;
+          color: #0A0A0A;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          transition: border-color 0.15s, transform 0.15s;
+        }
+        .cr-arrow:hover { transform: scale(1.08); border-color: rgba(0,0,0,0.4); }
+        .cr-arrow:active { transform: scale(0.93); }
+
+        /* ── Panneau droit ── */
+        .cr-right {
+          flex-shrink: 0;
+          position: relative;
+          overflow: hidden;
+          background: #F5F4F0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100%;
+        }
+
+        .cr-image-container {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .cr-img-slot {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .cr-img {
+          display: block;
+          transition: transform 0.3s ease;
+        }
+
+        .cr-img:hover {
+          transform: scale(1.05);
+        }
+
+        .cr-tag-strip {
+          position: absolute;
+          top: 14px;
+          left: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          z-index: 5;
+        }
+
+        .cr-tag {
+          font-size: 10px;
+          font-weight: 700;
+          padding: 3px 8px;
+          border-radius: 6px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .cr-tag-out {
+          background: rgba(0,0,0,0.08);
+          color: #666;
+          border: 0.5px solid rgba(0,0,0,0.1);
+        }
+
+        .cr-counter {
+          position: absolute;
+          bottom: 14px;
+          right: 16px;
+          font-size: 11px;
+          color: #999;
+          letter-spacing: 0.1em;
+          font-weight: 500;
+          z-index: 5;
+        }
+
+        /* Indicateur swipe mobile */
+        .cr-swipe-indicator {
+          position: absolute;
+          top: 50%;
+          right: 12px;
+          transform: translateY(-50%);
+          z-index: 6;
+          color: rgba(0,0,0,0.3);
+          animation: swipePulse 2s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        @keyframes swipePulse {
+          0%, 100% { opacity: 0.3; transform: translateY(-50%) translateX(0); }
+          50% { opacity: 0.8; transform: translateY(-50%) translateX(4px); }
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .cr-swipe-indicator { color: rgba(255,255,255,0.3); }
+        }
+
+        /* ── Animations ── */
+        @keyframes exitLeft {
+          from { opacity: 1; transform: translateX(0); }
+          to   { opacity: 0; transform: translateX(-24px); }
+        }
+        @keyframes exitRight {
+          from { opacity: 1; transform: translateX(0); }
+          to   { opacity: 0; transform: translateX(24px); }
+        }
+        @keyframes enterLeft {
+          from { opacity: 0; transform: translateX(32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes enterRight {
+          from { opacity: 0; transform: translateX(-32px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes imgIn {
+          from { opacity: 0; transform: scale(0.94); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+
+        .anim-exit-left  { animation: exitLeft  0.3s cubic-bezier(0.55,0,1,0.45) forwards; }
+        .anim-exit-right { animation: exitRight 0.3s cubic-bezier(0.55,0,1,0.45) forwards; }
+        .anim-enter-left  { animation: enterLeft  0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .anim-enter-right { animation: enterRight 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .anim-img-in { animation: imgIn 0.55s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+        /* ── Dark mode ── */
+        @media (prefers-color-scheme: dark) {
+          .cr-root { background: #111113; border-color: rgba(255,255,255,0.08); }
+          .cr-headline { color: #F5F5F5; }
+          .cr-label { color: #666; }
+          .cr-desc { color: #999; }
+          .cr-btn-ghost { color: #F5F5F5; border-color: rgba(255,255,255,0.15); }
+          .cr-btn-ghost:hover { border-color: rgba(255,255,255,0.35); }
+          .cr-arrow { color: #F5F5F5; border-color: rgba(255,255,255,0.15); }
+          .cr-arrow:hover { border-color: rgba(255,255,255,0.4); }
+          .cr-right { background: #1A1A1C; }
+          .cr-counter { color: #555; }
+        }
+
+        /* ── RESPONSIVE MOBILE UNIQUEMENT ── */
+        @media (max-width: 768px) {
+          .cr-root {
+            flex-direction: column;
+            height: auto;
+            min-height: auto;
+            border-radius: 16px;
+            cursor: auto;
+          }
+          .cr-root:active { cursor: auto; }
+          
+          .cr-left {
+            padding: 1.25rem;
+            min-height: 320px;
+            order: 2;
+          }
+          
+          .cr-right {
+            height: 320px;
+            order: 1;
+            min-height: 280px;
+          }
+          
+          .cr-mist-effect {
+            width: 100%;
+            right: 0;
+            top: auto;
+            bottom: 0;
+            height: 60%;
+            background: linear-gradient(
+              to bottom,
+              rgba(255, 255, 255, 0) 0%,
+              rgba(255, 255, 255, 0.15) 30%,
+              rgba(255, 255, 255, 0.5) 60%,
+              rgba(255, 255, 255, 0.85) 85%,
+              rgba(255, 255, 255, 0.98) 100%
+            );
+            mask: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+            -webkit-mask: linear-gradient(to bottom, transparent 0%, black 40%, black 100%);
+          }
+          
+          @media (prefers-color-scheme: dark) {
+            .cr-mist-effect {
+              background: linear-gradient(
+                to bottom,
+                rgba(17, 17, 19, 0) 0%,
+                rgba(17, 17, 19, 0.15) 30%,
+                rgba(17, 17, 19, 0.5) 60%,
+                rgba(17, 17, 19, 0.85) 85%,
+                rgba(17, 17, 19, 0.98) 100%
+              );
+            }
+          }
+          
+          .cr-headline { font-size: 1.5rem; }
+          .cr-price { font-size: 1.5rem; }
+          .cr-desc { font-size: 11px; -webkit-line-clamp: 3; }
+          
+          .cr-accent-bar {
+            width: 100%;
+            height: 3px;
+            top: 0;
+            left: 0;
+            border-radius: 0 0 2px 2px;
+          }
+          
+          .cr-ctas button {
+            padding: 10px 20px;
+            font-size: 12px;
+          }
+          
+          .cr-nav {
+            margin-top: 0.5rem;
+          }
+          
+          .cr-arrow {
+            width: 36px;
+            height: 36px;
+            font-size: 14px;
+          }
+          
+          .cr-dot {
+            height: 8px;
+          }
+          
+          .cr-dot.active {
+            width: 28px !important;
+          }
+          
+          .cr-tag-strip {
+            top: 10px;
+            left: 10px;
+          }
+          
+          .cr-counter {
+            bottom: 10px;
+            right: 12px;
+            font-size: 10px;
+          }
+        }
+
+        /* Petit mobile */
+        @media (max-width: 480px) {
+          .cr-left {
+            padding: 1rem;
+            min-height: 280px;
+          }
+          
+          .cr-right {
+            height: 260px;
+          }
+          
+          .cr-headline {
+            font-size: 1.3rem;
+          }
+          
+          .cr-price {
+            font-size: 1.3rem;
+          }
+          
+          .cr-desc {
+            font-size: 10px;
+          }
+          
+          .cr-ctas {
+            gap: 6px;
+          }
+          
+          .cr-ctas button {
+            padding: 8px 16px;
+            font-size: 11px;
+          }
+          
+          .cr-nav {
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+          }
+          
+          .cr-dots {
+            justify-content: center;
+          }
+          
+          .cr-arrows {
+            justify-content: center;
+          }
+        }
+      `}</style>
+    </div>
   );
 }

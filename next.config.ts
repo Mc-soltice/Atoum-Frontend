@@ -19,6 +19,18 @@ const nextConfig = {
         hostname: '**.trycloudflare.com',
         pathname: "/storage/**",
       },
+      {
+        protocol: "https",
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: "https",
+        hostname: '**.googleusercontent.com',
+      },
+      {
+        protocol: "https",
+        hostname: 'google.com',
+      },
     ],
     qualities: [60, 70, 75, 80],
   },

@@ -2,61 +2,85 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
-import Link from "next/link";
-import ProductImage from "@/components/admin/produit/ProductImage";
-import { useCart } from "@/contexte/panier/CartContext";
-import { ProductPromo } from "@/types/product";
 
-interface Props {
-  slides: ProductPromo[];
-  onCartClick?: () => void;
-}
+const slides = [
+  {
+    id: 0,
+    badge: "Nouveauté",
+    label: "AIR MAX PULSE",
+    headline: ["Confort", "Redéfini"],
+    sub: "Amorti réactif nouvelle génération. Disponible maintenant.",
+    cta: "Acheter",
+    ctaSecondary: "Voir la collection",
+    tag: "#AirMaxPulse",
+    price: "À partir de 149€",
+    img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&q=90",
+    bg: "#F5F0E8",
+    text: "#0A0A0A",
+    accent: "#FF3B00",
+    accentText: "#fff",
+  },
+  {
+    id: 1,
+    badge: "Tendance",
+    label: "TECH OUTERWEAR",
+    headline: ["L'hiver", "Autrement"],
+    sub: "Matières techniques, coupes architecturales. Livraison offerte.",
+    cta: "Découvrir",
+    ctaSecondary: "Voir les looks",
+    tag: "#WinterTech",
+    price: "À partir de 299€",
+    img: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=1200&q=90",
+    bg: "#0D0F14",
+    text: "#FFFFFF",
+    accent: "#3B82F6",
+    accentText: "#fff",
+  },
+  {
+    id: 2,
+    badge: "Édition Limitée",
+    label: "CAPSULE ÉTÉ",
+    headline: ["Couleurs", "Vives"],
+    sub: "100 pièces seulement. Sérigraphie artisanale, coton bio.",
+    cta: "S'approprier",
+    ctaSecondary: "En savoir plus",
+    tag: "#SummerCapsule",
+    price: "À partir de 79€",
+    img: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=1200&q=90",
+    bg: "#FFF9F0",
+    text: "#1A1A1A",
+    accent: "#FF9500",
+    accentText: "#fff",
+  },
+  {
+    id: 3,
+    badge: "Bestseller",
+    label: "EVERYDAY BAG",
+    headline: ["Simple.", "Parfait."],
+    sub: "Cuir pleine fleur, quincaillerie dorée. Le sac qui dure.",
+    cta: "Commander",
+    ctaSecondary: "Personnaliser",
+    tag: "#EverydayBag",
+    price: "À partir de 219€",
+    img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1200&q=90",
+    bg: "#1C1410",
+    text: "#F5EFE6",
+    accent: "#D4A853",
+    accentText: "#1C1410",
+  },
+];
 
 const DRAG_THRESHOLD = 60;
 const AUTO_PLAY_DELAY = 5000;
 
-export default function CarouselP({ slides, onCartClick }: Props) {
+export default function Carousel() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { addToCart } = useCart();
-
-  // Slide courant
   const slide = slides[current];
 
-  // ── Champs dérivés depuis ProductPromo ──────────────────────────────
-  const isAvailable = slide.stock > 0;
-  const hasDiscount =
-    slide.original_price && slide.original_price > slide.price;
-
-  const discountPercent = hasDiscount
-    ? (((slide.original_price! - slide.price) / slide.original_price!) * 100).toFixed(0)
-    : null;
-
-  const badge = hasDiscount ? `−${discountPercent}%` : "Nouveauté";
-  const label = slide.name.toUpperCase();
-  // Découpe le nom en deux lignes (mot 1 / reste) pour l'effet char-by-char
-  const words = slide.name.split(" ");
-  const headline: [string, string] = [
-    words[0] ?? slide.name,
-    words.slice(1).join(" ") || "",
-  ];
-  const priceDisplay = hasDiscount
-    ? `${slide.price.toLocaleString()} € (était ${slide.original_price?.toLocaleString()} €)`
-    : `À partir de ${slide.price.toLocaleString()} €`;
-
-  // ── Couleurs fixes par index (identité visuelle conservée) ───────────
-  const THEMES = [
-    { bg: "#F5F0E8", text: "#0A0A0A", accent: "#FF3B00", accentText: "#fff" },
-    { bg: "#0D0F14", text: "#FFFFFF", accent: "#3B82F6", accentText: "#fff" },
-    { bg: "#FFF9F0", text: "#1A1A1A", accent: "#FF9500", accentText: "#fff" },
-    { bg: "#1C1410", text: "#F5EFE6", accent: "#D4A853", accentText: "#1C1410" },
-  ];
-  const theme = THEMES[current % THEMES.length];
-
-  // ── Navigation ───────────────────────────────────────────────────────
   const goTo = (index: number, dir?: number) => {
     const d = dir ?? (index > current ? 1 : -1);
     setDirection(d);
@@ -76,21 +100,18 @@ export default function CarouselP({ slides, onCartClick }: Props) {
     else if (info.offset.x > DRAG_THRESHOLD) prev();
   };
 
-  // ── Panier ───────────────────────────────────────────────────────────
-  const handleAddToCart = () => {
-    if (!isAvailable) return;
-    addToCart(slide, 1);
-    if (onCartClick) onCartClick();
-  };
-
-  // ── Variants Framer Motion (identiques à l'original) ─────────────────
+  // Define easing functions as strings that framer-motion accepts
   const customEase = [0.76, 0, 0.24, 1];
   const customEase2 = [0.22, 1, 0.36, 1];
   const springEase = [0.4, 0, 0.2, 1];
 
   const imgVariants = {
     enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", scale: 1.08 }),
-    center: { x: 0, scale: 1, transition: { duration: 0.85, ease: customEase as any } },
+    center: {
+      x: 0,
+      scale: 1,
+      transition: { duration: 0.85, ease: customEase as any }
+    },
     exit: (d: number) => ({
       x: d > 0 ? "-28%" : "28%",
       scale: 1.04,
@@ -107,14 +128,23 @@ export default function CarouselP({ slides, onCartClick }: Props) {
 
   const charVariant = {
     hidden: { y: "115%", opacity: 0 },
-    visible: { y: "0%", opacity: 1, transition: { duration: 0.52, ease: customEase2 as any } },
-    exit: { y: "-55%", opacity: 0, transition: { duration: 0.28, ease: [0.55, 0, 1, 0.45] as any } },
+    visible: {
+      y: "0%",
+      opacity: 1,
+      transition: { duration: 0.52, ease: customEase2 as any }
+    },
+    exit: {
+      y: "-55%",
+      opacity: 0,
+      transition: { duration: 0.28, ease: [0.55, 0, 1, 0.45] as any }
+    },
   };
 
   const fadeUp = {
     hidden: { y: 18, opacity: 0 },
     visible: (i: number) => ({
-      y: 0, opacity: 1,
+      y: 0,
+      opacity: 1,
       transition: { delay: 0.45 + i * 0.07, duration: 0.48, ease: customEase2 as any },
     }),
     exit: { y: -8, opacity: 0, transition: { duration: 0.18 } },
@@ -122,20 +152,18 @@ export default function CarouselP({ slides, onCartClick }: Props) {
 
   const circumference = 2 * Math.PI * 7;
 
-  if (!slides.length) return null;
-
   return (
     <div
       className="carousel-root rounded-lg"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        background: theme.bg,
-        color: theme.text,
+        background: slide.bg,
+        color: slide.text,
         transition: "background 0.9s ease, color 0.6s ease",
       }}
     >
-      {/* ── Image ─────────────────────────────────────────────────────── */}
+      {/* Image */}
       <div className="img-track rounded-lg">
         <AnimatePresence custom={direction} mode="popLayout">
           <motion.div
@@ -151,24 +179,19 @@ export default function CarouselP({ slides, onCartClick }: Props) {
             dragElastic={0.1}
             onDragEnd={handleDragEnd}
           >
-            {/* ProductImage remplace <img> */}
-            <ProductImage
-              src={slide.main_image}
-              alt={slide.name}
-              className="slide-img"
-            />
+            <img src={slide.img} alt={slide.label} className="slide-img" />
             <div
               className="overlay"
               style={{
-                background: `linear-gradient(105deg, ${theme.bg}F8 0%, ${theme.bg}D0 30%, ${theme.bg}55 58%, transparent 100%)`,
+                background: `linear-gradient(105deg, ${slide.bg}F8 0%, ${slide.bg}D0 30%, ${slide.bg}55 58%, transparent 100%)`,
               }}
             />
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* ── Compteur ──────────────────────────────────────────────────── */}
-      <div className="counter" style={{ color: `${theme.text}50` }}>
+      {/* Counter top-right */}
+      <div className="counter" style={{ color: `${slide.text}50` }}>
         <AnimatePresence mode="wait">
           <motion.span
             key={current}
@@ -180,11 +203,11 @@ export default function CarouselP({ slides, onCartClick }: Props) {
             0{current + 1}
           </motion.span>
         </AnimatePresence>
-        <span className="counter-sep" style={{ background: `${theme.text}28` }} />
+        <span className="counter-sep" style={{ background: `${slide.text}28` }} />
         <span>0{slides.length}</span>
       </div>
 
-      {/* ── Contenu ───────────────────────────────────────────────────── */}
+      {/* Content */}
       <div className="content">
         <AnimatePresence mode="wait">
           <motion.div
@@ -200,19 +223,19 @@ export default function CarouselP({ slides, onCartClick }: Props) {
               variants={fadeUp}
               custom={0}
               className="badge"
-              style={{ background: theme.accent, color: theme.accentText }}
+              style={{ background: slide.accent, color: slide.accentText }}
             >
-              {badge}
+              {slide.badge}
             </motion.span>
 
             {/* Label */}
             <motion.p variants={fadeUp} custom={1} className="label">
-              {label}
+              {slide.label}
             </motion.p>
 
-            {/* Headline char-by-char */}
+            {/* Headline — char by char */}
             <h2 className="headline">
-              {headline.filter(Boolean).map((line, li) => (
+              {slide.headline.map((line, li) => (
                 <span key={li} className="headline-line">
                   {line.split("").map((char, ci) => (
                     <motion.span
@@ -230,71 +253,63 @@ export default function CarouselP({ slides, onCartClick }: Props) {
               ))}
             </h2>
 
-            {/* Description */}
+            {/* Sub */}
             <motion.p variants={fadeUp} custom={2} className="sub">
-              {slide.description}
+              {slide.sub}
             </motion.p>
 
-            {/* Prix */}
+            {/* Price */}
             <motion.p
               variants={fadeUp}
               custom={3}
               className="price"
-              style={{ color: theme.accent }}
+              style={{ color: slide.accent }}
             >
-              {priceDisplay}
+              {slide.price}
             </motion.p>
 
             {/* CTAs */}
             <motion.div variants={fadeUp} custom={4} className="ctas">
-              {/* CTA principal → page produit */}
-              <Link href={`/produits/${slide.id}`} aria-label={`Voir ${slide.name}`}>
-                <motion.span
-                  className="btn-primary rounded-lg p-2"
-                  style={{ background: theme.accent, color: theme.accentText }}
-                  whileHover={{ scale: 1.04, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 22 }}
-                >
-                  Voir le produit
-                </motion.span>
-              </Link>
-
-              {/* CTA secondaire → ajouter au panier */}
+              <motion.button
+                className="btn-primary rounded-lg p-2"
+                style={{ background: slide.accent, color: slide.accentText }}
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 380, damping: 22 }}
+              >
+                {slide.cta}
+              </motion.button>
               <motion.button
                 className="btn-ghost ml-1"
-                style={{ borderColor: `${theme.text}28`, color: theme.text }}
-                onClick={handleAddToCart}
-                disabled={!isAvailable}
-                whileHover={isAvailable ? {
+                style={{ borderColor: `${slide.text}28`, color: slide.text }}
+                whileHover={{
                   scale: 1.03,
-                  borderColor: theme.accent,
-                  color: theme.accent,
-                } : {}}
-                whileTap={isAvailable ? { scale: 0.97 } : {}}
+                  borderColor: slide.accent,
+                  color: slide.accent,
+                }}
+                whileTap={{ scale: 0.97 }}
                 transition={{ duration: 0.18 }}
               >
-                {isAvailable ? "Ajouter au panier" : "Indisponible"}
+                {slide.ctaSecondary}
               </motion.button>
             </motion.div>
 
-            {/* Stock faible */}
-            {slide.stock > 0 && slide.stock <= 5 && (
-              <motion.p
-                variants={fadeUp}
-                custom={5}
-                className="hashtag"
-                style={{ color: theme.accent }}
-              >
-                ⚠ Plus que {slide.stock} en stock
-              </motion.p>
-            )}
+            {/* Hashtag */}
+            <motion.p
+              variants={fadeUp}
+              custom={5}
+              className="hashtag"
+              style={{ color: `${slide.text}45` }}
+            >
+              {slide.tag}
+            </motion.p>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* ── Barre du bas ──────────────────────────────────────────────── */}
+      {/* Bottom bar */}
       <div className="bottom-bar">
+        {/* Dot indicators with SVG progress ring */}
         <div className="dots">
           {slides.map((_, i) => (
             <button
@@ -304,17 +319,19 @@ export default function CarouselP({ slides, onCartClick }: Props) {
               aria-label={`Slide ${i + 1}`}
             >
               <svg width="34" height="34" viewBox="0 0 36 36">
+                {/* Track */}
                 <circle
                   cx="18" cy="18" r="7"
                   fill="none"
-                  stroke={i === current ? `${theme.text}20` : `${theme.text}18`}
+                  stroke={i === current ? `${slide.text}20` : `${slide.text}18`}
                   strokeWidth="1.5"
                 />
+                {/* Animated progress ring on active */}
                 {i === current && (
                   <motion.circle
                     cx="18" cy="18" r="7"
                     fill="none"
-                    stroke={theme.accent}
+                    stroke={slide.accent}
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeDasharray={circumference}
@@ -324,11 +341,12 @@ export default function CarouselP({ slides, onCartClick }: Props) {
                     style={{ transformOrigin: "18px 18px" }}
                   />
                 )}
+                {/* Center dot */}
                 <motion.circle
                   cx="18" cy="18"
                   animate={{
                     r: i === current ? 4 : 2.5,
-                    fill: i === current ? theme.accent : `${theme.text}38`,
+                    fill: i === current ? slide.accent : `${slide.text}38`,
                   }}
                   transition={{ duration: 0.32, ease: springEase as any }}
                 />
@@ -337,34 +355,43 @@ export default function CarouselP({ slides, onCartClick }: Props) {
           ))}
         </div>
 
+        {/* Arrow controls */}
         <div className="arrows">
           <motion.button
             className="arrow-btn"
             onClick={prev}
-            style={{ borderColor: `${theme.text}22`, color: theme.text }}
-            whileHover={{ scale: 1.1, x: -2, borderColor: theme.accent, color: theme.accent }}
+            style={{ borderColor: `${slide.text}22`, color: slide.text }}
+            whileHover={{ scale: 1.1, x: -2, borderColor: slide.accent, color: slide.accent }}
             whileTap={{ scale: 0.9 }}
-          >←</motion.button>
+          >
+            ←
+          </motion.button>
           <motion.button
             className="arrow-btn"
             onClick={next}
-            style={{ borderColor: `${theme.text}22`, color: theme.text }}
-            whileHover={{ scale: 1.1, x: 2, borderColor: theme.accent, color: theme.accent }}
+            style={{ borderColor: `${slide.text}22`, color: slide.text }}
+            whileHover={{ scale: 1.1, x: 2, borderColor: slide.accent, color: slide.accent }}
             whileTap={{ scale: 0.9 }}
-          >→</motion.button>
+          >
+            →
+          </motion.button>
         </div>
       </div>
 
-      {/* ── Styles (identiques à l'original) ─────────────────────────── */}
       <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@300;400;500;600&display=swap');
 
         .carousel-root {
-          position: relative; width: 100%; height: 560px;
-          overflow: hidden; font-family: 'Outfit', sans-serif;
-          cursor: grab; user-select: none;
+          position: relative;
+          width: 100%;
+          height: 560px;
+          overflow: hidden;
+          font-family: 'Outfit', sans-serif;
+          cursor: grab;
+          user-select: none;
         }
         .carousel-root:active { cursor: grabbing; }
+
+        /* Image */
         .img-track { position: absolute; inset: 0; overflow: hidden; }
         .img-wrapper { position: absolute; inset: 0; will-change: transform; }
         .slide-img {
@@ -373,65 +400,119 @@ export default function CarouselP({ slides, onCartClick }: Props) {
           pointer-events: none; display: block;
         }
         .overlay { position: absolute; inset: 0; }
+
+        /* Counter */
         .counter {
-          position: absolute; top: 1.6rem; right: 5%;
+          position: absolute;
+          top: 1.6rem; right: 5%;
           display: flex; align-items: center; gap: 0.55rem;
-          font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em; z-index: 10;
+          font-size: 0.72rem; font-weight: 500; letter-spacing: 0.08em;
+          z-index: 10;
         }
         .counter-sep { width: 22px; height: 1px; display: block; }
+
+        /* Content */
         .content {
           position: absolute; inset: 0;
-          display: flex; align-items: center; z-index: 5; padding: 0 5%;
+          display: flex; align-items: center;
+          z-index: 5; padding: 0 5%;
         }
-        .content-inner { max-width: 500px; display: flex; flex-direction: column; gap: 0; }
+        .content-inner {
+          max-width: 500px;
+          display: flex; flex-direction: column; gap: 0;
+        }
+
         .badge {
           display: inline-flex; align-self: flex-start;
           font-size: 0.62rem; font-weight: 700;
           letter-spacing: 0.2em; text-transform: uppercase;
-          padding: 0.28rem 0.8rem; border-radius: 2px; margin-bottom: 0.85rem;
+          padding: 0.28rem 0.8rem;
+          border-radius: 2px;
+          margin-bottom: 0.85rem;
         }
+
         .label {
           font-size: 0.68rem; font-weight: 500;
           letter-spacing: 0.35em; text-transform: uppercase;
           opacity: 0.45; margin: 0 0 0.55rem;
         }
+
         .headline {
           font-family: 'Syne', sans-serif;
           font-size: clamp(2.8rem, 5.5vw, 5rem);
-          font-weight: 800; line-height: 0.93;
-          margin: 0 0 1.1rem; letter-spacing: -0.02em;
+          font-weight: 800;
+          line-height: 0.93;
+          margin: 0 0 1.1rem;
+          letter-spacing: -0.02em;
         }
-        .headline-line { display: block; overflow: hidden; line-height: 1.06; }
-        .sub { font-size: 0.88rem; line-height: 1.65; opacity: 0.6; margin: 0 0 0.55rem; max-width: 360px; font-weight: 300; }
-        .price { font-size: 0.95rem; font-weight: 600; margin: 0 0 1.35rem; letter-spacing: 0.01em; }
+        .headline-line {
+          display: block;
+          overflow: hidden;
+          line-height: 1.06;
+        }
+
+        .sub {
+          font-size: 0.88rem; line-height: 1.65;
+          opacity: 0.6; margin: 0 0 0.55rem;
+          max-width: 360px; font-weight: 300;
+        }
+
+        .price {
+          font-size: 0.95rem; font-weight: 600;
+          margin: 0 0 1.35rem; letter-spacing: 0.01em;
+        }
+
         .ctas { display: flex; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 1.1rem; }
+
         .btn-primary {
           display: inline-flex; align-items: center; gap: 0.5rem;
-          padding: 0.72rem 1.5rem; font-size: 0.78rem; font-weight: 600;
+          padding: 0.72rem 1.5rem;
+          font-size: 0.78rem; font-weight: 600;
           letter-spacing: 0.08em; text-transform: uppercase;
-          border: none; border-radius: 3px; cursor: pointer; font-family: 'Outfit', sans-serif;
+          border: none; border-radius: 3px; cursor: pointer;
+          font-family: 'Outfit', sans-serif;
         }
+        .btn-arrow { transition: transform 0.2s; }
+        .btn-primary:hover .btn-arrow { transform: translateX(4px); }
+
         .btn-ghost {
           display: inline-flex; align-items: center;
-          padding: 0.72rem 1.3rem; font-size: 0.78rem; font-weight: 500;
-          letter-spacing: 0.05em; background: transparent; border: 1px solid;
-          border-radius: 3px; cursor: pointer; font-family: 'Outfit', sans-serif;
+          padding: 0.72rem 1.3rem;
+          font-size: 0.78rem; font-weight: 500;
+          letter-spacing: 0.05em;
+          background: transparent; border: 1px solid;
+          border-radius: 3px; cursor: pointer;
+          font-family: 'Outfit', sans-serif;
         }
-        .btn-ghost:disabled { opacity: 0.45; cursor: not-allowed; }
-        .hashtag { font-size: 0.7rem; letter-spacing: 0.05em; margin: 0; }
+
+        .hashtag {
+          font-size: 0.7rem; letter-spacing: 0.05em; margin: 0;
+        }
+
+        /* Bottom bar */
         .bottom-bar {
-          position: absolute; bottom: 1.4rem; left: 5%; right: 5%;
-          display: flex; align-items: center; justify-content: space-between; z-index: 10;
+          position: absolute;
+          bottom: 1.4rem; left: 5%; right: 5%;
+          display: flex; align-items: center;
+          justify-content: space-between;
+          z-index: 10;
         }
+
         .dots { display: flex; align-items: center; gap: 0; }
-        .dot-btn { background: none; border: none; padding: 2px; cursor: pointer; line-height: 0; }
+        .dot-btn {
+          background: none; border: none; padding: 2px;
+          cursor: pointer; line-height: 0;
+        }
+
         .arrows { display: flex; gap: 0.45rem; }
         .arrow-btn {
           width: 2.4rem; height: 2.4rem;
           display: flex; align-items: center; justify-content: center;
           background: transparent; border: 1px solid;
-          border-radius: 50%; font-size: 0.9rem; cursor: pointer; font-family: inherit;
+          border-radius: 50%; font-size: 0.9rem;
+          cursor: pointer; font-family: inherit;
         }
+
         @media (max-width: 640px) {
           .carousel-root { height: 400px; }
           .headline { font-size: clamp(2.2rem, 10vw, 3rem); }

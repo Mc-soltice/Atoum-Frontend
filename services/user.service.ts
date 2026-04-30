@@ -91,19 +91,9 @@ export const userService = {
     try {
       const { data } = await api.patch(`/users/${id}`, payload);
       return data.data ?? data;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(
-          `Erreur lors de la mise à jour de l'utilisateur ${id} :`,
-          error.message,
-        );
-      } else {
-        console.error(
-          `Erreur inconnue lors de la mise à jour de l'utilisateur ${id} :`,
-          error,
-        );
-      }
-      throw error;
+    } catch (error: any) {
+      console.error(error.response?.data);
+      throw error; // ✅ important
     }
   },
 

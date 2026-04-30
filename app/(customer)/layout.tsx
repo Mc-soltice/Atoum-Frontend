@@ -1,7 +1,7 @@
 import ClientLayout from "@/components/providers/ClientLayout";
 
 /**
- * Métadonnées SEO (SERVER SIDE ✅)
+ * Métadonnées SEO (SERVER SIDE ONLY)
  */
 export const metadata = {
   title: {
@@ -29,5 +29,9 @@ export default function CustomerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <ClientLayout>{children}</ClientLayout>;
+  return (
+    <ClientLayout>
+      {children}
+    </ClientLayout>
+  );
 }
