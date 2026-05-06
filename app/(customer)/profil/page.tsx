@@ -26,9 +26,9 @@ import { useAuthContext } from "@/contexte/AuthContext";
 import { useOrders } from "@/contexte/OrderContext";
 import { useUsers } from "@/contexte/UserContext";
 import type { UpdateUserPayload } from "@/types/user";
-import toast from "react-hot-toast";
-import "ldrs/react/DotSpinner.css";
 import { DotSpinner } from "ldrs/react";
+import "ldrs/react/DotSpinner.css";
+import toast from "react-hot-toast";
 
 export default function ModernProfilePage() {
   const { user, logout } = useAuthContext();
@@ -237,7 +237,7 @@ export default function ModernProfilePage() {
         {/* HEADER */}
         <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
           <div className="flex items-center gap-6 flex-wrap">
-            <div className="w-24 h-24 rounded-full bg-linear-to-br from-amber-500 to-pink-500 flex items-center justify-center text-3xl font-bold text-white">
+            <div className="w-24 h-24 rounded-full bg-linear-to-br from-green-500 to-pink-500 flex items-center justify-center text-3xl font-bold text-white">
               {user.first_name?.[0] || ""}{user.last_name?.[0] || ""}
             </div>
 
@@ -274,7 +274,7 @@ export default function ModernProfilePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full text-left px-4 py-3 rounded-xl capitalize transition flex items-center gap-3 mb-2 ${activeTab === tab.id
-                  ? "bg-amber-400 text-white"
+                  ? "bg-green-400 text-white"
                   : "text-gray-700 hover:bg-gray-100"
                   }`}
               >
@@ -294,7 +294,7 @@ export default function ModernProfilePage() {
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl hover:bg-amber-600 transition"
+                      className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition"
                     >
                       <Edit2 size={16} /> Modifier
                     </button>
@@ -303,7 +303,7 @@ export default function ModernProfilePage() {
                       <button
                         onClick={handleSave}
                         disabled={loading || contextLoading}
-                        className="bg-amber-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-amber-600 transition disabled:opacity-50"
+                        className="bg-green-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-green-600 transition disabled:opacity-50"
                       >
                         <Save size={16} /> {loading || contextLoading ? "Enregistrement..." : "Enregistrer"}
                       </button>
@@ -376,7 +376,7 @@ export default function ModernProfilePage() {
                     {!showPasswordFields ? (
                       <button
                         onClick={() => setShowPasswordFields(true)}
-                        className="text-amber-600 hover:text-amber-700 text-sm flex items-center gap-2"
+                        className="text-green-600 hover:text-green-700 text-sm flex items-center gap-2"
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
@@ -402,7 +402,7 @@ export default function ModernProfilePage() {
                               value={form.password}
                               onChange={handleChange}
                               placeholder="Nouveau mot de passe"
-                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-amber-500 text-gray-800"
+                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-green-500 text-gray-800"
                             />
                           </div>
                           <div>
@@ -412,7 +412,7 @@ export default function ModernProfilePage() {
                               value={form.password_confirmation}
                               onChange={handleChange}
                               placeholder="Confirmer le mot de passe"
-                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-amber-500 text-gray-800"
+                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-green-500 text-gray-800"
                             />
                           </div>
                         </div>
@@ -556,7 +556,7 @@ function InputField({
   const hasChanges = value !== originalValue;
 
   return (
-    <div className={`bg-gray-50 p-4 rounded-xl border transition ${dirty ? 'border-amber-400 bg-amber-50/30' : 'border-gray-200'
+    <div className={`bg-gray-50 p-4 rounded-xl border transition ${dirty ? 'border-green-400 bg-green-50/30' : 'border-gray-200'
       }`}>
       <div className="flex justify-between items-center">
         <label className="text-sm text-gray-500">{label}</label>
@@ -577,7 +577,7 @@ function InputField({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full mt-2 p-2 rounded-lg bg-white border focus:outline-none focus:border-amber-500 text-gray-800 ${dirty ? 'border-amber-400' : 'border-gray-300'
+          className={`w-full mt-2 p-2 rounded-lg bg-white border focus:outline-none focus:border-green-500 text-gray-800 ${dirty ? 'border-green-400' : 'border-gray-300'
             }`}
         />
       ) : (
@@ -597,7 +597,7 @@ function SettingItem({ icon, title }: SettingItemProps) {
         {icon}
         <span>{title}</span>
       </div>
-      <button className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
+      <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
         Gérer
       </button>
     </div>

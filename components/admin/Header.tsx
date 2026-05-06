@@ -209,7 +209,7 @@ export default function Header() {
                     <Link
                       href="/login"
                       onClick={closeAllMenus}
-                      className="block px-4 py-3 text-sm font-medium text-amber-600 hover:bg-amber-50 text-center transition-colors"
+                      className="block px-4 py-3 text-sm font-medium text-green-600 hover:bg-green-50 text-center transition-colors"
                     >
                       Se connecter
                     </Link>

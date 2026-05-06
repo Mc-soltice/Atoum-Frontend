@@ -5,11 +5,12 @@ import CheckoutActions from "@/components/customer/checkouts/CheckoutActions";
 import CheckoutAddressForm from "@/components/customer/checkouts/CheckoutAddressForm";
 import CheckoutPayment from "@/components/customer/checkouts/CheckoutPayment";
 import CheckoutSummary from "@/components/customer/checkouts/CheckoutSummary";
+import { useAuthContext } from "@/contexte/AuthContext";
 import { useOrders } from "@/contexte/OrderContext";
 import { CartToaster, useCart } from "@/contexte/panier/CartContext";
-import { PaymentInfo, ShippingAddress } from "@/types/order";
 import { useDeliveryCheckout } from "@/hooks/useDeliveryCheckout";
 import { DeliveryOption } from "@/types/delivery";
+import { PaymentInfo, ShippingAddress } from "@/types/order";
 import {
   ListCheck,
   MailIcon,
@@ -20,8 +21,10 @@ import {
   WalletMinimalIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useAuthContext } from "@/contexte/AuthContext";
+import { useEffect, useState } from "react";
+import { paymentService } from "@/services/payment.service";
+import StripeProvider from "@/components/providers/StripeProvider";
+import StripePaymentElement from "@/components/customer/checkouts/StripePaymentElement";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -57,6 +60,11 @@ export default function CheckoutPage() {
 
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentInfo["method"]>("cash_on_delivery");
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [stripePaymentIntentId, setStripePaymentIntentId] =
+    useState<string | null>(null);
+  const [stripeError, setStripeError] = useState<string | null>(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
 
   const steps = [
     { id: 1, name: "Adresse", icon: "📍" },
@@ -78,6 +86,9 @@ export default function CheckoutPage() {
       case 2:
         return !!deliveryOption;
       case 3:
+        if (paymentMethod === "stripe") {
+          return !!stripePaymentIntentId;
+        }
         return !!paymentMethod;
       default:
         return true;
@@ -119,6 +130,10 @@ export default function CheckoutPage() {
         delivery_option_id: deliveryOption.id,
         payment_method: paymentMethod,
         delivery_price: getDeliveryPrice(),
+        stripe_payment_intent_id:
+          paymentMethod === "stripe" && stripePaymentIntentId
+            ? stripePaymentIntentId
+            : undefined,
       });
 
       clearCart();
@@ -136,6 +151,50 @@ export default function CheckoutPage() {
     discount: 0,
     tax: 0,
     total: getSubtotal() + getDeliveryPrice(),
+  };
+
+  const createStripeClientSecret = async () => {
+    if (!deliveryOption) {
+      setStripeError("Veuillez sélectionner une option de livraison avant de payer.");
+      return;
+    }
+
+    setStripeError(null);
+    setStripeLoading(true);
+
+    try {
+      const result = await paymentService.createPaymentIntent({
+        amount: orderSummary.total,
+      });
+      setClientSecret(result.client_secret);
+    } catch (error) {
+      console.error("Erreur création Payment Intent:", error);
+      setStripeError("Impossible de démarrer le paiement Stripe.");
+    } finally {
+      setStripeLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (paymentMethod === "stripe") {
+      if (!clientSecret && currentStep === 3 && !stripeLoading) {
+        createStripeClientSecret();
+      }
+    } else {
+      setClientSecret(null);
+      setStripePaymentIntentId(null);
+      setStripeError(null);
+      setStripeLoading(false);
+    }
+  }, [paymentMethod, currentStep]);
+
+  const handleStripeSuccess = (paymentIntentId: string) => {
+    setStripePaymentIntentId(paymentIntentId);
+    setCurrentStep(4);
+  };
+
+  const handleStripeError = (message: string) => {
+    setStripeError(message);
   };
 
   return (
@@ -273,6 +332,36 @@ export default function CheckoutPage() {
                     method={paymentMethod}
                     onChange={setPaymentMethod}
                   />
+
+                  {paymentMethod === "stripe" && (
+                    <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-6">
+                      {stripeLoading && (
+                        <div className="text-gray-600">Initialisation du paiement Stripe...</div>
+                      )}
+
+                      {stripeError && (
+                        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                          {stripeError}
+                        </div>
+                      )}
+
+                      {clientSecret && !stripePaymentIntentId ? (
+                        <StripeProvider clientSecret={clientSecret}>
+                          <StripePaymentElement
+                            amount={orderSummary.total}
+                            onSuccess={handleStripeSuccess}
+                            onError={handleStripeError}
+                          />
+                        </StripeProvider>
+                      ) : null}
+
+                      {stripePaymentIntentId && (
+                        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-green-700">
+                          Paiement Stripe initialisé avec succès. Vous pouvez passer à la dernière étape.
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -350,12 +439,12 @@ export default function CheckoutPage() {
                       </h3>
                       <div className="inline-flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-lg shadow-inner">
                         {paymentMethod === "cash_on_delivery" && "💵"}
-                        {paymentMethod === "credit_card" && "💳"}
+                        {paymentMethod === "stripe" && "💳"}
                         {paymentMethod === "mobile_money" && "📱"}
                         <span className="font-medium">
                           {paymentMethod === "cash_on_delivery" &&
                             "Paiement à la livraison"}
-                          {paymentMethod === "credit_card" && "Carte bancaire"}
+                          {paymentMethod === "stripe" && "Carte bancaire"}
                           {paymentMethod === "mobile_money" && "Mobile Money"}
                         </span>
                       </div>
@@ -382,7 +471,7 @@ export default function CheckoutPage() {
                     onClick={handleNextStep}
                     disabled={!validateStep(currentStep)}
                     className={`px-8 py-3 rounded-lg font-medium transition-all ${validateStep(currentStep)
-                      ? "bg-linear-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700"
+                      ? "bg-linear-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
                       : "bg-gray-300 text-gray-500 cursor-not-allowed"
                       }`}
                   >
@@ -519,7 +608,7 @@ function DeliveryOptionCard({
     <div
       onClick={() => onSelect(option)}
       className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${selected
-        ? "border-amber-100 bg-primary/5"
+        ? "border-green-100 bg-primary/5"
         : "border-gray-200 hover:border-gray-300"
         } ${!option.is_active ? "opacity-50 cursor-not-allowed" : ""}`}
     >

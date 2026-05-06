@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { PaymentInfo } from "@/types/order";
-import { Smartphone, CreditCard, HandCoins } from "lucide-react";
+import { CreditCard, HandCoins, Smartphone } from "lucide-react";
+import { useState } from "react";
 
 interface Props {
   method: PaymentInfo["method"];
@@ -28,17 +28,17 @@ export default function CheckoutPayment({ method, onChange }: Props) {
       popular: false,
     },
     {
-      value: "credit_card" as const,
+      value: "stripe" as const,
       label: "Carte bancaire",
       icon: <CreditCard className="w-6 h-6 text-primary" />,
-      description: "Visa, Mastercard, CB",
+      description: "Paiement sécurisé par Stripe",
       popular: false,
     },
   ];
 
   const handleMethodChange = (newMethod: PaymentInfo["method"]) => {
     onChange(newMethod);
-    setShowCardForm(newMethod === "credit_card");
+    setShowCardForm(false);
   };
 
   return (
@@ -48,11 +48,10 @@ export default function CheckoutPayment({ method, onChange }: Props) {
           <div
             key={opt.value}
             onClick={() => handleMethodChange(opt.value)}
-            className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
-              method === opt.value
-                ? "border-amber-100 bg-primary/5"
-                : "border-gray-200 hover:border-gray-300"
-            }`}
+            className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${method === opt.value
+              ? "border-green-100 bg-primary/5"
+              : "border-gray-200 hover:border-gray-300"
+              }`}
           >
             <div className="flex items-start gap-4">
               <div className="text-2xl shrink-0">{opt.icon}</div>
@@ -70,11 +69,10 @@ export default function CheckoutPayment({ method, onChange }: Props) {
                 </div>
               </div>
               <div
-                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                  method === opt.value
-                    ? "border-primary bg-primary"
-                    : "border-gray-300"
-                }`}
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${method === opt.value
+                  ? "border-primary bg-primary"
+                  : "border-gray-300"
+                  }`}
               >
                 {method === opt.value && (
                   <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -84,51 +82,6 @@ export default function CheckoutPayment({ method, onChange }: Props) {
           </div>
         ))}
       </div>
-
-      {/* Formulaire de carte (conditionnel) */}
-      {showCardForm && (
-        <div className="p-6 border border-gray-300 rounded-xl bg-gray-50 space-y-4 animate-fadeIn">
-          <h3 className="font-bold text-gray-800">Informations de carte</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Numéro de carte</label>
-              <input
-                type="text"
-                placeholder="1234 5678 9012 3456"
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Date d&apos;expiration
-              </label>
-              <input
-                type="text"
-                placeholder="MM/AA"
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">CVV</label>
-              <input
-                type="text"
-                placeholder="123"
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Titulaire de la carte
-              </label>
-              <input
-                type="text"
-                placeholder="Nom sur la carte"
-                className="w-full border border-gray-300 rounded-lg p-3 text-sm"
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Sécurité et garanties */}
       <div className="p-4 bg-green-50 rounded-xl border border-green-100">

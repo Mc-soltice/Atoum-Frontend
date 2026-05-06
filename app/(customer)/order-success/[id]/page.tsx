@@ -237,7 +237,7 @@ export default function OrderSuccessPage() {
             <div className="relative px-4 py-2 text-lg font-medium flex items-center gap-2 text-gray-900 group-hover:text-white transition-colors duration-300">
               <Store className="w-5 h-5" />
               <span>Retour à la boutique</span>
-              <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             </div>
           </button>
           <button
@@ -247,7 +247,7 @@ export default function OrderSuccessPage() {
             <div className="relative px-4 py-2 text-lg font-medium flex items-center gap-2 text-gray-900 group-hover:text-white transition-colors duration-300">
               <Download className="w-5 h-5" />
               <span>Telecharger le bon de Commande</span>
-              <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             </div>
           </button>
         </div>

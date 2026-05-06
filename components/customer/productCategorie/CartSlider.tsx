@@ -66,7 +66,7 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
         {/* En-tête avec animation */}
         <div
           className="flex items-center justify-between p-4 border-b border-gray-200 
-                   bg-linear-to-r from-amber-500 to-amber-600 text-white
+                   bg-linear-to-r from-green-500 to-green-600 text-white
                    transition-all duration-300"
           style={{
             opacity: isOpen ? 1 : 0,
@@ -81,7 +81,7 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
             />
             <div>
               <h2 className="text-lg font-bold">Votre Panier</h2>
-              <p className="text-sm text-amber-100">
+              <p className="text-sm text-green-100">
                 {totalItems} article{totalItems !== 1 ? "s" : ""}
               </p>
             </div>
@@ -109,10 +109,10 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
               }}
             >
               <div
-                className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mb-4"
+                className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-4"
                 style={{ animation: "float 3s ease-in-out infinite" }}
               >
-                <ShoppingBag className="h-12 w-12 text-amber-500" />
+                <ShoppingBag className="h-12 w-12 text-green-500" />
               </div>
               <h3
                 className="text-lg font-semibold text-gray-900 mb-2"
@@ -136,8 +136,8 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
               </p>
               <button
                 onClick={onClose}
-                className="px-6 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white 
-                         font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                className="px-6 py-3 bg-linear-to-r from-green-500 to-green-600 text-white 
+                         font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                          transition-all duration-300 shadow-md hover:shadow-lg
                          hover:scale-105 active:scale-95"
                 style={{
@@ -195,7 +195,7 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
 
                       <div className="flex justify-between items-center mt-2">
                         <div
-                          className="text-sm font-bold text-amber-600"
+                          className="text-sm font-bold text-green-600"
                           style={{ animation: "pulseOnce 0.5s ease-in-out" }}
                         >
                           {(
@@ -326,7 +326,7 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
                 <div className="flex justify-between items-center">
                   <span className="font-semibold text-gray-900">Total</span>
                   <span
-                    className="text-xl font-bold text-amber-600"
+                    className="text-xl font-bold text-green-600"
                     style={{ animation: "pulseOnce 0.5s ease-in-out" }}
                   >
                     {getTotal().toLocaleString()} €
@@ -340,8 +340,8 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
               <Link
                 href="/panier"
                 onClick={onClose}
-                className="block w-full py-3 bg-linear-to-r from-amber-500 to-amber-600 
-                         text-white font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                className="block w-full py-3 bg-linear-to-r from-green-500 to-green-600 
+                         text-white font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                          transition-all duration-300 shadow-md text-center
                          hover:shadow-lg hover:scale-105 active:scale-95"
                 style={{
@@ -378,8 +378,8 @@ export default function CartSlider({ isOpen, onClose }: CartSliderProps) {
 
               <button
                 onClick={onClose}
-                className="w-full py-2.5 text-amber-600 font-medium border border-amber-600 
-                         rounded-lg hover:bg-amber-50 transition-all duration-300
+                className="w-full py-2.5 text-green-600 font-medium border border-green-600 
+                         rounded-lg hover:bg-green-50 transition-all duration-300
                          hover:shadow-md hover:scale-105 active:scale-95"
                 style={{
                   animation: "slideUp 0.4s ease-out forwards",

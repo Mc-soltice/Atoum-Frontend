@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import ProductCard from "./ProductCard";
+import AnimatedContent from "@/components/ui/AnimatedContent";
+import { Product } from "@/types/product";
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { Product } from "@/types/product";
-import AnimatedContent from "@/components/ui/AnimatedContent";
+import { useMemo, useState } from "react";
+import ProductCard from "./ProductCard";
 
 interface Props {
   initialProducts: Product[];
@@ -53,24 +53,24 @@ export default function ProductGrid({ initialProducts }: Props) {
           >
             <div className="relative">
               {/* Effet de glow */}
-              <div className="absolute inset-0 bg-amber-500 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-green-500 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
 
               {/* Bulle principale */}
-              <div className="relative flex items-center gap-2 sm:gap-3 px-3 sm:px-5 md:px-6 py-2 sm:py-3 bg-white rounded-full shadow-md sm:shadow-lg border border-gray-100 hover:border-amber-500 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 max-w-full">
+              <div className="relative flex items-center gap-2 sm:gap-3 px-3 sm:px-5 md:px-6 py-2 sm:py-3 bg-white rounded-full shadow-md sm:shadow-lg border border-gray-100 hover:border-green-500 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 max-w-full">
 
                 {/* Icône */}
                 <div className="relative shrink-0">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
-                  <div className="absolute inset-0 bg-amber-500 rounded-full blur-md opacity-0 group-hover:opacity-50 animate-ping" />
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                  <div className="absolute inset-0 bg-green-500 rounded-full blur-md opacity-0 group-hover:opacity-50 animate-ping" />
                 </div>
 
                 {/* Texte */}
-                <span className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base group-hover:text-amber-600 transition-colors duration-300 truncate">
+                <span className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base group-hover:text-green-600 transition-colors duration-300 truncate">
                   Découvrez notre grande variété de produits
                 </span>
 
                 {/* Badge */}
-                <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-amber-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md sm:shadow-lg">
+                <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-green-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md sm:shadow-lg">
                   {products.length}
                 </div>
 
@@ -117,7 +117,7 @@ export default function ProductGrid({ initialProducts }: Props) {
                 px-4 py-2 rounded-lg border transition-all duration-300
                 ${currentPage === 1
                   ? 'opacity-50 cursor-not-allowed border-gray-200 text-gray-400'
-                  : 'border-gray-300 hover:border-amber-500 hover:text-amber-600 hover:shadow-md'
+                  : 'border-gray-300 hover:border-green-500 hover:text-green-600 hover:shadow-md'
                 }
               `}
             >
@@ -132,8 +132,8 @@ export default function ProductGrid({ initialProducts }: Props) {
                   className={`
                     w-10 h-10 rounded-lg border transition-all duration-300
                     ${currentPage === page
-                      ? 'bg-amber-500 text-white border-amber-500 shadow-md'
-                      : 'border-gray-300 hover:border-amber-500 hover:text-amber-600'
+                      ? 'bg-green-500 text-white border-green-500 shadow-md'
+                      : 'border-gray-300 hover:border-green-500 hover:text-green-600'
                     }
                   `}
                 >
@@ -149,7 +149,7 @@ export default function ProductGrid({ initialProducts }: Props) {
                 px-4 py-2 rounded-lg border transition-all duration-300
                 ${currentPage === totalPages
                   ? 'opacity-50 cursor-not-allowed border-gray-200 text-gray-400'
-                  : 'border-gray-300 hover:border-amber-500 hover:text-amber-600 hover:shadow-md'
+                  : 'border-gray-300 hover:border-green-500 hover:text-green-600 hover:shadow-md'
                 }
               `}
             >

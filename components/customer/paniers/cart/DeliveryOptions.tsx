@@ -1,8 +1,8 @@
 "use client";
 
 // ✅ Importer depuis les bons fichiers
-import { useCart } from "@/contexte/panier/CartContext";
 import { useDelivery } from "@/contexte/DeliveryContext"; // Importer le hook de livraison
+import { useCart } from "@/contexte/panier/CartContext";
 import type { DeliveryOption } from "@/types/delivery"; // Importer le type depuis le bon endroit
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -107,7 +107,7 @@ export default function DeliveryOptions() {
                   className="
                     absolute -top-2 -right-2
                     w-6 h-6
-                    bg-linear-to-r from-orange-500 to-amber-500
+                    bg-linear-to-r from-orange-500 to-green-500
                     text-white
                     rounded-full flex items-center justify-center
                     shadow-md

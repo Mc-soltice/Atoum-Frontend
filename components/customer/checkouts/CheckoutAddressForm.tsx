@@ -1,8 +1,8 @@
 "use client";
 
 import { ShippingAddress } from "@/types/order";
+import { AlertCircle, Mail, MapPin, PhoneCall, Tag, User } from "lucide-react";
 import { useState } from "react";
-import { User, Tag, Mail, PhoneCall, MapPin, AlertCircle } from "lucide-react";
 
 interface Props {
   value: ShippingAddress;
@@ -95,10 +95,10 @@ export default function CheckoutAddressForm({ value, onChange }: Props) {
 
       <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
         <div className="flex items-start gap-3">
-          <span className="text-amber-500 mt-1">
+          <span className="text-green-500 mt-1">
             <AlertCircle className="w-7 h-7" />
           </span>
-          <div className="text-sm text-amber-800">
+          <div className="text-sm text-green-800">
             <p className="font-medium">
               Assurez-vous que votre adresse est correcte
             </p>
@@ -141,11 +141,10 @@ function InputField({
       </label>
       <input
         type={type}
-        className={`w-full border rounded-lg p-3 text-sm transition-all focus:outline-none focus:ring-2 ${
-          error
+        className={`w-full border rounded-lg p-3 text-sm transition-all focus:outline-none focus:ring-2 ${error
             ? "border-red-300 focus:ring-red-200 bg-red-50"
             : "border-gray-300 focus:border-primary focus:ring-primary/20 hover:border-gray-400"
-        }`}
+          }`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

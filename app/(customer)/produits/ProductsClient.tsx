@@ -1,14 +1,14 @@
 // app/produits/ProductsClient.tsx
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import Breadcrumbs, { BreadcrumbItem } from "@/components/ui/Breadcrumbs";
-import ProductCard from "@/components/customer/products/ProductCard";
 import CartSlider from "@/components/customer/productCategorie/CartSlider";
-import { Product } from "@/types/product";
+import ProductCard from "@/components/customer/products/ProductCard";
+import Breadcrumbs, { BreadcrumbItem } from "@/components/ui/Breadcrumbs";
 import { Category } from "@/types/category";
+import { Product } from "@/types/product";
+import { AnimatePresence, motion } from "framer-motion";
 import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { label: "Accueil", href: "/" },
@@ -192,7 +192,7 @@ export default function ProductsClient({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg
-                         focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent
+                         focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent
                          transition-all duration-200"
               />
             </div>
@@ -208,8 +208,8 @@ export default function ProductsClient({
             <motion.button
               {...scaleOnHover}
               onClick={() => setIsMobileFiltersOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg
-                       hover:bg-amber-600 transition-colors shadow-sm relative"
+              className="flex items-center gap-2 px-4 py-2.5 bg-green-500 text-white rounded-lg
+                       hover:bg-green-600 transition-colors shadow-sm relative"
             >
               <Filter className="h-4 w-4" />
               <span className="font-medium">Filtres</span>
@@ -219,7 +219,7 @@ export default function ProductsClient({
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
-                    className="absolute -top-1 -right-1 bg-white text-amber-600 text-xs font-bold 
+                    className="absolute -top-1 -right-1 bg-white text-green-600 text-xs font-bold 
                                rounded-full h-5 w-5 flex items-center justify-center shadow"
                   >
                     {selectedCategoryIds.length}
@@ -231,8 +231,8 @@ export default function ProductsClient({
             <motion.button
               {...scaleOnHover}
               onClick={openCartSlider}
-              className="flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-amber-500 to-amber-600 
-                       text-white rounded-lg hover:from-amber-600 hover:to-amber-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-green-500 to-green-600 
+                       text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-colors shadow-sm"
             >
               <svg
                 className="h-4 w-4"
@@ -288,7 +288,7 @@ export default function ProductsClient({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleClearFilters}
-                      className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                      className="text-sm text-green-600 hover:text-green-700 font-medium"
                     >
                       Tout effacer
                     </motion.button>
@@ -310,8 +310,8 @@ export default function ProductsClient({
                 <motion.button
                   {...scaleOnHover}
                   onClick={openCartSlider}
-                  className="w-full py-2.5 bg-linear-to-r from-amber-500 to-amber-600 text-white 
-                           font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                  className="w-full py-2.5 bg-linear-to-r from-green-500 to-green-600 text-white 
+                           font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                            transition-colors shadow-sm mt-3 cursor-pointer"
                 >
                   Voir mon panier
@@ -327,7 +327,7 @@ export default function ProductsClient({
                   className="bg-white rounded-xl p-4 shadow-sm border border-gray-200"
                 >
                   <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <SlidersHorizontal className="h-4 w-4 text-amber-500" />
+                    <SlidersHorizontal className="h-4 w-4 text-green-500" />
                     Catégories
                   </h3>
                   <motion.div
@@ -349,7 +349,7 @@ export default function ProductsClient({
                             type="checkbox"
                             checked={selectedCategoryIds.includes(id)}
                             onChange={() => handleCategoryToggle(id, name)}
-                            className="checkbox checkbox-sm checkbox-amber rounded
+                            className="checkbox checkbox-sm checkbox-green rounded
                                      transition-all duration-200"
                           />
                           <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
@@ -391,7 +391,7 @@ export default function ProductsClient({
                         value={option.value}
                         checked={sortBy === option.value}
                         onChange={(e) => setSortBy(e.target.value)}
-                        className="radio radio-sm radio-amber transition-all duration-200"
+                        className="radio radio-sm radio-green transition-all duration-200"
                       />
                       <span className="text-gray-700 group-hover:text-gray-900 transition-colors">
                         {option.label}
@@ -409,9 +409,9 @@ export default function ProductsClient({
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-amber-50 border border-amber-200 rounded-xl p-4"
+                    className="bg-green-50 border border-green-200 rounded-xl p-4"
                   >
-                    <h4 className="font-medium text-amber-900 mb-2">
+                    <h4 className="font-medium text-green-900 mb-2">
                       Catégories sélectionnées :
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -421,7 +421,7 @@ export default function ProductsClient({
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.8 }}
-                          className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 
+                          className="inline-flex items-center gap-1 bg-green-100 text-green-800 
                                    px-2 py-1 rounded-full text-xs font-medium"
                         >
                           {categoryName}
@@ -434,7 +434,7 @@ export default function ProductsClient({
                                 categoryName,
                               )
                             }
-                            className="text-amber-600 hover:text-amber-800"
+                            className="text-green-600 hover:text-green-800"
                             aria-label={`Retirer ${categoryName}`}
                           >
                             <X className="h-3 w-3" />
@@ -482,7 +482,7 @@ export default function ProductsClient({
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="select select-bordered select-sm bg-white text-gray-700
-                           transition-all duration-200 focus:ring-2 focus:ring-amber-500"
+                           transition-all duration-200 focus:ring-2 focus:ring-green-500"
                 >
                   <option value="default">Recommandé</option>
                   <option value="price-asc">Prix croissant</option>
@@ -494,8 +494,8 @@ export default function ProductsClient({
                 <motion.button
                   {...scaleOnHover}
                   onClick={openCartSlider}
-                  className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-amber-500 to-amber-600 
-                           text-white rounded-lg hover:from-amber-600 hover:to-amber-700 
+                  className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-500 to-green-600 
+                           text-white rounded-lg hover:from-green-600 hover:to-green-700 
                            transition-colors shadow-sm cursor-pointer"
                 >
                   <svg
@@ -574,8 +574,8 @@ export default function ProductsClient({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={handleClearFilters}
-                      className="px-6 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white 
-                               font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                      className="px-6 py-3 bg-linear-to-r from-green-500 to-green-600 text-white 
+                               font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                                transition-all shadow-md hover:shadow-lg cursor-pointer"
                     >
                       Réinitialiser les filtres
@@ -640,7 +640,7 @@ export default function ProductsClient({
                                 type="checkbox"
                                 checked={selectedCategoryIds.includes(id)}
                                 onChange={() => handleCategoryToggle(id, name)}
-                                className="checkbox checkbox-sm checkbox-amber
+                                className="checkbox checkbox-sm checkbox-green
                                          transition-all duration-200"
                               />
                               <span className="text-gray-700 group-hover:text-gray-900">
@@ -676,7 +676,7 @@ export default function ProductsClient({
                             value={option.value}
                             checked={sortBy === option.value}
                             onChange={(e) => setSortBy(e.target.value)}
-                            className="radio radio-sm radio-amber transition-all duration-200"
+                            className="radio radio-sm radio-green transition-all duration-200"
                           />
                           <span className="text-gray-700 group-hover:text-gray-900">
                             {option.label}
@@ -692,8 +692,8 @@ export default function ProductsClient({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={handleClearFilters}
-                    className="w-full py-2.5 text-amber-600 font-medium border border-amber-600 
-                             rounded-lg hover:bg-amber-50 transition-colors cursor-pointer"
+                    className="w-full py-2.5 text-green-600 font-medium border border-green-600 
+                             rounded-lg hover:bg-green-50 transition-colors cursor-pointer"
                   >
                     Réinitialiser
                   </motion.button>
@@ -701,9 +701,9 @@ export default function ProductsClient({
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setIsMobileFiltersOpen(false)}
-                    className="w-full py-2.5 bg-linear-to-r from-amber-500 to-amber-600 
-                             text-white font-medium rounded-lg hover:from-amber-600 
-                             hover:to-amber-700 transition-colors cursor-pointer"
+                    className="w-full py-2.5 bg-linear-to-r from-green-500 to-green-600 
+                             text-white font-medium rounded-lg hover:from-green-600 
+                             hover:to-green-700 transition-colors cursor-pointer"
                   >
                     Voir les résultats
                   </motion.button>

@@ -1,11 +1,11 @@
 // components/customer/users/EditProfileModal.tsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { Save, X, Key } from "lucide-react";
 import { useUsers } from "@/contexte/UserContext";
-import { toast } from "react-hot-toast";
 import type { UpdateUserPayload } from "@/types/user";
+import { Key, Save, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface Props {
   isOpen: boolean;
@@ -340,7 +340,7 @@ function Input({
         <input
           {...props}
           className={`w-full border rounded-lg px-4 py-2.5 text-sm transition ${isDirty
-            ? 'border-amber-300 bg-amber-50/50 focus:ring-amber-500'
+            ? 'border-green-300 bg-green-50/50 focus:ring-green-500'
             : error
               ? 'border-red-300 focus:ring-red-500'
               : success
@@ -349,7 +349,7 @@ function Input({
             } focus:outline-none focus:ring-2 focus:border-transparent`}
         />
         {isDirty && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 text-xs">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xs">
             Modifié
           </span>
         )}

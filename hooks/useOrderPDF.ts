@@ -1,4 +1,4 @@
-import { generateOrderPDF } from '@/utils/orderGenerator';
+import { generateOrderPDF } from '@/app/api/order/orderGenerator';
 import { useCallback } from 'react';
 
 interface OrderItem {

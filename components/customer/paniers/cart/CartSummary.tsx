@@ -91,7 +91,7 @@ export default function CartSummary({
 
           {/* Total */}
           <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-amber">Total</span>
+            <span className="text-lg font-semibold text-green">Total</span>
             <div className="text-right">
               <div className="text-2xl font-bold text-gray-900">
                 {total.toLocaleString()}€
@@ -113,7 +113,7 @@ export default function CartSummary({
                 flex items-center justify-center gap-2
                 ${items.length === 0
                   ? "text-gray-700 font-semibold border-2 border-orange cursor-not-allowed"
-                  : "text-white font-semibold bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-md hover:shadow-lg"
+                  : "text-white font-semibold bg-linear-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 shadow-md hover:shadow-lg"
                 }
                   
               `}

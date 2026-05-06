@@ -111,7 +111,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
       {/* Galerie d'images */}
       <div className="w-full space-y-4">
         {/* Image principale */}
-        <div className="aspect-square w-full bg-linear-to-br from-emerald-50 to-amber-50 rounded-lg flex items-center justify-center border border-emerald-100 overflow-hidden">
+        <div className="aspect-square w-full bg-linear-to-br from-emerald-50 to-green-50 rounded-lg flex items-center justify-center border border-emerald-100 overflow-hidden">
           <ProductImage
             src={product.main_image}
             alt={product.name}
@@ -128,8 +128,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
                 key={index}
                 onClick={() => setSelectedImage(index)}
                 className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${selectedImage === index
-                  ? "border-amber-400 ring-2 ring-amber-200"
-                  : "border-amber-100 hover:border-amber-300"
+                  ? "border-green-400 ring-2 ring-green-200"
+                  : "border-green-100 hover:border-green-300"
                   }`}
               >
                 <ProductImage
@@ -144,8 +144,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
 
             {/* Si on a plus de 3 images, montrer un indicateur */}
             {productImages.length > 3 && (
-              <div className="aspect-square rounded-lg border border-amber-100 bg-amber-50 flex items-center justify-center">
-                <span className="text-sm font-medium text-amber-700">
+              <div className="aspect-square rounded-lg border border-green-100 bg-green-50 flex items-center justify-center">
+                <span className="text-sm font-medium text-green-700">
                   +{productImages.length - 3}
                 </span>
               </div>
@@ -188,7 +188,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <span className="text-2xl font-bold text-amber-700">
+              <span className="text-2xl font-bold text-green-700">
                 {product.price.toLocaleString()} €
               </span>
               {product.original_price &&
@@ -206,8 +206,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
                   En stock
                 </span>
               ) : product.stock > 0 ? (
-                <span className="flex items-center text-amber-600">
-                  <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
+                <span className="flex items-center text-green-600">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
                   Plus que {product.stock}
                 </span>
               ) : (
@@ -220,7 +220,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
           </div>
 
           {product.original_price && product.original_price > product.price && (
-            <div className="inline-block px-3 py-1 bg-linear-to-r from-orange-500 to-amber-500 text-white text-sm font-bold rounded-full mt-2">
+            <div className="inline-block px-3 py-1 bg-linear-to-r from-orange-500 to-green-500 text-white text-sm font-bold rounded-full mt-2">
               Économisez{" "}
               {Math.round((1 - product.price / product.original_price) * 100)}%
             </div>
@@ -273,7 +273,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         <div>
           <button
             onClick={handleAddToCart}
-            className="btn rounded-lg bg-linear-to-r from-orange-500 to-amber-500 text-white w-full py-3 text-base hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-sm hover:shadow"
+            className="btn rounded-lg bg-linear-to-r from-orange-500 to-green-500 text-white w-full py-3 text-base hover:from-orange-600 hover:to-green-600 transition-all duration-300 shadow-sm hover:shadow"
             disabled={product.stock === 0}
           >
             <ShoppingCart className="inline-block mr-2 w-5 h-5" />

@@ -41,8 +41,9 @@ export interface ShippingAddress {
  * Interface pour le paiement
  */
 export interface PaymentInfo {
-  method: "credit_card" | "mobile_money" | "cash_on_delivery";
+  method: "stripe" | "mobile_money" | "cash_on_delivery";
   transaction_id?: string;
+  stripe_payment_intent_id?: string;
   status: "pending" | "completed" | "failed" | "refunded";
   paid_at?: string;
 }
@@ -80,6 +81,22 @@ export interface CreateOrderFromCartPayload {
   delivery_option_id: string;
   delivery_price: number;
   payment_method: PaymentInfo["method"];
+  stripe_payment_intent_id?: string;
+  notes?: string;
+}
+
+export interface CreateOrderPayload {
+  user_id?: string;
+  items: {
+    product_id: string;
+    variant_id?: string;
+    quantity: number;
+  }[];
+  shipping_address: ShippingAddress;
+  payment_method: PaymentInfo["method"];
+  delivery_option_id: string;
+  delivery_price: number;
+  stripe_payment_intent_id?: string;
   notes?: string;
 }
 
@@ -93,23 +110,6 @@ export interface OrderSummaryData {
   tax?: number;
   total: number;
   items_count: number;
-}
-
-/**
- * Payload pour créer une commande
- */
-export interface CreateOrderPayload {
-  user_id?: string;
-  items: {
-    product_id: string;
-    variant_id?: string;
-    quantity: number;
-  }[];
-  shipping_address: ShippingAddress;
-  payment_method: PaymentInfo["method"];
-  delivery_option_id: string;
-  delivery_price: number;
-  notes?: string;
 }
 
 /**

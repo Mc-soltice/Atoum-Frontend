@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import CartSlider from "@/components/customer/productCategorie/CartSlider";
+import ProductCard from "@/components/customer/products/ProductCard";
 import Breadcrumbs, { BreadcrumbItem } from "@/components/ui/Breadcrumbs";
 import { useProducts } from "@/contexte/ProductContext";
 import { useCart } from "@/contexte/panier/CartContext";
-import CartSlider from "@/components/customer/productCategorie/CartSlider";
-import ProductCard from "@/components/customer/products/ProductCard";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { Search } from "lucide-react";
 import { DotSpinner } from "ldrs/react";
 import "ldrs/react/DotSpinner.css";
+import { Search } from "lucide-react";
 
 const breadcrumbs: BreadcrumbItem[] = [
   { label: "Accueil", href: "/" },
@@ -78,7 +78,7 @@ export default function PromotionsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                           focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -96,8 +96,8 @@ export default function PromotionsPage() {
             {/* Bouton panier mobile */}
             <button
               onClick={openCartSlider}
-              className="flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-lg
-                       hover:from-amber-600 hover:to-amber-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 bg-linear-to-r from-green-500 to-green-600 text-white rounded-lg
+                       hover:from-green-600 hover:to-green-700 transition-colors shadow-sm"
             >
               <svg
                 className="h-4 w-4"
@@ -150,8 +150,8 @@ export default function PromotionsPage() {
 
             <button
               onClick={handleConsultProducts}
-              className="px-8 py-4 bg-linear-to-r from-amber-500 to-amber-600 text-white font-semibold rounded-xl 
-                       hover:from-amber-600 hover:to-amber-700 transition-all duration-300 transform 
+              className="px-8 py-4 bg-linear-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl 
+                       hover:from-green-600 hover:to-green-700 transition-all duration-300 transform 
                        hover:scale-105 shadow-lg hover:shadow-xl"
             >
               Consulter tous nos produits
@@ -160,8 +160,8 @@ export default function PromotionsPage() {
             {/* Icônes décoratives */}
             <div className="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-gray-100">
               <div className="text-center">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -201,7 +201,7 @@ export default function PromotionsPage() {
                     {searchQuery && (
                       <button
                         onClick={() => setSearchQuery("")}
-                        className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                        className="text-sm text-green-600 hover:text-green-700 font-medium"
                       >
                         Effacer
                       </button>
@@ -219,8 +219,8 @@ export default function PromotionsPage() {
                   {/* Bouton panier desktop */}
                   <button
                     onClick={openCartSlider}
-                    className="w-full py-2.5 bg-linear-to-r from-amber-500 to-amber-600 text-white 
-                             font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                    className="w-full py-2.5 bg-linear-to-r from-green-500 to-green-600 text-white 
+                             font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                              transition-colors shadow-sm mt-3"
                   >
                     Voir mon panier
@@ -228,7 +228,7 @@ export default function PromotionsPage() {
                 </div>
 
                 {/* Badge promotionnel */}
-                <div className="bg-linear-to-br from-red-50 to-amber-50 border border-red-200 rounded-xl p-4">
+                <div className="bg-linear-to-br from-red-50 to-green-50 border border-red-200 rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                       <svg className="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -242,7 +242,7 @@ export default function PromotionsPage() {
                   </div>
                   <button
                     onClick={handleConsultProducts}
-                    className="w-full text-sm text-amber-600 hover:text-amber-700 font-medium 
+                    className="w-full text-sm text-green-600 hover:text-green-700 font-medium 
                              flex items-center justify-center gap-1"
                   >
                     Voir tous nos produits
@@ -271,8 +271,8 @@ export default function PromotionsPage() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={openCartSlider}
-                    className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-amber-500 to-amber-600 
-                             text-white rounded-lg hover:from-amber-600 hover:to-amber-700 
+                    className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-green-500 to-green-600 
+                             text-white rounded-lg hover:from-green-600 hover:to-green-700 
                              transition-colors shadow-sm"
                   >
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -307,8 +307,8 @@ export default function PromotionsPage() {
                   </p>
                   <button
                     onClick={() => setSearchQuery("")}
-                    className="px-6 py-3 bg-linear-to-r from-amber-500 to-amber-600 text-white 
-                             font-medium rounded-lg hover:from-amber-600 hover:to-amber-700 
+                    className="px-6 py-3 bg-linear-to-r from-green-500 to-green-600 text-white 
+                             font-medium rounded-lg hover:from-green-600 hover:to-green-700 
                              transition-all shadow-md hover:shadow-lg"
                   >
                     Effacer la recherche

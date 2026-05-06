@@ -32,7 +32,7 @@ const nextConfig = {
         hostname: 'google.com',
       },
     ],
-    qualities: [60, 70, 75, 80],
+    qualities: [60, 70, 75, 80, 90],
   },
 
 };

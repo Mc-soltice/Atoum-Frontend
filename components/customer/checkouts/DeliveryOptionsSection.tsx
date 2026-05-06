@@ -1,5 +1,5 @@
-import { Truck, Store } from "lucide-react";
 import { DeliveryOption } from "@/types/delivery";
+import { Store, Truck } from "lucide-react";
 
 interface DeliveryOptionsSectionProps {
   options: DeliveryOption[];
@@ -81,8 +81,8 @@ function DeliveryOptionCard({
     <div
       onClick={() => onSelect(option)}
       className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${selected
-          ? "border-amber-100 bg-primary/5"
-          : "border-gray-200 hover:border-gray-300"
+        ? "border-green-100 bg-primary/5"
+        : "border-gray-200 hover:border-gray-300"
         } ${!option.is_active ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <div className="flex items-start gap-3">

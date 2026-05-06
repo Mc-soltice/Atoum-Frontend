@@ -3,7 +3,7 @@
 import ProductImage from "@/components/admin/produit/ProductImage";
 import { useCart } from "@/contexte/panier/CartContext";
 import { Product } from "@/types/product";
-import { ShoppingBag } from "lucide-react";
+import { CheckCircle, CirclePlus, Package } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -27,7 +27,7 @@ export default function ProductCard({ product, onCartClick }: Props) {
   };
 
   return (
-    <div className="group relative bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl active:scale-[0.99] flex flex-col">
+    <div className="group relative bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl active:scale-[0.99] flex flex-col">
 
       {/* Barre de progression au scroll */}
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gray-100 z-20">
@@ -47,14 +47,19 @@ export default function ProductCard({ product, onCartClick }: Props) {
         />
 
         {/* Badge animé */}
-        {isAvailable && (
-          <div className="absolute top-3 left-3">
-            <div className="relative">
-              <div className="absolute inset-0 bg-emerald-500 rounded-full blur-md opacity-50 group-hover:opacity-75 transition-opacity duration-300" />
-              <div className="relative px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-emerald-600 border border-white/50 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                En stock
-              </div>
+        {/* Badge de disponibilité - responsive */}
+        {isAvailable ? (
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-green-500/95 backdrop-blur-sm rounded-full text-white shadow-lg">
+              <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 animate-pulse" />
+              <span className="text-[10px] sm:text-xs font-semibold">Stock</span>
+            </div>
+          </div>
+        ) : (
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-gray-600/95 backdrop-blur-sm rounded-full text-white shadow-lg">
+              <Package className="w-2 h-2 sm:w-3 sm:h-3" />
+              <span className="text-[10px] sm:text-xs font-semibold">Rupture</span>
             </div>
           </div>
         )}
@@ -110,12 +115,12 @@ export default function ProductCard({ product, onCartClick }: Props) {
                 : 'text-gray-400'
               }
         `}>
-              <ShoppingBag className="h-4 w-4" />
+              <CirclePlus className="h-4 w-4" />
               <span>Ajouter</span>
 
               {/* Remplissage au survol */}
               {isAvailable && (
-                <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
               )}
             </div>
           </button>
