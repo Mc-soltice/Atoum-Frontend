@@ -193,7 +193,7 @@ export default function LoginContent() {
           priority
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-linear-to-br from-emerald-900/80 via-teal-800/70 to-green-900/80 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-linear-to-br from-emerald-900/80 via-teal-800/70 to-amber-900/80 backdrop-blur-sm" />
       </motion.div>
 
       <motion.div

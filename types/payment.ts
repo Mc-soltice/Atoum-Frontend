@@ -7,7 +7,9 @@ export interface CreatePaymentIntentResponse {
 // Payload envoyé à Laravel pour créer un intent
 export interface CreatePaymentIntentPayload {
   order_id?: string;
-  amount: number; // en euros (ex: 49.99)
+  // Le backend doit calculer le montant depuis la commande pour éviter toute
+  // manipulation côté client. `amount` reste optionnel pour rétrocompatibilité.
+  amount?: number; // en euros (ex: 49.99)
 }
 
 // Réponse de l'endpoint Laravel POST /api/payments/verify

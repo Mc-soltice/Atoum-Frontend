@@ -16,7 +16,7 @@ export default async function Home() {
   );
 
   return (
-    <div className="flex flex-col gap-15">
+    <div className="flex flex-col gap-15  bg-linear-to-br from-amber-50/80 via-orange-50/60 to-rose-50/80">
       <Hero /> {/* Hero prend toute la largeur */}
       <div className="w-full flex justify-center px-4">
         <div className="w-full max-w-7xl flex flex-col gap-8">

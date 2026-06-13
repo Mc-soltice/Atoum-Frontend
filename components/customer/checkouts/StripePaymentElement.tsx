@@ -7,6 +7,8 @@ interface StripePaymentElementProps {
   amount: number; // en euros
   onSuccess: (paymentIntentId: string) => void;
   onError: (errorMessage: string) => void;
+  // URL de retour après confirmation Stripe (peut contenir order_id en query)
+  returnUrl?: string;
 }
 
 /**
@@ -20,6 +22,7 @@ export default function StripePaymentElement({
   amount,
   onSuccess,
   onError,
+  returnUrl,
 }: StripePaymentElementProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -39,7 +42,8 @@ export default function StripePaymentElement({
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/payment-success`,
+          // Utiliser la returnUrl passée depuis la page parente si fournie
+          return_url: returnUrl ?? `${window.location.origin}/payment-success`,
         },
         // redirect: "if_required" évite une redirection si le paiement réussit immédiatement
         redirect: "if_required",

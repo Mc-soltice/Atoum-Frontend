@@ -53,8 +53,8 @@ const formatPrice = (price: number) => {
 // Badge de statut stylisé
 const StatusBadge = ({ status }: { status: { value: string; label: string } }) => {
   const statusStyles = {
-    pending: "bg-green-50 text-green-700 border-green-200",
-    completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    pending: "bg-amber-50 text-amber-700 border-amber-200",
+    completed: "bg-amber-50 text-amber-700 border-amber-200",
     cancelled: "bg-rose-50 text-rose-700 border-rose-200",
     processing: "bg-blue-50 text-blue-700 border-blue-200"
   };
@@ -171,12 +171,12 @@ export default function HistoriquePage() {
                 href="/"
                 className="relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 active:scale-95 group inline-flex items-center"
               >
-                <div className="relative px-6 py-3 text-lg font-medium flex items-center gap-2 text-green-500 group-hover:text-white transition-colors duration-300">
+                <div className="relative px-6 py-3 text-lg font-medium flex items-center gap-2 text-amber-500 group-hover:text-white transition-colors duration-300">
                   <Store size={16} />
                   <span>Commencer vos achats</span>
 
                   {/* Remplissage au survol */}
-                  <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                  <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
                 </div>
               </Link>
             </div>
@@ -230,7 +230,7 @@ export default function HistoriquePage() {
                       <div className="flex items-center space-x-6">
                         <div className="text-right">
                           <p className="text-sm text-gray-500">Total</p>
-                          <p className="text-2xl font-bold text-green-600">
+                          <p className="text-2xl font-bold text-amber-600">
                             {formatPrice(order.total_amount)}
                           </p>
                         </div>
@@ -313,7 +313,7 @@ export default function HistoriquePage() {
                               <span>Télécharger la facture</span>
 
                               {/* Remplissage au survol */}
-                              <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                              <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
                             </div>
                           </button>
 
@@ -335,7 +335,7 @@ export default function HistoriquePage() {
                 <CreditCard className="w-5 h-5 text-gray-400" />
                 <span className="text-gray-600">Total des commandes</span>
               </div>
-              <span className="text-2xl font-bold text-green-600">
+              <span className="text-2xl font-bold text-amber-600">
                 {formatPrice(orders.reduce((sum, order) => sum + order.total_amount, 0))}
               </span>
             </div>

@@ -2,7 +2,7 @@ const MovieDetails = () => {
   return (
     <main style={{ flex: 1, padding: 24 }}>
       <div>
-        <span style={{ color: "green" }}>PUBLISHED</span>
+        <span style={{ color: "amber" }}>PUBLISHED</span>
         <p>Updated 2d ago</p>
       </div>
 

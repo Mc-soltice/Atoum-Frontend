@@ -22,7 +22,7 @@ export default async function ProductDetail({ params }: PageProps) {
   ];
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-white to-gray-50">
+    <main className="min-h-screen  bg-linear-to-br from-amber-50/80 via-orange-50/60 to-rose-50/80">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         <Breadcrumbs items={breadcrumbs} />
 

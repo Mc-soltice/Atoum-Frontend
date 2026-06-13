@@ -34,7 +34,7 @@ export default function CheckoutSummary({ summary }: Props) {
           )}
 
           {summary.discount && summary.discount > 0 && (
-            <div className="flex justify-between text-green-600">
+            <div className="flex justify-between text-amber-600">
               <span>Remise</span>
               <span>-{summary.discount.toLocaleString()}€</span>
             </div>
@@ -62,8 +62,8 @@ export default function CheckoutSummary({ summary }: Props) {
 
         {/* Économies estimées */}
         {summary.discount && summary.discount > 0 && (
-          <div className="p-3 bg-green-50 rounded-lg border border-green-100">
-            <div className="flex items-center gap-2 text-green-700 text-sm">
+          <div className="p-3 bg-amber-50 rounded-lg border border-amber-100">
+            <div className="flex items-center gap-2 text-amber-700 text-sm">
               <span>🎉</span>
               <span>
                 Vous économisez{" "}

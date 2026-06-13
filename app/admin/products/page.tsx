@@ -236,7 +236,7 @@ function ProductsContent() {
 
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
+            <div className="p-2 bg-amber-100 rounded-lg">
               <Wallet className="w-5 h-5 text-slate-900" />
             </div>
             <div>

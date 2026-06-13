@@ -107,11 +107,11 @@ export default function Header() {
   const getNavbarStyle = () => {
     if (!isHomePage) {
       // Sur toutes les autres pages : fond vert fixe
-      return "bg-emerald-600 border-emerald-500/20 shadow-lg shadow-emerald-500/20";
+      return "bg-amber-600 border-amber-500/20 shadow-lg shadow-amber-500/20";
     }
     // Sur la page d'accueil : comportement original (transparent au début, vert au scroll)
     return scrolled
-      ? "bg-emerald-600 backdrop-blur-sm border-emerald-500/20 shadow-lg shadow-emerald-500/20"
+      ? "bg-linear-to-r from-amber-400 to-rose-500 backdrop-blur-sm border-amber-500/20 shadow-lg shadow-amber-500/20"
       : "bg-transparent backdrop-blur-0 border-transparent shadow-none";
   };
 
@@ -137,14 +137,14 @@ export default function Header() {
               ? "bg-white/20 shadow-white/10"
               : scrolled
                 ? "bg-white/20 shadow-white/10"
-                : "bg-emerald-600 shadow-emerald-600/20"
+                : "bg-amber-600 shadow-amber-600/20"
               }`}>
               <span className={`font-bold text-base transition-all duration-500 ${!isHomePage ? "text-white" : scrolled ? "text-white" : "text-white"
                 }`}>A</span>
             </div>
             <span className={`text-base sm:text-[17px] font-semibold tracking-tight transition-all duration-500 ${!isHomePage ? "text-white" : scrolled ? "text-white" : "text-white"
               }`}>
-              Atoum<span className={`transition-colors duration-500 ${!isHomePage ? "text-emerald-200" : scrolled ? "text-emerald-200" : "text-emerald-200"
+              Atoum<span className={`transition-colors duration-500 ${!isHomePage ? "text-amber-200" : scrolled ? "text-amber-200" : "text-amber-200"
                 }`}>-ra</span>
             </span>
           </Link>
@@ -224,7 +224,7 @@ export default function Header() {
             >
               <ShoppingBag className="w-5 h-5" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">
                   {cartItemCount > 9 ? "9+" : cartItemCount}
                 </span>
               )}
@@ -258,7 +258,7 @@ export default function Header() {
                       : "text-white/80 hover:bg-white/10"
                       }`}
                   >
-                    <div className="w-7 h-7 rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-xs font-semibold shadow-md">
+                    <div className="w-7 h-7 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white text-xs font-semibold shadow-md">
                       {getUserInitials()}
                     </div>
                     <span className="hidden lg:inline">
@@ -269,8 +269,8 @@ export default function Header() {
                   <Link
                     href="/login"
                     className={`text-sm font-semibold px-3.5 py-1.5 rounded-lg transition-colors ${!isHomePage || scrolled
-                      ? "text-white bg-emerald-700 hover:bg-emerald-800"
-                      : "text-white bg-emerald-600 hover:bg-emerald-700"
+                      ? "text-white bg-amber-700 hover:bg-amber-800"
+                      : "text-white bg-amber-600 hover:bg-amber-700"
                       }`}
                     onClick={closeAllMenus}
                   >
@@ -285,9 +285,9 @@ export default function Header() {
                       className="fixed inset-0 z-40"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-emerald-100 z-50 py-1">
-                      <div className="px-4 py-3 border-b border-emerald-100">
-                        <p className="text-sm font-semibold text-emerald-900 truncate">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-amber-100 z-50 py-1">
+                      <div className="px-4 py-3 border-b border-amber-100">
+                        <p className="text-sm font-semibold text-amber-900 truncate">
                           {user.first_name} {user.last_name}
                         </p>
                         <p className="text-xs text-stone-500 truncate mt-0.5">
@@ -297,7 +297,7 @@ export default function Header() {
 
                       <Link
                         href="/profil"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-emerald-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <UserCircle className="w-4 h-4" />
@@ -307,7 +307,7 @@ export default function Header() {
                       {canAccessDashboard && (
                         <Link
                           href="/admin"
-                          className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-emerald-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <LayoutDashboard className="w-4 h-4" />
@@ -317,17 +317,17 @@ export default function Header() {
 
                       <Link
                         href="/parametres"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-emerald-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <Settings className="w-4 h-4" />
                         Paramètres
                       </Link>
 
-                      <div className="border-t border-emerald-100 mt-1 pt-1">
+                      <div className="border-t border-amber-100 mt-1 pt-1">
                         <button
                           onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-emerald-50 transition-colors flex items-center gap-3"
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-amber-50 transition-colors flex items-center gap-3"
                         >
                           <LogOut className="w-4 h-4" />
                           Déconnexion
@@ -360,8 +360,8 @@ export default function Header() {
           fixed inset-0 z-100 md:hidden
           transition-all duration-300 ease-in-out
           ${isMobileMenuOpen
-            ? "bg-emerald-900/60 backdrop-blur-sm opacity-100 visible"
-            : "bg-emerald-900/0 backdrop-blur-none opacity-0 invisible pointer-events-none"
+            ? "bg-amber-900/60 backdrop-blur-sm opacity-100 visible"
+            : "bg-amber-900/0 backdrop-blur-none opacity-0 invisible pointer-events-none"
           }
         `}
         onClick={closeAllMenus}
@@ -371,7 +371,7 @@ export default function Header() {
           className={`
             fixed top-0 right-0 h-full w-64 
             bg-white z-101 md:hidden shadow-2xl 
-            border-l border-emerald-100
+            border-l border-amber-100
             transition-all duration-500 ease-out
             ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
           `}
@@ -381,10 +381,10 @@ export default function Header() {
             {/* Fermeture */}
             <button
               onClick={closeAllMenus}
-              className="absolute top-4 right-4 p-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-colors z-10"
+              className="absolute top-4 right-4 p-2 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors z-10"
               aria-label="Fermer"
             >
-              <X className="w-5 h-5 text-emerald-600" />
+              <X className="w-5 h-5 text-amber-600" />
             </button>
 
             {/* Section Utilisateur */}
@@ -392,7 +392,7 @@ export default function Header() {
               <div
                 className={`
                   relative pt-10 pb-6 px-4
-                  border-b border-emerald-100
+                  border-b border-amber-100
                   transition-all duration-500 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"}
                 `}
@@ -400,20 +400,20 @@ export default function Header() {
               >
                 <div className="relative flex justify-center">
                   <div className="absolute inset-0 flex justify-center">
-                    <div className="w-24 h-24 rounded-full bg-emerald-500/20 blur-xl"></div>
+                    <div className="w-24 h-24 rounded-full bg-amber-500/20 blur-xl"></div>
                   </div>
-                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-emerald-200">
+                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-amber-200">
                     {getUserInitials()}
                   </div>
                 </div>
 
                 <div className="text-center mt-4">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <div className="h-px w-6 bg-linear-to-r from-transparent to-emerald-300"></div>
-                    <h3 className="text-emerald-900 font-bold text-base">
+                    <div className="h-px w-6 bg-linear-to-r from-transparent to-amber-300"></div>
+                    <h3 className="text-amber-900 font-bold text-base">
                       {user.first_name} {user.last_name}
                     </h3>
-                    <div className="h-px w-6 bg-linear-to-l from-transparent to-emerald-300"></div>
+                    <div className="h-px w-6 bg-linear-to-l from-transparent to-amber-300"></div>
                   </div>
 
                   <div className="flex items-center justify-center gap-1.5 mt-1.5">
@@ -428,7 +428,7 @@ export default function Header() {
               <div
                 className={`
                   pt-10 pb-6 px-4
-                  border-b border-emerald-100
+                  border-b border-amber-100
                   transition-all duration-500 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"}
                 `}
@@ -436,14 +436,14 @@ export default function Header() {
               >
                 <div className="relative flex justify-center">
                   <div className="absolute inset-0 flex justify-center">
-                    <div className="w-24 h-24 rounded-full bg-emerald-500/10 blur-xl"></div>
+                    <div className="w-24 h-24 rounded-full bg-amber-500/10 blur-xl"></div>
                   </div>
-                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-lg ring-4 ring-emerald-200">
+                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-lg ring-4 ring-amber-200">
                     <User className="w-10 h-10" />
                   </div>
                 </div>
                 <div className="text-center mt-4">
-                  <h3 className="text-emerald-900 font-bold text-base">Invité</h3>
+                  <h3 className="text-amber-900 font-bold text-base">Invité</h3>
                   <p className="text-stone-400 text-xs mt-1">
                     Connectez-vous pour accéder<br />à votre compte
                   </p>
@@ -463,8 +463,8 @@ export default function Header() {
                         closeAllMenus();
                       }}
                       className={`block text-sm font-medium px-3.5 py-2 rounded-lg transition-all w-full ${active === link.name
-                        ? "bg-emerald-50 text-emerald-600"
-                        : "text-stone-600 hover:bg-emerald-50 hover:text-emerald-600"
+                        ? "bg-amber-50 text-amber-600"
+                        : "text-stone-600 hover:bg-amber-50 hover:text-amber-600"
                         }`}
                     >
                       {link.name}
@@ -475,7 +475,7 @@ export default function Header() {
 
               <div
                 className={`
-                  h-px bg-emerald-100 my-3 transition-all duration-500
+                  h-px bg-amber-100 my-3 transition-all duration-500
                   ${isMobileMenuOpen ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"}
                 `}
                 style={{ transitionDelay: isMobileMenuOpen ? "400ms" : "0ms" }}
@@ -483,8 +483,8 @@ export default function Header() {
 
               {/* Recherche Mobile */}
               <form onSubmit={handleSearch} className="mb-3">
-                <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2">
-                  <Search className="w-4 h-4 text-emerald-400" />
+                <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2">
+                  <Search className="w-4 h-4 text-amber-400" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -498,7 +498,7 @@ export default function Header() {
               <button
                 className={`
                   flex items-center gap-2 w-full px-4 py-3 rounded-lg 
-                  text-stone-600 hover:bg-emerald-50 transition-all duration-300 ease-out
+                  text-stone-600 hover:bg-amber-50 transition-all duration-300 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                 `}
                 style={{ transitionDelay: isMobileMenuOpen ? "460ms" : "0ms" }}
@@ -514,7 +514,7 @@ export default function Header() {
                     href="/login"
                     onClick={closeAllMenus}
                     className={`
-                      w-full block px-4 py-3 rounded-lg text-emerald-600 bg-emerald-50
+                      w-full block px-4 py-3 rounded-lg text-amber-600 bg-amber-50
                       transition-all duration-300 ease-out text-center text-base font-medium
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                     `}
@@ -528,7 +528,7 @@ export default function Header() {
                     onClick={closeAllMenus}
                     className={`
                       w-full block px-4 py-3 mt-2 text-center text-white 
-                      bg-linear-to-r from-emerald-500 to-emerald-600
+                      bg-linear-to-r from-amber-500 to-amber-600
                       transition-all duration-300 ease-out text-base font-semibold 
                       rounded-xl shadow-md
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
@@ -543,18 +543,18 @@ export default function Header() {
 
             {/* Liens pour utilisateur connecté */}
             {!loading && user && (
-              <div className="border-t border-emerald-100 pt-3 pb-6 px-4">
+              <div className="border-t border-amber-100 pt-3 pb-6 px-4">
                 <Link
                   href="/profil"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-emerald-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
                   style={{ transitionDelay: isMobileMenuOpen ? "640ms" : "0ms" }}
                 >
-                  <UserCircle className="w-4 h-4 text-stone-400 group-hover:text-emerald-500 transition-colors" />
+                  <UserCircle className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
                   <span>Mon Profil</span>
                 </Link>
 
@@ -562,16 +562,16 @@ export default function Header() {
                   href="/panier"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-emerald-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
                   style={{ transitionDelay: isMobileMenuOpen ? "700ms" : "0ms" }}
                 >
-                  <ShoppingBag className="w-4 h-4 text-stone-400 group-hover:text-emerald-500 transition-colors" />
+                  <ShoppingBag className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
                   <span>Mon Panier</span>
                   {cartItemCount > 0 && (
-                    <span className="ml-auto bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <span className="ml-auto bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">
                       {cartItemCount}
                     </span>
                   )}
@@ -581,13 +581,13 @@ export default function Header() {
                   href="/historique"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-emerald-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
                   style={{ transitionDelay: isMobileMenuOpen ? "760ms" : "0ms" }}
                 >
-                  <Package className="w-4 h-4 text-stone-400 group-hover:text-emerald-500 transition-colors" />
+                  <Package className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
                   <span>Mes Commandes</span>
                 </Link>
 
@@ -596,18 +596,18 @@ export default function Header() {
                     href="/admin"
                     onClick={closeAllMenus}
                     className={`
-                      w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-emerald-50 
+                      w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
                       transition-all duration-300 ease-out text-left text-sm font-medium group
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                     `}
                     style={{ transitionDelay: isMobileMenuOpen ? "820ms" : "0ms" }}
                   >
-                    <LayoutDashboard className="w-4 h-4 text-stone-400 group-hover:text-emerald-500 transition-colors" />
+                    <LayoutDashboard className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
                     <span>Tableau de bord</span>
                   </Link>
                 )}
 
-                <div className="h-px bg-emerald-100 my-2"></div>
+                <div className="h-px bg-amber-100 my-2"></div>
 
                 <button
                   onClick={() => {

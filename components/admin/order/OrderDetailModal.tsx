@@ -412,7 +412,7 @@ function getStatusColor(status: OrderStatus): string {
     case "pending":
       return "bg-yellow-100 text-yellow-800";
     case "delivered":
-      return "bg-green-100 text-green-800";
+      return "bg-amber-100 text-amber-800";
     case "cancelled":
       return "bg-red-100 text-red-800";
     default:

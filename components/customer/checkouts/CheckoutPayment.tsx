@@ -49,7 +49,7 @@ export default function CheckoutPayment({ method, onChange }: Props) {
             key={opt.value}
             onClick={() => handleMethodChange(opt.value)}
             className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${method === opt.value
-              ? "border-green-100 bg-primary/5"
+              ? "border-amber-100 bg-primary/5"
               : "border-gray-200 hover:border-gray-300"
               }`}
           >
@@ -84,10 +84,10 @@ export default function CheckoutPayment({ method, onChange }: Props) {
       </div>
 
       {/* Sécurité et garanties */}
-      <div className="p-4 bg-green-50 rounded-xl border border-green-100">
+      <div className="p-4 bg-amber-50 rounded-xl border border-amber-100">
         <div className="flex items-center gap-3">
-          <span className="text-green-500 text-xl">🛡️</span>
-          <div className="text-sm text-green-800">
+          <span className="text-amber-500 text-xl">🛡️</span>
+          <div className="text-sm text-amber-800">
             <p className="font-medium">Paiement 100% sécurisé</p>
             <p>Vos données bancaires sont chiffrées et protégées</p>
           </div>

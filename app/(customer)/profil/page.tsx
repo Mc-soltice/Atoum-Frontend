@@ -6,7 +6,6 @@ import {
   CheckCircle,
   Clock,
   CreditCard,
-  DollarSign,
   Edit2,
   LogOut,
   Mail,
@@ -14,14 +13,14 @@ import {
   Phone,
   Save,
   Settings,
-  ShoppingBag,
   Truck,
   User,
   X,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
+import HistoriqueContent from "@/components/customer/historique/historique";
 import { useAuthContext } from "@/contexte/AuthContext";
 import { useOrders } from "@/contexte/OrderContext";
 import { useUsers } from "@/contexte/UserContext";
@@ -48,10 +47,8 @@ export default function ModernProfilePage() {
     password_confirmation: "",
   });
 
-  // État pour suivre les champs modifiés
   const [dirtyFields, setDirtyFields] = useState<Set<string>>(new Set());
 
-  // Mettre à jour le formulaire quand l'utilisateur change
   useEffect(() => {
     if (user) {
       setForm({
@@ -62,7 +59,6 @@ export default function ModernProfilePage() {
         password: "",
         password_confirmation: "",
       });
-      // Réinitialiser les champs modifiés et cacher les champs mot de passe
       setDirtyFields(new Set());
       setShowPasswordFields(false);
       setIsEditing(false);
@@ -77,65 +73,46 @@ export default function ModernProfilePage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
-    // Mettre à jour la valeur
-    setForm(prev => ({ ...prev, [name]: value }));
-
-    // Marquer le champ comme modifié
-    setDirtyFields(prev => {
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setDirtyFields((prev) => {
       const newSet = new Set(prev);
-
-      // Vérifier si la valeur est différente de la valeur originale
       const originalValue = user?.[name as keyof typeof user] ?? "";
       if (value !== originalValue) {
         newSet.add(name);
       } else {
         newSet.delete(name);
       }
-
       return newSet;
     });
   };
 
   const handleSave = async (): Promise<void> => {
     if (!user) return;
-
-    // Validation du mot de passe si présent
     if (form.password && form.password !== form.password_confirmation) {
       toast.error("Les mots de passe ne correspondent pas");
       return;
     }
-
     if (form.password && form.password.length < 6) {
       toast.error("Le mot de passe doit contenir au moins 6 caractères");
       return;
     }
-
     setLoading(true);
     try {
-      // Construire l'objet avec seulement les champs modifiés
       const updateData: UpdateUserPayload = {};
-
-      // Parcourir les champs modifiés (sauf password et password_confirmation)
-      dirtyFields.forEach(field => {
-        if (field !== 'password' && field !== 'password_confirmation') {
-          // @ts-ignore - On sait que ces champs existent dans UpdateUserPayload
+      dirtyFields.forEach((field) => {
+        if (field !== "password" && field !== "password_confirmation") {
+          // @ts-ignore - champs valides
           updateData[field] = form[field as keyof typeof form];
         }
       });
-
-      // Ajouter le mot de passe seulement s'il a été rempli
       if (form.password) {
         updateData.password = form.password;
       }
-
-      // Vérifier qu'il y a au moins un champ à modifier
       if (Object.keys(updateData).length === 0) {
         toast.error("Aucune modification détectée");
         setLoading(false);
         return;
       }
-
       await updateUser(user.id, updateData);
       toast.success("Profil mis à jour avec succès !");
       setIsEditing(false);
@@ -148,10 +125,12 @@ export default function ModernProfilePage() {
     }
   };
 
-  // Fonction pour réinitialiser un champ à sa valeur originale
   const resetField = (fieldName: string) => {
-    setForm(prev => ({ ...prev, [fieldName]: user?.[fieldName as keyof typeof user] ?? "" }));
-    setDirtyFields(prev => {
+    setForm((prev) => ({
+      ...prev,
+      [fieldName]: user?.[fieldName as keyof typeof user] ?? "",
+    }));
+    setDirtyFields((prev) => {
       const newSet = new Set(prev);
       newSet.delete(fieldName);
       return newSet;
@@ -160,16 +139,15 @@ export default function ModernProfilePage() {
 
   const handleCancelPassword = () => {
     setShowPasswordFields(false);
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       password: "",
       password_confirmation: "",
     }));
-    // Retirer le mot de passe des champs modifiés s'il y était
-    setDirtyFields(prev => {
+    setDirtyFields((prev) => {
       const newSet = new Set(prev);
-      newSet.delete('password');
-      newSet.delete('password_confirmation');
+      newSet.delete("password");
+      newSet.delete("password_confirmation");
       return newSet;
     });
   };
@@ -198,7 +176,7 @@ export default function ModernProfilePage() {
     switch (statusValue.toLowerCase()) {
       case "delivered":
       case "completed":
-        return <CheckCircle className="text-green-600" size={20} />;
+        return <CheckCircle className="text-amber-600" size={20} />;
       case "pending":
         return <Clock className="text-yellow-600" size={20} />;
       case "cancelled":
@@ -212,7 +190,7 @@ export default function ModernProfilePage() {
     switch (statusValue.toLowerCase()) {
       case "delivered":
       case "completed":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "bg-amber-100 text-amber-700 border-amber-200";
       case "pending":
         return "bg-yellow-100 text-yellow-700 border-yellow-200";
       case "cancelled":
@@ -232,51 +210,91 @@ export default function ModernProfilePage() {
   }
 
   return (
-    <div className=" bg-gray-50 text-gray-800">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* HEADER */}
-        <div className="bg-white rounded-3xl p-6 shadow-lg border border-gray-200">
-          <div className="flex items-center gap-6 flex-wrap">
-            <div className="w-24 h-24 rounded-full bg-linear-to-br from-green-500 to-pink-500 flex items-center justify-center text-3xl font-bold text-white">
-              {user.first_name?.[0] || ""}{user.last_name?.[0] || ""}
+    <div className="bg-gray-50 text-gray-800 min-h-screen">
+      <div className="max-w-7xl mx-auto p-3 sm:p-6">
+        {/* HEADER - responsive */}
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg border border-gray-200">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-linear-to-br from-amber-500 to-pink-500 flex items-center justify-center text-xl sm:text-3xl font-bold text-white">
+                {user.first_name?.[0] || ""}
+                {user.last_name?.[0] || ""}
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+                  {user.first_name} {user.last_name}
+                </h1>
+                <p className="text-sm text-gray-500 truncate max-w-45 sm:max-w-none">
+                  {user.email}
+                </p>
+                {user.role?.includes("admin") && (
+                  <span className="inline-block mt-1 px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded-full">
+                    Administrateur
+                  </span>
+                )}
+              </div>
             </div>
-
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-800">
-                {user.first_name} {user.last_name}
-              </h1>
-              <p className="text-gray-500">{user.email}</p>
-              {user.role?.includes("admin") && (
-                <span className="inline-block mt-2 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded-full">
-                  Administrateur
-                </span>
-              )}
-            </div>
-
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl hover:bg-red-100 transition border border-red-200"
+              className="flex items-center justify-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl hover:bg-red-100 transition border border-red-200 sm:self-center"
             >
               <LogOut size={16} /> Déconnexion
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mt-6">
-          {/* SIDEBAR */}
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-gray-200 h-fit">
+        <div className="flex flex-col lg:flex-row gap-6 mt-6">
+          {/* Onglets mobiles (scrollable) */}
+          <div className="lg:hidden overflow-x-auto pb-2 -mx-2 px-2">
+            <div className="flex gap-2 min-w-max">
+              {[
+                { id: "profile", label: "Profil", icon: <User size={18} /> },
+                {
+                  id: "orders",
+                  label: "Commandes",
+                  icon: <Package size={18} />,
+                },
+                {
+                  id: "settings",
+                  label: "Paramètres",
+                  icon: <Settings size={18} />,
+                },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition ${
+                    activeTab === tab.id
+                      ? "bg-amber-500 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {tab.icon}
+                  <span>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Sidebar desktop */}
+          <div className="hidden lg:block lg:w-64 bg-white rounded-2xl p-4 shadow-lg border border-gray-200 h-fit">
             {[
               { id: "profile", label: "Profil", icon: <User size={18} /> },
               { id: "orders", label: "Commandes", icon: <Package size={18} /> },
-              { id: "settings", label: "Paramètres", icon: <Settings size={18} /> },
+              {
+                id: "settings",
+                label: "Paramètres",
+                icon: <Settings size={18} />,
+              },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl capitalize transition flex items-center gap-3 mb-2 ${activeTab === tab.id
-                  ? "bg-green-400 text-white"
-                  : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                className={`w-full text-left px-4 py-3 rounded-xl capitalize transition flex items-center gap-3 mb-2 ${
+                  activeTab === tab.id
+                    ? "bg-amber-500 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
                 {tab.icon}
                 <span>{tab.label}</span>
@@ -284,33 +302,37 @@ export default function ModernProfilePage() {
             ))}
           </div>
 
-          {/* CONTENT */}
-          <div className="lg:col-span-3 bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+          {/* CONTENU PRINCIPAL */}
+          <div className="flex-1 bg-white rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-200">
             {activeTab === "profile" && (
               <div>
-                <div className="flex justify-between mb-6 flex-wrap gap-4">
-                  <h2 className="text-xl font-bold text-gray-800">Informations personnelles</h2>
+                <div className="flex flex-col sm:flex-row justify-between mb-6 gap-4">
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Informations personnelles
+                  </h2>
 
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600 transition"
+                      className="flex items-center justify-center gap-2 bg-amber-500 text-white px-4 py-2 rounded-xl hover:bg-amber-600 transition w-full sm:w-auto"
                     >
                       <Edit2 size={16} /> Modifier
                     </button>
                   ) : (
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                       <button
                         onClick={handleSave}
                         disabled={loading || contextLoading}
-                        className="bg-green-500 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-green-600 transition disabled:opacity-50"
+                        className="bg-amber-500 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-amber-600 transition disabled:opacity-50"
                       >
-                        <Save size={16} /> {loading || contextLoading ? "Enregistrement..." : "Enregistrer"}
+                        <Save size={16} />{" "}
+                        {loading || contextLoading
+                          ? "Enregistrement..."
+                          : "Enregistrer"}
                       </button>
-
                       <button
                         onClick={handleCancelEdit}
-                        className="bg-gray-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 hover:bg-gray-700 transition"
+                        className="bg-gray-600 text-white px-4 py-2 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-700 transition"
                       >
                         <X size={16} /> Annuler
                       </button>
@@ -318,7 +340,7 @@ export default function ModernProfilePage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   <InputField
                     icon={<User size={16} />}
                     label="Prénom"
@@ -330,7 +352,6 @@ export default function ModernProfilePage() {
                     onReset={resetField}
                     dirty={dirtyFields.has("first_name")}
                   />
-
                   <InputField
                     icon={<User size={16} />}
                     label="Nom"
@@ -342,7 +363,6 @@ export default function ModernProfilePage() {
                     onReset={resetField}
                     dirty={dirtyFields.has("last_name")}
                   />
-
                   <InputField
                     icon={<Mail size={16} />}
                     label="Email"
@@ -355,7 +375,6 @@ export default function ModernProfilePage() {
                     onReset={resetField}
                     dirty={dirtyFields.has("email")}
                   />
-
                   <InputField
                     icon={<Phone size={16} />}
                     label="Téléphone"
@@ -370,15 +389,22 @@ export default function ModernProfilePage() {
                   />
                 </div>
 
-                {/* Section changement de mot de passe */}
+                {/* Changement mot de passe */}
                 {isEditing && (
                   <div className="mt-6">
                     {!showPasswordFields ? (
                       <button
                         onClick={() => setShowPasswordFields(true)}
-                        className="text-green-600 hover:text-green-700 text-sm flex items-center gap-2"
+                        className="text-amber-600 hover:text-amber-700 text-sm flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto py-2 border border-amber-200 rounded-lg bg-amber-50"
                       >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                         </svg>
                         Changer le mot de passe
@@ -386,7 +412,9 @@ export default function ModernProfilePage() {
                     ) : (
                       <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                         <div className="flex justify-between items-center mb-4">
-                          <label className="text-sm font-medium text-gray-700">Nouveau mot de passe</label>
+                          <label className="text-sm font-medium text-gray-700">
+                            Nouveau mot de passe
+                          </label>
                           <button
                             onClick={handleCancelPassword}
                             className="text-gray-400 hover:text-gray-600"
@@ -395,26 +423,22 @@ export default function ModernProfilePage() {
                           </button>
                         </div>
                         <div className="space-y-4">
-                          <div>
-                            <input
-                              type="password"
-                              name="password"
-                              value={form.password}
-                              onChange={handleChange}
-                              placeholder="Nouveau mot de passe"
-                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-green-500 text-gray-800"
-                            />
-                          </div>
-                          <div>
-                            <input
-                              type="password"
-                              name="password_confirmation"
-                              value={form.password_confirmation}
-                              onChange={handleChange}
-                              placeholder="Confirmer le mot de passe"
-                              className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-green-500 text-gray-800"
-                            />
-                          </div>
+                          <input
+                            type="password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Nouveau mot de passe"
+                            className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-amber-500 text-gray-800"
+                          />
+                          <input
+                            type="password"
+                            name="password_confirmation"
+                            value={form.password_confirmation}
+                            onChange={handleChange}
+                            placeholder="Confirmer le mot de passe"
+                            className="w-full p-2 rounded-lg bg-white border border-gray-300 focus:outline-none focus:border-amber-500 text-gray-800"
+                          />
                         </div>
                       </div>
                     )}
@@ -435,67 +459,29 @@ export default function ModernProfilePage() {
 
             {activeTab === "orders" && (
               <div>
-                <h2 className="text-xl font-bold mb-6 text-gray-800">Mes commandes</h2>
-                {ordersLoading ? (
-                  <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
-                  </div>
-                ) : orders.length === 0 ? (
-                  <div className="text-center py-12 text-gray-400">
-                    <ShoppingBag size={48} className="mx-auto mb-4 opacity-50" />
-                    <p>Aucune commande pour le moment</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {orders.map((order) => (
-                      <div
-                        key={order.id}
-                        className="bg-gray-50 rounded-xl border border-gray-200 p-4 hover:bg-gray-100 transition"
-                      >
-                        <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-                          <div>
-                            <p className="font-semibold text-gray-800">
-                              Commande #{order.reference || order.id}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {new Date(order.created_at).toLocaleDateString("fr-FR")}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(order.status.value)}
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs border ${getStatusColor(
-                                order.status.value
-                              )}`}
-                            >
-                              {order.status.label}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-2">
-                            <DollarSign size={16} className="text-green-600" />
-                            <span className="font-bold text-gray-800">
-                              {order.total_amount.toLocaleString("fr-FR")} FCFA
-                            </span>
-                          </div>
-                          <button className="text-purple-600 hover:text-purple-700 text-sm">
-                            Voir les détails
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <HistoriqueContent
+                  orders={orders}
+                  loading={ordersLoading}
+                  getStatusIcon={getStatusIcon}
+                  getStatusColor={getStatusColor}
+                />
               </div>
             )}
 
             {activeTab === "settings" && (
               <div className="space-y-4">
-                <h2 className="text-xl font-bold mb-6 text-gray-800">Paramètres</h2>
+                <h2 className="text-xl font-bold mb-6 text-gray-800">
+                  Paramètres
+                </h2>
                 <SettingItem icon={<Bell size={16} />} title="Notifications" />
-                <SettingItem icon={<CreditCard size={16} />} title="Moyens de paiement" />
-                <SettingItem icon={<Truck size={16} />} title="Adresses de livraison" />
+                <SettingItem
+                  icon={<CreditCard size={16} />}
+                  title="Moyens de paiement"
+                />
+                <SettingItem
+                  icon={<Truck size={16} />}
+                  title="Adresses de livraison"
+                />
                 <SettingItem
                   icon={
                     <svg
@@ -522,7 +508,7 @@ export default function ModernProfilePage() {
   );
 }
 
-// Types pour les props des composants
+// Composants internes
 interface InputFieldProps {
   icon: React.ReactElement;
   label: string;
@@ -536,11 +522,6 @@ interface InputFieldProps {
   onReset: (fieldName: string) => void;
 }
 
-interface SettingItemProps {
-  icon: React.ReactElement;
-  title: string;
-}
-
 function InputField({
   icon,
   label,
@@ -551,15 +532,18 @@ function InputField({
   onChange,
   onReset,
   dirty = false,
-  type = "text"
+  type = "text",
 }: InputFieldProps) {
   const hasChanges = value !== originalValue;
 
   return (
-    <div className={`bg-gray-50 p-4 rounded-xl border transition ${dirty ? 'border-green-400 bg-green-50/30' : 'border-gray-200'
-      }`}>
+    <div
+      className={`bg-gray-50 p-3 sm:p-4 rounded-xl border transition ${
+        dirty ? "border-amber-400 bg-amber-50/30" : "border-gray-200"
+      }`}
+    >
       <div className="flex justify-between items-center">
-        <label className="text-sm text-gray-500">{label}</label>
+        <label className="text-xs sm:text-sm text-gray-500">{label}</label>
         {editing && hasChanges && (
           <button
             type="button"
@@ -577,11 +561,12 @@ function InputField({
           name={name}
           value={value}
           onChange={onChange}
-          className={`w-full mt-2 p-2 rounded-lg bg-white border focus:outline-none focus:border-green-500 text-gray-800 ${dirty ? 'border-green-400' : 'border-gray-300'
-            }`}
+          className={`w-full mt-1 sm:mt-2 p-2 rounded-lg bg-white border focus:outline-none focus:border-amber-500 text-gray-800 text-sm sm:text-base ${
+            dirty ? "border-amber-400" : "border-gray-300"
+          }`}
         />
       ) : (
-        <div className="flex items-center gap-2 mt-2 text-gray-700">
+        <div className="flex items-center gap-2 mt-1 sm:mt-2 text-gray-700 text-sm sm:text-base">
           {icon}
           <span>{value || "Non renseigné"}</span>
         </div>
@@ -590,14 +575,19 @@ function InputField({
   );
 }
 
+interface SettingItemProps {
+  icon: React.ReactElement;
+  title: string;
+}
+
 function SettingItem({ icon, title }: SettingItemProps) {
   return (
-    <div className="flex items-center justify-between bg-gray-50 p-4 rounded-xl border border-gray-200 hover:bg-gray-100 transition">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200 hover:bg-gray-100 transition">
       <div className="flex items-center gap-3 text-gray-700">
         {icon}
-        <span>{title}</span>
+        <span className="text-sm sm:text-base">{title}</span>
       </div>
-      <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition text-sm">
+      <button className="bg-amber-500 text-white px-4 py-2 rounded-lg hover:bg-amber-600 transition text-sm w-full sm:w-auto">
         Gérer
       </button>
     </div>

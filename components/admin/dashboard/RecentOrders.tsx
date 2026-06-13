@@ -1,7 +1,7 @@
 // components/admin/dashboard/RecentOrders.tsx
 "use client";
 
-import { ShoppingBag, MoreVertical } from "lucide-react";
+import { MoreVertical, ShoppingBag } from "lucide-react";
 
 const orders = [
   { id: '#ORD-001', customer: 'Marie Dubois', amount: '89,99 €', status: 'completed', date: '2024-01-15' },
@@ -12,7 +12,7 @@ const orders = [
 ];
 
 const statusColors: Record<string, string> = {
-  completed: 'bg-green-100 text-green-800',
+  completed: 'bg-amber-100 text-amber-800',
   processing: 'bg-blue-100 text-blue-800',
   pending: 'bg-yellow-100 text-yellow-800',
   cancelled: 'bg-red-100 text-red-800',

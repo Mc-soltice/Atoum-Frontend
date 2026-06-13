@@ -45,7 +45,7 @@ export default function CartPage() {
           <Breadcrumbs items={breadcrumbs} />
         </div>
 
-        <div className="w-full bg-linear-to-r from-green-400 to-green-600 text-white flex items-center justify-between px-6 py-4 mb-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="w-full bg-linear-to-r from-amber-400 to-amber-600 text-white flex items-center justify-between px-6 py-4 mb-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300">
           <div className="flex items-center gap-3">
             <div>
               <h2 className="text-2xl font-bold text-white sm:text-3xl">
@@ -96,7 +96,7 @@ export default function CartPage() {
                   </p>
                   <button
                     onClick={handleContinueShopping}
-                    className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                    className="px-6 py-3 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors"
                   >
                     Découvrir nos produits
                   </button>

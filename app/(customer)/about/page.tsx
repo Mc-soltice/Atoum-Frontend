@@ -37,8 +37,8 @@ export default function AboutPage() {
       description:
         "Soins par les plantes médicinales biologiques, harmonie avec les 4 éléments suprêmes.",
       icon: <Leaf className="h-10 w-10" />,
-      color: "from-emerald-500 to-teal-600",
-      bgColor: "bg-emerald-500/10",
+      color: "from-amber-500 to-teal-600",
+      bgColor: "bg-amber-500/10",
       rotation: -3,
       delay: 0.1,
       content:
@@ -121,7 +121,7 @@ export default function AboutPage() {
       title: "Élixirs",
       description: "Mélanges sacrés et mixtures médicinales.",
       icon: <Droplets className="h-10 w-10" />,
-      color: "from-teal-500 to-emerald-400",
+      color: "from-teal-500 to-amber-400",
       bgColor: "bg-teal-500/10",
       rotation: 2,
       delay: 0.8,
