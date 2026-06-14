@@ -20,7 +20,9 @@ import { useState } from "react";
 interface OrderHistoryProps {
   orders: FullOrder[];
   loading: boolean;
-  onDownloadInvoice?: (order: FullOrder) => Promise<void>;
+  onDownloadInvoice?: (
+    order: FullOrder,
+  ) => Promise<{ success: boolean; error?: unknown }>;
   title?: string;
   standalone?: boolean;
 }

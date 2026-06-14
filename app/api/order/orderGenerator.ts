@@ -1,26 +1,9 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
-// Helper to load company logo from disk as a data URL when running in Node
-export const getCompanyLogoDataUrlSync = (relativePath = 'public/images/Logo.png'): string | null => {
-  try {
-    if (typeof window !== 'undefined') return null;
-    // require here to avoid bundler issues on the client
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const fs = require('fs');
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const path = require('path');
-    const abs = path.resolve(process.cwd(), relativePath);
-    if (!fs.existsSync(abs)) return null;
-    const ext = path.extname(abs).slice(1).toLowerCase();
-    const mime = ext === 'png' ? 'image/png' : ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
-    const data = fs.readFileSync(abs);
-    const base64 = data.toString('base64');
-    return `data:${mime};base64,${base64}`;
-  } catch (e) {
-    return null;
-  }
-};
+// Helper to resolve logo only when it is explicitly provided by the client.
+// The browser fetches the logo via HTTP, so this file contains no server-only imports.
+export const getCompanyLogoDataUrlSync = (): string | null => null;
 
 interface OrderItem {
   id: string;
@@ -45,9 +28,9 @@ interface Order {
 }
 
 const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat('fr-FR', {
+  return new Intl.NumberFormat("fr-FR", {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(price);
 };
 
@@ -71,7 +54,7 @@ export const generateOrderPDF = (order: Order): jsPDF => {
     gray200: [229, 231, 235] as [number, number, number],
     gray100: [243, 244, 246] as [number, number, number],
     gray50: [249, 250, 251] as [number, number, number],
-    white: [255, 255, 255] as [number, number, number]
+    white: [255, 255, 255] as [number, number, number],
   };
 
   let yPos = margin;
@@ -84,7 +67,7 @@ export const generateOrderPDF = (order: Order): jsPDF => {
 
   // === EN-TÊTE MINIMALISTE ===
   // Company name (left) and invoice title + reference (right)
-  const COMPANY_NAME = 'Atoum-ra Mbianga';
+  const COMPANY_NAME = "Atoum-ra Mbianga";
 
   // Try to draw logo if provided (expects data URL or base64 string)
   const hasLogo = !!order.companyLogo;
@@ -96,7 +79,14 @@ export const generateOrderPDF = (order: Order): jsPDF => {
   if (hasLogo) {
     try {
       // Place logo at top-left (align top with header area)
-      doc.addImage(order.companyLogo as string, 'PNG', margin, yPos, imgWidth, imgHeight);
+      doc.addImage(
+        order.companyLogo as string,
+        "PNG",
+        margin,
+        yPos,
+        imgWidth,
+        imgHeight,
+      );
     } catch (e) {
       // ignore image errors, continue with text-only header
     }
@@ -108,20 +98,22 @@ export const generateOrderPDF = (order: Order): jsPDF => {
   // Company name to the right of the logo (or at margin if no logo)
   const companyTextX = hasLogo ? margin + imgWidth + 4 : margin;
   doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.primary);
   doc.text(COMPANY_NAME, companyTextX, centerY);
 
   // Invoice title and reference on the right, vertically centered (smaller)
   doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.gray900);
-  doc.text('COMMANDE', pageWidth - margin, centerY - 3, { align: 'right' });
+  doc.text("COMMANDE", pageWidth - margin, centerY - 3, { align: "right" });
 
   doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray500);
-  doc.text(`N° ${order.reference}`, pageWidth - margin, centerY + 6, { align: 'right' });
+  doc.text(`N° ${order.reference}`, pageWidth - margin, centerY + 6, {
+    align: "right",
+  });
 
   // Ligne fine décorative juste sous l'en-tête
   doc.setDrawColor(...colors.primary);
@@ -133,16 +125,20 @@ export const generateOrderPDF = (order: Order): jsPDF => {
 
   // === BANDEAU DE STATUT MINIMAL ===
   doc.setFillColor(...colors.successLight);
-  doc.rect(margin, yPos, pageWidth - (margin * 2), 25, 'F');
+  doc.rect(margin, yPos, pageWidth - margin * 2, 25, "F");
 
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.success);
-  doc.text('✓', margin + 8, yPos + 16);
+  doc.text("✓", margin + 8, yPos + 16);
 
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray700);
-  doc.text('Commande confirmée - Un email vous a été envoyé', margin + 18, yPos + 16);
+  doc.text(
+    "Commande confirmée - Un email vous a été envoyé",
+    margin + 18,
+    yPos + 16,
+  );
 
   yPos += 40;
 
@@ -152,39 +148,44 @@ export const generateOrderPDF = (order: Order): jsPDF => {
 
   // Date
   doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray500);
-  doc.text('Date', col1X, yPos);
+  doc.text("Date", col1X, yPos);
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.gray900);
-  const formattedDate = new Date(order.created_at).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+  const formattedDate = new Date(order.created_at).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   });
   doc.text(formattedDate, col1X, yPos + 8);
 
   // Statut
   doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray500);
-  doc.text('Statut', col2X, yPos);
+  doc.text("Statut", col2X, yPos);
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  const statusLabel = typeof order.status === 'string' ? order.status : order.status.label;
+  doc.setFont("helvetica", "bold");
+  const statusLabel =
+    typeof order.status === "string" ? order.status : order.status.label;
   doc.setTextColor(...colors.success);
-  doc.text(statusLabel.charAt(0).toUpperCase() + statusLabel.slice(1), col2X, yPos + 8);
+  doc.text(
+    statusLabel.charAt(0).toUpperCase() + statusLabel.slice(1),
+    col2X,
+    yPos + 8,
+  );
 
   yPos += 25;
 
   // Montant total
   doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray500);
-  doc.text('Montant total', col1X, yPos);
+  doc.text("Montant total", col1X, yPos);
   doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.primary);
   doc.text(`${formatPrice(order.total_amount)} €`, col1X, yPos + 15);
 
@@ -197,59 +198,68 @@ export const generateOrderPDF = (order: Order): jsPDF => {
 
   // === TITRE ARTICLES SIMPLE ===
   doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.gray900);
-  doc.text('Articles', margin, yPos);
+  doc.text("Articles", margin, yPos);
 
   doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray500);
-  doc.text(`${order.items.length} article${order.items.length > 1 ? 's' : ''}`, margin + 45, yPos);
+  doc.text(
+    `${order.items.length} article${order.items.length > 1 ? "s" : ""}`,
+    margin + 45,
+    yPos,
+  );
 
   yPos += 8;
 
   // === TABLEAU DES ARTICLES ULTRA MINIMAL ===
-  const tableData = order.items.map(item => [
+  const tableData = order.items.map((item) => [
     item.product_name,
     item.quantity.toString(),
     `${formatPrice(item.unit_price)} €`,
-    `${formatPrice(item.subtotal)} €`
+    `${formatPrice(item.subtotal)} €`,
   ]);
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Produit', 'Qté', 'Prix unitaire', 'Total']],
+    head: [["Produit", "Qté", "Prix unitaire", "Total"]],
     body: tableData,
-    theme: 'plain',
+    theme: "plain",
     styles: {
       fontSize: 9,
       cellPadding: 6,
       lineColor: [...colors.gray200],
       lineWidth: 0.1,
-      textColor: [...colors.gray700]
+      textColor: [...colors.gray700],
     },
     headStyles: {
       fillColor: [...colors.gray50],
       textColor: [...colors.gray500],
-      fontStyle: 'normal',
+      fontStyle: "normal",
       fontSize: 8,
-      cellPadding: 4
+      cellPadding: 4,
     },
     bodyStyles: {
-      fillColor: [...colors.white]
+      fillColor: [...colors.white],
     },
     columnStyles: {
-      0: { cellWidth: 'auto' },
-      1: { halign: 'center', cellWidth: 20 },
-      2: { halign: 'right', cellWidth: 35 },
-      3: { halign: 'right', cellWidth: 35, fontStyle: 'bold', textColor: [...colors.primary] }
+      0: { cellWidth: "auto" },
+      1: { halign: "center", cellWidth: 20 },
+      2: { halign: "right", cellWidth: 35 },
+      3: {
+        halign: "right",
+        cellWidth: 35,
+        fontStyle: "bold",
+        textColor: [...colors.primary],
+      },
     },
     margin: { left: margin, right: margin },
     didParseCell: (data) => {
-      if (data.section === 'body' && data.column.index === 0) {
-        data.cell.styles.fontStyle = 'normal';
+      if (data.section === "body" && data.column.index === 0) {
+        data.cell.styles.fontStyle = "normal";
       }
-    }
+    },
   });
 
   const finalY = (doc as any).lastAutoTable.finalY;
@@ -263,14 +273,19 @@ export const generateOrderPDF = (order: Order): jsPDF => {
     doc.line(margin, recapY - 5, pageWidth - margin, recapY - 5);
 
     doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "normal");
     doc.setTextColor(...colors.gray700);
-    doc.text('Livraison', margin, recapY);
+    doc.text("Livraison", margin, recapY);
     doc.text(order.delivery.name, margin + 50, recapY);
 
-    doc.setFont('helvetica', 'bold');
+    doc.setFont("helvetica", "bold");
     doc.setTextColor(...colors.gray900);
-    doc.text(`${formatPrice(order.delivery.price)} €`, pageWidth - margin, recapY, { align: 'right' });
+    doc.text(
+      `${formatPrice(order.delivery.price)} €`,
+      pageWidth - margin,
+      recapY,
+      { align: "right" },
+    );
 
     recapY += 15;
   }
@@ -281,14 +296,19 @@ export const generateOrderPDF = (order: Order): jsPDF => {
   doc.line(margin, recapY - 2, pageWidth - margin, recapY - 2);
 
   doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.gray900);
-  doc.text('TOTAL TTC', margin, recapY + 5);
+  doc.text("TOTAL TTC", margin, recapY + 5);
 
   doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...colors.primary);
-  doc.text(`${formatPrice(order.total_amount)} €`, pageWidth - margin, recapY + 5, { align: 'right' });
+  doc.text(
+    `${formatPrice(order.total_amount)} €`,
+    pageWidth - margin,
+    recapY + 5,
+    { align: "right" },
+  );
 
   // === PIED DE PAGE MINIMAL ===
   const footerY = pageHeight - 15;
@@ -298,31 +318,24 @@ export const generateOrderPDF = (order: Order): jsPDF => {
   doc.line(margin, footerY - 5, pageWidth - margin, footerY - 5);
 
   doc.setFontSize(7);
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray400);
-  doc.text(
-    new Date().toLocaleDateString('fr-FR'),
-    margin,
-    footerY
-  );
+  doc.text(new Date().toLocaleDateString("fr-FR"), margin, footerY);
 
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray400);
   doc.text(
-    'Commande générée automatiquement - Atoum-ra Mbianga',
+    "Commande générée automatiquement - Atoum-ra Mbianga",
     pageWidth / 2,
     footerY,
-    { align: 'center' }
+    { align: "center" },
   );
 
-  doc.setFont('helvetica', 'normal');
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...colors.gray400);
-  doc.text(
-    `#${order.reference.slice(-6)}`,
-    pageWidth - margin,
-    footerY,
-    { align: 'right' }
-  );
+  doc.text(`#${order.reference.slice(-6)}`, pageWidth - margin, footerY, {
+    align: "right",
+  });
 
   return doc;
 };
