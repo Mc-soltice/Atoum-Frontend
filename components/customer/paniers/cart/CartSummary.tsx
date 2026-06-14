@@ -80,7 +80,7 @@ export default function CartSummary({
           {totalSavings > 0 && (
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Économies</span>
-              <span className="font-semibold text-emerald-600">
+              <span className="font-semibold text-amber-600">
                 -{totalSavings.toLocaleString()}€
               </span>
             </div>
@@ -91,7 +91,7 @@ export default function CartSummary({
 
           {/* Total */}
           <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold text-green">Total</span>
+            <span className="text-lg font-semibold text-amber">Total</span>
             <div className="text-right">
               <div className="text-2xl font-bold text-gray-900">
                 {total.toLocaleString()}€
@@ -113,7 +113,7 @@ export default function CartSummary({
                 flex items-center justify-center gap-2
                 ${items.length === 0
                   ? "text-gray-700 font-semibold border-2 border-orange cursor-not-allowed"
-                  : "text-white font-semibold bg-linear-to-r from-orange-500 to-green-500 hover:from-orange-600 hover:to-green-600 shadow-md hover:shadow-lg"
+                  : "text-white font-semibold bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-md hover:shadow-lg"
                 }
                   
               `}
@@ -160,7 +160,7 @@ export default function CartSummary({
         {/* Garanties */}
         <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-emerald-500" />
+            <Shield className="w-4 h-4 text-amber-500" />
             <span>Paiement sécurisé</span>
           </div>
           <div className="flex items-center gap-2">

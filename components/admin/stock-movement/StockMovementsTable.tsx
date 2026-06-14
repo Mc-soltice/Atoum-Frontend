@@ -1,9 +1,9 @@
 // components/admin/stock-movement/StockMovementsTable.tsx
 "use client";
 
-import type { StockMovement } from "@/types/stock-movement";
 import Filter from "@/components/admin/Filter";
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import type { StockMovement } from "@/types/stock-movement";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 interface StockMovementsTableProps {
   movements: StockMovement[];
@@ -156,7 +156,7 @@ const StockMovementsTable = forwardRef<{ getFilteredData: () => StockMovement[] 
                       <span className={`
     inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
     ${movement.movement_type === 'in'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-amber-100 text-amber-800'
                           : 'bg-red-100 text-red-800'
                         }
   `}>

@@ -1,17 +1,17 @@
 // app/admin/stock-movements/page.tsx
 "use client";
 
-import "ldrs/react/Waveform.css";
-import { Waveform } from "ldrs/react";
-import { Download, Package, AlertCircle, RefreshCw, Calendar, TrendingUp, TrendingDown } from "lucide-react";
-import { useEffect, useState, useCallback } from "react";
-import type { StockMovement } from "@/types/stock-movement";
 import StockMovementsTable from "@/components/admin/stock-movement/StockMovementsTable";
+import { useAuthContext } from "@/contexte/AuthContext";
+import { useOrders } from "@/contexte/OrderContext";
+import type { StockMovement } from "@/types/stock-movement";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { useOrders } from "@/contexte/OrderContext";
-import { useAuthContext } from "@/contexte/AuthContext";
+import { Waveform } from "ldrs/react";
+import "ldrs/react/Waveform.css";
+import { AlertCircle, Calendar, Download, Package, RefreshCw, TrendingDown, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 /**
@@ -390,7 +390,7 @@ export default function StockMovementsPage() {
 
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
+            <div className="p-2 bg-amber-100 rounded-lg">
               <TrendingDown className="w-5 h-5 text-slate-900" />
             </div>
             <div>

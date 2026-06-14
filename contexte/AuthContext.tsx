@@ -2,7 +2,7 @@
 
 import { authService } from "@/services/auth.service";
 import type { CreateUserPayload, User } from "@/types/user";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: session, status } = useSession();  // ← ajout
+  const { data: session, status } = useSession(); // ← ajout
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,19 +29,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (status === "loading") return;
 
-    if (status === "authenticated" && session?.user) {
-      // Connecté via NextAuth
-      setUser(session.user as User);
-      if (session.accessToken) {
-        localStorage.setItem("auth_token", session.accessToken as string);
+    const initializeUser = async () => {
+      if (status === "authenticated" && session?.user) {
+        setUser(session.user as User);
+        if (session.accessToken) {
+          localStorage.setItem("auth_token", session.accessToken as string);
+        }
+        setLoading(false);
+        return;
       }
-    } else {
-      // Non connecté — pas d'erreur, juste user null
-      setUser(null);
-      localStorage.removeItem("auth_token");
-    }
 
-    setLoading(false); // ← dans tous les cas, on arrête le loading
+      // Récupérer l'utilisateur via le token stocké si la session NextAuth n'est pas active
+      if (typeof window !== "undefined") {
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+          try {
+            const me = await authService.me();
+            setUser(me);
+          } catch (error) {
+            localStorage.removeItem("auth_token");
+            setUser(null);
+          } finally {
+            setLoading(false);
+          }
+          return;
+        }
+      }
+
+      setUser(null);
+      setLoading(false);
+    };
+
+    initializeUser();
   }, [session, status]);
 
   const redirectAfterAuth = (user: User) => {
@@ -85,10 +104,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await authService.logout(); // optionnel si API
     } catch (e) {
       console.error("Logout failed:", e);
-      // on s'en fiche si l'API échoue
     } finally {
       localStorage.removeItem("auth_token");
       setUser(null);
+      await signOut({ redirect: false });
       router.replace("/home");
     }
   };

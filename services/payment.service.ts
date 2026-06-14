@@ -14,11 +14,11 @@ class PaymentService {
    * Auth : Sanctum Bearer token (envoyé automatiquement par axios.ts)
    */
   async createPaymentIntent(
-    payload: CreatePaymentIntentPayload
+    payload: CreatePaymentIntentPayload,
   ): Promise<CreatePaymentIntentResponse> {
     const response = await api.post<CreatePaymentIntentResponse>(
       "/payments/create-intent",
-      payload
+      payload,
     );
     return response.data;
   }
@@ -29,13 +29,10 @@ class PaymentService {
    *
    * Route Laravel attendue : POST /api/payments/verify
    */
-  async verifyPayment(
-    paymentIntentId: string
-  ): Promise<VerifyPaymentResponse> {
-    const response = await api.post<VerifyPaymentResponse>(
-      "/payments/verify",
-      { payment_intent_id: paymentIntentId }
-    );
+  async verifyPayment(paymentIntentId: string): Promise<VerifyPaymentResponse> {
+    const response = await api.post<VerifyPaymentResponse>("/payments/verify", {
+      payment_intent_id: paymentIntentId,
+    });
     return response.data;
   }
 }

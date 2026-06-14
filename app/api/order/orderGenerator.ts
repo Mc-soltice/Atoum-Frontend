@@ -57,12 +57,12 @@ export const generateOrderPDF = (order: Order): jsPDF => {
   const pageHeight = doc.internal.pageSize.height;
   const margin = 20;
 
-  // Palette de couleurs minimaliste - green 600 (#d97706)
+  // Palette de couleurs minimaliste - amber 600 (#d97706)
   const colors = {
-    primary: [217, 119, 6] as [number, number, number], // green-600
-    primaryLight: [254, 243, 199] as [number, number, number], // green-100
-    success: [16, 185, 129] as [number, number, number], // Emerald-500 (gardé pour le succès)
-    successLight: [236, 253, 245] as [number, number, number], // Emerald-50
+    primary: [217, 119, 6] as [number, number, number], // amber-600
+    primaryLight: [254, 243, 199] as [number, number, number], // amber-100
+    success: [16, 185, 129] as [number, number, number], // amber-500 (gardé pour le succès)
+    successLight: [236, 253, 245] as [number, number, number], // amber-50
     gray900: [17, 24, 39] as [number, number, number],
     gray700: [55, 65, 81] as [number, number, number],
     gray500: [107, 114, 128] as [number, number, number],

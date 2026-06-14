@@ -78,7 +78,7 @@ export default function OrderSuccessPage() {
 
   if (loading) {
     return (
-      <div className="max-h-[50vh] bg-linear-to-b from-green-50 to-white py-10 px-4">
+      <div className="max-h-[50vh] bg-linear-to-b from-amber-50 to-white py-10 px-4">
         <div className="max-w-2xl mx-auto text-center py-12">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4"></div>
@@ -91,7 +91,7 @@ export default function OrderSuccessPage() {
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-linear-to-b from-green-50 to-white py-12 px-4">
+      <div className="min-h-screen bg-linear-to-b from-amber-50 to-white py-12 px-4">
         <div className="max-w-2xl mx-auto text-center py-12">
           <p className="text-gray-600">Commande non trouvée</p>
         </div>
@@ -100,11 +100,11 @@ export default function OrderSuccessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-green-50 to-white py-12 px-4">
+    <div className="min-h-screen bg-linear-to-b from-amber-50 to-white py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* En-tête de succès */}
         <div className="text-center mb-8">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <CheckCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Commande Confirmée</h1>
           <p className="text-gray-600">Votre commande a été traitée avec succès</p>
         </div>
@@ -121,7 +121,7 @@ export default function OrderSuccessPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Statut</p>
-                <p className="text-xl font-semibold text-green-600 capitalize">
+                <p className="text-xl font-semibold text-amber-600 capitalize">
                   {order.status.label || order.status.value}
                 </p>
               </div>
@@ -220,8 +220,8 @@ export default function OrderSuccessPage() {
             </div>
 
             {/* Message de confirmation */}
-            <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-100">
-              <p className="text-green-800 text-center">
+            <div className="mt-6 p-4 bg-amber-50 rounded-lg border border-amber-100">
+              <p className="text-amber-800 text-center">
                 ✓ Un email de confirmation a été envoyé à votre adresse email avec tous les détails de votre commande.
               </p>
             </div>
@@ -237,7 +237,7 @@ export default function OrderSuccessPage() {
             <div className="relative px-4 py-2 text-lg font-medium flex items-center gap-2 text-gray-900 group-hover:text-white transition-colors duration-300">
               <Store className="w-5 h-5" />
               <span>Retour à la boutique</span>
-              <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             </div>
           </button>
           <button
@@ -247,7 +247,7 @@ export default function OrderSuccessPage() {
             <div className="relative px-4 py-2 text-lg font-medium flex items-center gap-2 text-gray-900 group-hover:text-white transition-colors duration-300">
               <Download className="w-5 h-5" />
               <span>Telecharger le bon de Commande</span>
-              <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+              <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
             </div>
           </button>
         </div>

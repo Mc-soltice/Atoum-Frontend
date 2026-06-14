@@ -19,11 +19,7 @@ export default function ProductImage({
   const [hasError, setHasError] = useState(false);
 
   // Configuration centralisée des domaines qui nécessitent unoptimized=true
-  const UNOPTIMIZED_DOMAINS = [
-    "trycloudflare.com",
-    "localhost",
-    "127.0.0.1"
-  ];
+  const UNOPTIMIZED_DOMAINS = ["trycloudflare.com", "localhost", "127.0.0.1"];
 
   // Image absente
   if (!src || hasError) {

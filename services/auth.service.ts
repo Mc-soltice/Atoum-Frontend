@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import type { User, CreateUserPayload } from "@/types/user";
+import type { CreateUserPayload, User } from "@/types/user";
 
 interface AuthResponse {
   token: string;
@@ -7,7 +7,6 @@ interface AuthResponse {
 }
 
 export const authService = {
-
   async login(email: string, password: string): Promise<AuthResponse> {
     try {
       const { data } = await api.post<AuthResponse>("/login", {
@@ -24,7 +23,6 @@ export const authService = {
       throw error;
     }
   },
-
 
   async register(payload: CreateUserPayload): Promise<AuthResponse> {
     try {
@@ -52,8 +50,17 @@ export const authService = {
       localStorage.removeItem("auth_token");
     } catch (error) {
       console.error("Logout error:", error);
-      // Même en cas d'erreur, on nettoie le token localement
       localStorage.removeItem("auth_token");
+      throw error;
+    }
+  },
+
+  async me(): Promise<User> {
+    try {
+      const { data } = await api.get<User>("/users/me");
+      return data;
+    } catch (error) {
+      console.error("Me fetch error:", error);
       throw error;
     }
   },

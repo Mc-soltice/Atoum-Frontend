@@ -5,10 +5,13 @@ import CheckoutActions from "@/components/customer/checkouts/CheckoutActions";
 import CheckoutAddressForm from "@/components/customer/checkouts/CheckoutAddressForm";
 import CheckoutPayment from "@/components/customer/checkouts/CheckoutPayment";
 import CheckoutSummary from "@/components/customer/checkouts/CheckoutSummary";
+import StripePaymentElement from "@/components/customer/checkouts/StripePaymentElement";
+import StripeProvider from "@/components/providers/StripeProvider";
 import { useAuthContext } from "@/contexte/AuthContext";
 import { useOrders } from "@/contexte/OrderContext";
 import { CartToaster, useCart } from "@/contexte/panier/CartContext";
 import { useDeliveryCheckout } from "@/hooks/useDeliveryCheckout";
+import { paymentService } from "@/services/payment.service";
 import { DeliveryOption } from "@/types/delivery";
 import { PaymentInfo, ShippingAddress } from "@/types/order";
 import {
@@ -22,9 +25,6 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { paymentService } from "@/services/payment.service";
-import StripeProvider from "@/components/providers/StripeProvider";
-import StripePaymentElement from "@/components/customer/checkouts/StripePaymentElement";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -37,7 +37,6 @@ export default function CheckoutPage() {
     selectDelivery,
     getDeliveryPrice,
   } = useDeliveryCheckout();
-
 
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useAuthContext();
@@ -61,16 +60,18 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentInfo["method"]>("cash_on_delivery");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [stripePaymentIntentId, setStripePaymentIntentId] =
-    useState<string | null>(null);
+  const [stripePaymentIntentId, setStripePaymentIntentId] = useState<
+    string | null
+  >(null);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [stripeLoading, setStripeLoading] = useState(false);
 
   const steps = [
     { id: 1, name: "Adresse", icon: "📍" },
     { id: 2, name: "Livraison", icon: "🚚" },
-    { id: 3, name: "Paiement", icon: "💳" },
-    { id: 4, name: "Confirmation", icon: "✅" },
+    { id: 3, name: "Récapitulatif", icon: "✅" },
+    { id: 4, name: "Paiement", icon: "💳" },
   ];
 
   const validateStep = (step: number): boolean => {
@@ -86,8 +87,12 @@ export default function CheckoutPage() {
       case 2:
         return !!deliveryOption;
       case 3:
+        // Récapitulatif : aucune validation supplémentaire, les étapes précédentes suffisent
+        return true;
+      case 4:
+        // Paiement : vérifier qu'une méthode a été choisie (ou que Stripe a un payment intent)
         if (paymentMethod === "stripe") {
-          return !!stripePaymentIntentId;
+          return !!stripePaymentIntentId || !!clientSecret;
         }
         return !!paymentMethod;
       default:
@@ -119,6 +124,28 @@ export default function CheckoutPage() {
     }
 
     try {
+      // Si paiement par Stripe, vérifier le payment intent (commande créée lors de l'init)
+      if (paymentMethod === "stripe") {
+        if (!stripePaymentIntentId || !createdOrderId) {
+          alert("Veuillez compléter le paiement avant de valider la commande.");
+          return;
+        }
+
+        const verification = await paymentService.verifyPayment(
+          stripePaymentIntentId,
+        );
+        if (verification.success) {
+          clearCart();
+          const orderId = verification.order_id || createdOrderId;
+          router.push(`/order-success/${orderId}`);
+          return;
+        } else {
+          alert(verification.message || "Le paiement n'a pas pu être vérifié.");
+          return;
+        }
+      }
+
+      // Paiement autre (ex: cash_on_delivery) -> créer la commande maintenant
       const orderItems = items.map((item) => ({
         product_id: item.product.id,
         quantity: item.quantity,
@@ -130,10 +157,6 @@ export default function CheckoutPage() {
         delivery_option_id: deliveryOption.id,
         payment_method: paymentMethod,
         delivery_price: getDeliveryPrice(),
-        stripe_payment_intent_id:
-          paymentMethod === "stripe" && stripePaymentIntentId
-            ? stripePaymentIntentId
-            : undefined,
       });
 
       clearCart();
@@ -155,7 +178,9 @@ export default function CheckoutPage() {
 
   const createStripeClientSecret = async () => {
     if (!deliveryOption) {
-      setStripeError("Veuillez sélectionner une option de livraison avant de payer.");
+      setStripeError(
+        "Veuillez sélectionner une option de livraison avant de payer.",
+      );
       return;
     }
 
@@ -163,10 +188,31 @@ export default function CheckoutPage() {
     setStripeLoading(true);
 
     try {
+      // Si aucune commande n'a été créée, créer la commande en amont (payment_method = stripe)
+      let orderId = createdOrderId;
+      if (!orderId) {
+        const orderItems = items.map((item) => ({
+          product_id: item.product.id,
+          quantity: item.quantity,
+        }));
+
+        const order = await createOrderFromCart({
+          items: orderItems,
+          shipping_address: shippingAddress,
+          delivery_option_id: deliveryOption.id,
+          payment_method: "stripe",
+          delivery_price: getDeliveryPrice(),
+        });
+
+        orderId = order.id;
+        setCreatedOrderId(orderId);
+      }
+
       const result = await paymentService.createPaymentIntent({
-        amount: orderSummary.total,
+        order_id: orderId,
       });
       setClientSecret(result.client_secret);
+      console.log("createPaymentIntent result:", result);
     } catch (error) {
       console.error("Erreur création Payment Intent:", error);
       setStripeError("Impossible de démarrer le paiement Stripe.");
@@ -177,7 +223,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (paymentMethod === "stripe") {
-      if (!clientSecret && currentStep === 3 && !stripeLoading) {
+      if (!clientSecret && currentStep === 4 && !stripeLoading) {
         createStripeClientSecret();
       }
     } else {
@@ -190,7 +236,7 @@ export default function CheckoutPage() {
 
   const handleStripeSuccess = (paymentIntentId: string) => {
     setStripePaymentIntentId(paymentIntentId);
-    setCurrentStep(4);
+    // Laisser l'utilisateur sur l'étape paiement et autoriser la soumission
   };
 
   const handleStripeError = (message: string) => {
@@ -231,9 +277,10 @@ export default function CheckoutPage() {
                       w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm
                       border-2 transition-all duration-500 ease-out
                       relative overflow-hidden
-                      ${currentStep >= step.id
-                        ? "bg-primary text-white border-primary scale-110"
-                        : "bg-white text-gray-500 border-gray-300"
+                      ${
+                        currentStep >= step.id
+                          ? "bg-primary text-white border-primary scale-110"
+                          : "bg-white text-gray-500 border-gray-300"
                       }
                       ${currentStep === step.id ? "ring-4 ring-primary/30" : ""}
                     `}
@@ -254,9 +301,10 @@ export default function CheckoutPage() {
                   <div
                     className={`
                       h-1 w-1 rounded-full mt-1 transition-all duration-300
-                      ${currentStep === step.id
-                        ? "bg-primary scale-150"
-                        : "bg-transparent"
+                      ${
+                        currentStep === step.id
+                          ? "bg-primary scale-150"
+                          : "bg-transparent"
                       }
                     `}
                   ></div>
@@ -320,7 +368,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {currentStep === 3 && (
+              {currentStep === 4 && (
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
                     <span className="text-slate-600">
@@ -336,7 +384,9 @@ export default function CheckoutPage() {
                   {paymentMethod === "stripe" && (
                     <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-6">
                       {stripeLoading && (
-                        <div className="text-gray-600">Initialisation du paiement Stripe...</div>
+                        <div className="text-gray-600">
+                          Initialisation du paiement Stripe...
+                        </div>
                       )}
 
                       {stripeError && (
@@ -355,9 +405,16 @@ export default function CheckoutPage() {
                         </StripeProvider>
                       ) : null}
 
+                      {/* DEBUG: afficher le client_secret (temporaire) */}
+                      {clientSecret && !stripePaymentIntentId && (
+                        <div className="mt-2 text-xs text-gray-500">
+                          client_secret: {clientSecret}
+                        </div>
+                      )}
+
                       {stripePaymentIntentId && (
-                        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-green-700">
-                          Paiement Stripe initialisé avec succès. Vous pouvez passer à la dernière étape.
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-700">
+                          Paiement Stripe initialisé avec succès.
                         </div>
                       )}
                     </div>
@@ -365,7 +422,7 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              {currentStep === 4 && (
+              {currentStep === 3 && (
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
                     <span className="text-slate-600">
@@ -458,10 +515,11 @@ export default function CheckoutPage() {
                 <button
                   onClick={handlePrevStep}
                   disabled={currentStep === 1}
-                  className={`px-6 py-3 rounded-lg font-medium transition-all ${currentStep === 1
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
-                    }`}
+                  className={`px-6 py-3 rounded-lg font-medium transition-all ${
+                    currentStep === 1
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-gray-600 hover:text-gray-800 hover:bg-gray-100"
+                  }`}
                 >
                   ← Retour
                 </button>
@@ -470,10 +528,11 @@ export default function CheckoutPage() {
                   <button
                     onClick={handleNextStep}
                     disabled={!validateStep(currentStep)}
-                    className={`px-8 py-3 rounded-lg font-medium transition-all ${validateStep(currentStep)
-                      ? "bg-linear-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      }`}
+                    className={`px-8 py-3 rounded-lg font-medium transition-all ${
+                      validateStep(currentStep)
+                        ? "bg-linear-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
                   >
                     Continuer →
                   </button>
@@ -607,10 +666,11 @@ function DeliveryOptionCard({
   return (
     <div
       onClick={() => onSelect(option)}
-      className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${selected
-        ? "border-green-100 bg-primary/5"
-        : "border-gray-200 hover:border-gray-300"
-        } ${!option.is_active ? "opacity-50 cursor-not-allowed" : ""}`}
+      className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${
+        selected
+          ? "border-amber-100 bg-primary/5"
+          : "border-gray-200 hover:border-gray-300"
+      } ${!option.is_active ? "opacity-50 cursor-not-allowed" : ""}`}
     >
       <div className="flex items-start gap-3">
         <div className="text-2xl">{getIcon(option.name)}</div>
@@ -631,8 +691,9 @@ function DeliveryOptionCard({
           </div>
         </div>
         <div
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected ? "border-primary bg-primary" : "border-gray-300"
-            }`}
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+            selected ? "border-primary bg-primary" : "border-gray-300"
+          }`}
         >
           {selected && <div className="w-2 h-2 bg-white rounded-full"></div>}
         </div>

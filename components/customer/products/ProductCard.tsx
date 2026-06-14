@@ -31,7 +31,7 @@ export default function ProductCard({ product, onCartClick }: Props) {
 
       {/* Barre de progression au scroll */}
       <div className="absolute top-0 left-0 w-full h-0.5 bg-gray-100 z-20">
-        <div className="h-full bg-linear-to-r from-amber-500 to-emerald-500 w-0 group-hover:w-full transition-all duration-1000 ease-out" />
+        <div className="h-full bg-linear-to-r from-amber-500 to-amber-500 w-0 group-hover:w-full transition-all duration-1000 ease-out" />
       </div>
 
       {/* Image avec zoom dynamique */}
@@ -50,7 +50,7 @@ export default function ProductCard({ product, onCartClick }: Props) {
         {/* Badge de disponibilité - responsive */}
         {isAvailable ? (
           <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
-            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-green-500/95 backdrop-blur-sm rounded-full text-white shadow-lg">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-amber-500/95 backdrop-blur-sm rounded-full text-white shadow-lg">
               <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 animate-pulse" />
               <span className="text-[10px] sm:text-xs font-semibold">Stock</span>
             </div>
@@ -120,7 +120,7 @@ export default function ProductCard({ product, onCartClick }: Props) {
 
               {/* Remplissage au survol */}
               {isAvailable && (
-                <div className="absolute inset-0 bg-green-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                <div className="absolute inset-0 bg-amber-500 -z-10 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-300 ease-out" />
               )}
             </div>
           </button>

@@ -111,7 +111,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
       {/* Galerie d'images */}
       <div className="w-full space-y-4">
         {/* Image principale */}
-        <div className="aspect-square w-full bg-linear-to-br from-emerald-50 to-green-50 rounded-lg flex items-center justify-center border border-emerald-100 overflow-hidden">
+        <div className="aspect-square w-full bg-linear-to-br from-amber-50 to-amber-50 rounded-lg flex items-center justify-center border border-amber-100 overflow-hidden">
           <ProductImage
             src={product.main_image}
             alt={product.name}
@@ -128,8 +128,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
                 key={index}
                 onClick={() => setSelectedImage(index)}
                 className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${selectedImage === index
-                  ? "border-green-400 ring-2 ring-green-200"
-                  : "border-green-100 hover:border-green-300"
+                  ? "border-amber-400 ring-2 ring-amber-200"
+                  : "border-amber-100 hover:border-amber-300"
                   }`}
               >
                 <ProductImage
@@ -144,8 +144,8 @@ export default function ProductClient({ productId }: ProductClientProps) {
 
             {/* Si on a plus de 3 images, montrer un indicateur */}
             {productImages.length > 3 && (
-              <div className="aspect-square rounded-lg border border-green-100 bg-green-50 flex items-center justify-center">
-                <span className="text-sm font-medium text-green-700">
+              <div className="aspect-square rounded-lg border border-amber-100 bg-amber-50 flex items-center justify-center">
+                <span className="text-sm font-medium text-amber-700">
                   +{productImages.length - 3}
                 </span>
               </div>
@@ -174,7 +174,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         {/* En-tête */}
         <header>
           <div className="mb-2">
-            <span className="inline-block px-2.5 py-0.5 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200">
+            <span className="inline-block px-2.5 py-0.5 text-xs font-medium text-amber-700 bg-amber-50 rounded-full border border-amber-200">
               {product.category?.name || "Sans catégorie"}
             </span>
           </div>
@@ -188,7 +188,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <div>
-              <span className="text-2xl font-bold text-green-700">
+              <span className="text-2xl font-bold text-amber-700">
                 {product.price.toLocaleString()} €
               </span>
               {product.original_price &&
@@ -201,13 +201,13 @@ export default function ProductClient({ productId }: ProductClientProps) {
 
             <div className="text-sm">
               {product.stock > 10 ? (
-                <span className="flex items-center text-emerald-600">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
+                <span className="flex items-center text-amber-600">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
                   En stock
                 </span>
               ) : product.stock > 0 ? (
-                <span className="flex items-center text-green-600">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                <span className="flex items-center text-amber-600">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full mr-2"></span>
                   Plus que {product.stock}
                 </span>
               ) : (
@@ -220,7 +220,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
           </div>
 
           {product.original_price && product.original_price > product.price && (
-            <div className="inline-block px-3 py-1 bg-linear-to-r from-orange-500 to-green-500 text-white text-sm font-bold rounded-full mt-2">
+            <div className="inline-block px-3 py-1 bg-linear-to-r from-orange-500 to-amber-500 text-white text-sm font-bold rounded-full mt-2">
               Économisez{" "}
               {Math.round((1 - product.price / product.original_price) * 100)}%
             </div>
@@ -236,7 +236,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         {(product.ingredients ||
           product.benefits ||
           product.usage_instructions) && (
-            <div className="rounded-lg p-4 border border-emerald-100">
+            <div className="rounded-lg p-4 border border-amber-100">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 Détails
               </h3>
@@ -246,20 +246,20 @@ export default function ProductClient({ productId }: ProductClientProps) {
                   key={index}
                   className="flex items-center text-gray-700 mb-2 last:mb-0"
                 >
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-3"></span>
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-3"></span>
                   <span className="text-sm">{ingredient}</span>
                 </div>
               ))}
 
               {product.benefits?.[0] && (
-                <div className="flex items-center text-gray-700 mt-3 pt-3 border-t border-emerald-100">
+                <div className="flex items-center text-gray-700 mt-3 pt-3 border-t border-amber-100">
                   <Heart className="w-4 h-4 mr-3 text-rose-500" />
                   <span className="text-sm">Aport : {product.benefits[0]}</span>
                 </div>
               )}
 
               {product.usage_instructions && (
-                <div className="flex items-center text-gray-700 mt-3 pt-3 border-t border-emerald-100">
+                <div className="flex items-center text-gray-700 mt-3 pt-3 border-t border-amber-100">
                   <span className="w-1.5 h-1.5 bg-blue-500 rounded-full mr-3"></span>
                   <span className="text-sm">
                     Prise: {product.usage_instructions}
@@ -273,7 +273,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         <div>
           <button
             onClick={handleAddToCart}
-            className="btn rounded-lg bg-linear-to-r from-orange-500 to-green-500 text-white w-full py-3 text-base hover:from-orange-600 hover:to-green-600 transition-all duration-300 shadow-sm hover:shadow"
+            className="btn rounded-lg bg-linear-to-r from-orange-500 to-amber-500 text-white w-full py-3 text-base hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-sm hover:shadow"
             disabled={product.stock === 0}
           >
             <ShoppingCart className="inline-block mr-2 w-5 h-5" />
@@ -285,7 +285,7 @@ export default function ProductClient({ productId }: ProductClientProps) {
         <div className="border-t border-gray-300 pt-4">
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex items-center text-gray-600">
-              <Shield className="w-4 h-4 mr-2 text-emerald-500" />
+              <Shield className="w-4 h-4 mr-2 text-amber-500" />
               <span>Garantie 30 jours</span>
             </div>
             <div className="flex items-center text-gray-600">

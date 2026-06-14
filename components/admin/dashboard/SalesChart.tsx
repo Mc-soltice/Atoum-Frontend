@@ -1,8 +1,8 @@
 // components/admin/dashboard/SalesChart.tsx
 "use client";
 
-import { useState } from "react";
 import { TrendingUp } from "lucide-react";
+import { useState } from "react";
 
 const chartData = [
   { month: 'Jan', sales: 4000 },
@@ -36,11 +36,10 @@ export default function SalesChart() {
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-3 py-1.5 text-sm rounded-lg ${
-                timeRange === range
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              className={`px-3 py-1.5 text-sm rounded-lg ${timeRange === range
+                ? 'bg-amber-100 text-amber-700'
+                : 'text-gray-600 hover:bg-gray-100'
+                }`}
             >
               {range === 'week' && 'Semaine'}
               {range === 'month' && 'Mois'}
@@ -53,12 +52,12 @@ export default function SalesChart() {
       {/* Légende */}
       <div className="flex items-center mb-8">
         <div className="flex items-center mr-6">
-          <div className="w-3 h-3 bg-emerald-500 rounded-full mr-2"></div>
+          <div className="w-3 h-3 bg-amber-500 rounded-full mr-2"></div>
           <span className="text-sm text-gray-600">Ventes 2024</span>
         </div>
         <div className="flex items-center">
-          <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
-          <span className="text-sm text-green-600">+12.5% vs dernière année</span>
+          <TrendingUp className="h-4 w-4 text-amber-500 mr-1" />
+          <span className="text-sm text-amber-600">+12.5% vs dernière année</span>
         </div>
       </div>
 
@@ -69,7 +68,7 @@ export default function SalesChart() {
           return (
             <div key={index} className="flex-1 flex flex-col items-center">
               <div
-                className="w-full bg-linear-to-t from-emerald-500 to-emerald-300 rounded-t-lg transition-all hover:opacity-80"
+                className="w-full bg-linear-to-t from-amber-500 to-amber-300 rounded-t-lg transition-all hover:opacity-80"
                 style={{ height: `${height}%` }}
               />
               <span className="mt-2 text-xs text-gray-500">{data.month}</span>

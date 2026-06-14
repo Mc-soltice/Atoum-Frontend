@@ -81,7 +81,7 @@ function DeliveryOptionCard({
     <div
       onClick={() => onSelect(option)}
       className={`p-4 border-2 rounded-xl cursor-pointer transition-all ${selected
-        ? "border-green-100 bg-primary/5"
+        ? "border-amber-100 bg-primary/5"
         : "border-gray-200 hover:border-gray-300"
         } ${!option.is_active ? "opacity-50 cursor-not-allowed" : ""}`}
     >

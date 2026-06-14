@@ -107,7 +107,7 @@ export default function DeliveryOptions() {
                   className="
                     absolute -top-2 -right-2
                     w-6 h-6
-                    bg-linear-to-r from-orange-500 to-green-500
+                    bg-linear-to-r from-orange-500 to-amber-500
                     text-white
                     rounded-full flex items-center justify-center
                     shadow-md
@@ -144,7 +144,7 @@ export default function DeliveryOptions() {
                       : "Gratuit"}
                   </div>
                   {Number(option.price) === 0 && (
-                    <div className="text-xs text-emerald-600 font-medium mt-1">
+                    <div className="text-xs text-amber-600 font-medium mt-1">
                       Économisez sur la livraison
                     </div>
                   )}

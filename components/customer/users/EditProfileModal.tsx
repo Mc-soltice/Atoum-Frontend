@@ -340,16 +340,16 @@ function Input({
         <input
           {...props}
           className={`w-full border rounded-lg px-4 py-2.5 text-sm transition ${isDirty
-            ? 'border-green-300 bg-green-50/50 focus:ring-green-500'
+            ? 'border-amber-300 bg-amber-50/50 focus:ring-amber-500'
             : error
               ? 'border-red-300 focus:ring-red-500'
               : success
-                ? 'border-green-300 focus:ring-green-500'
+                ? 'border-amber-300 focus:ring-amber-500'
                 : 'border-neutral-300 focus:ring-neutral-900'
             } focus:outline-none focus:ring-2 focus:border-transparent`}
         />
         {isDirty && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xs">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-amber-500 text-xs">
             Modifié
           </span>
         )}
@@ -358,7 +358,7 @@ function Input({
         <p className="mt-1 text-xs text-red-600">{error}</p>
       )}
       {success && !error && (
-        <p className="mt-1 text-xs text-green-600">{success}</p>
+        <p className="mt-1 text-xs text-amber-600">{success}</p>
       )}
     </div>
   );
