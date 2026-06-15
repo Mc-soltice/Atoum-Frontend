@@ -165,14 +165,13 @@ export default function ProductsClient({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-linear-to-br from-[#8BC34A]/20 via-[#558B2F]/10 to-[#8BC34A]/20 lg:px-50"
+      className="min-h-screen bg-linear-to-br from-amber-50/80 via-orange-50/60 to-rose-50/80 lg:px-50"
     >
       {/* En-tête avec fil d'ariane */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="bg-white border-b border-gray-200"
       >
         <div className="container mx-auto px-4 py-6">
           <Breadcrumbs items={breadcrumbs} />
@@ -182,7 +181,7 @@ export default function ProductsClient({
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="relative overflow-hidden rounded-2xl mb-8 mt-4"
+            className="relative overflow-hidden rounded-2xl mb-8 mt-4 bg-white"
           >
             {/* Dégradé animé - Style vert priaire */}
             <div className="absolute inset-0 bg-linear-to-r from-[#558B2F] via-[#8BC34A] to-[#558B2F] animate-gradient" />
@@ -224,7 +223,7 @@ export default function ProductsClient({
                 className="text-3xl md:text-5xl font-bold text-white mb-4"
               >
                 Découvrez nos Produits
-                <span className="block text-[#8BC34A] mt-2">
+                <span className="block font-bold text-white mt-2">
                   d&apos;Exception 🌿
                 </span>
               </motion.h1>
@@ -263,7 +262,7 @@ export default function ProductsClient({
             transition={{ delay: 0.1, duration: 0.3 }}
             className="mt-4 relative"
           >
-            <div className="relative">
+            <div className="relative bg-white border-b border-gray-200 ">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
@@ -534,7 +533,7 @@ export default function ProductsClient({
             animate="visible"
             variants={slideInRight}
             transition={{ duration: 0.4 }}
-            className="flex-1"
+            className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-200"
           >
             {/* En-tête produits desktop */}
             <div className="hidden md:flex items-center justify-between mb-6">
@@ -562,7 +561,7 @@ export default function ProductsClient({
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="select select-bordered select-sm bg-white text-gray-700
-                           transition-all duration-200 focus:ring-2 focus:ring-[#8BC34A]"
+                  rounded-lg transition-all duration-200 focus:ring-2 focus:ring-[#8BC34A]"
                 >
                   <option value="default">Recommandé</option>
                   <option value="price-asc">Prix croissant</option>
@@ -605,7 +604,7 @@ export default function ProductsClient({
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                 >
                   {filteredProducts.map((product, index) => (
                     <motion.div

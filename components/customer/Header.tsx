@@ -9,7 +9,6 @@ import {
   Menu,
   Package,
   Search,
-  Settings,
   ShoppingBag,
   User,
   UserCircle,
@@ -383,15 +382,6 @@ export default function Header() {
                           Tableau de bord
                         </Link>
                       )}
-
-                      <Link
-                        href="/parametres"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-[#f2f9df] transition-colors"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <Settings className="w-4 h-4" />
-                        Paramètres
-                      </Link>
 
                       <div className="border-t border-[#dfeac4] mt-1 pt-1">
                         <button

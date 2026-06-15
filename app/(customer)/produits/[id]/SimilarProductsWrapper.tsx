@@ -1,16 +1,19 @@
 "use client";
 
+import SameProductCarousel from "@/components/customer/products/SameProductCarousel";
 import { useProducts } from "@/contexte/ProductContext";
 import { Product } from "@/types/product";
-import SameProductCarousel from "@/components/customer/products/SameProductCarousel";
 import { useEffect, useState } from "react";
 
 interface SimilarProductsWrapperProps {
   productId: string;
 }
 
-export default function SimilarProductsWrapper({ productId }: SimilarProductsWrapperProps) {
-  const { currentProduct, products, loading, fetchProductById, fetchProducts } = useProducts();
+export default function SimilarProductsWrapper({
+  productId,
+}: SimilarProductsWrapperProps) {
+  const { currentProduct, products, loading, fetchProductById, fetchProducts } =
+    useProducts();
   const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function SimilarProductsWrapper({ productId }: SimilarProductsWra
         .filter(
           (p) =>
             p.category?.id === currentProduct.category?.id &&
-            p.id !== currentProduct.id
+            p.id !== currentProduct.id,
         )
         .slice(0, 6); // Limiter à 6 produits
       setSimilarProducts(similar);
@@ -43,6 +46,8 @@ export default function SimilarProductsWrapper({ productId }: SimilarProductsWra
       <SameProductCarousel
         slides={similarProducts}
         title="Consultez nos produits similaires"
+        autoplay={true}
+        autoplayInterval={3000}
       />
     </div>
   );

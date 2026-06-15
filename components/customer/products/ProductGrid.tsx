@@ -15,7 +15,7 @@ export default function ProductGrid({ initialProducts }: Props) {
   const products = initialProducts;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const productsPerPage = 15;
+  const productsPerPage = 12;
 
   // 🔹 Pagination
   const paginatedProducts = useMemo(() => {
@@ -76,7 +76,7 @@ export default function ProductGrid({ initialProducts }: Props) {
       </AnimatedContent>
 
       {/* Grille de produits avec animation */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-3">
         {paginatedProducts.map((product, index) => (
           <AnimatedContent
             key={product.id}

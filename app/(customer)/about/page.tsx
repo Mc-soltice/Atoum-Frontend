@@ -16,10 +16,10 @@ import {
   Mail,
   MapPin,
   Phone,
+  Shell,
   Shield,
-  Sparkle,
-  Sparkles, Sun,
-  Trees
+  Sun,
+  Trees,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -72,7 +72,7 @@ export default function AboutPage() {
       id: 4,
       title: "Rituels Sacrés",
       description: "Cérémonies de purification et connexion spirituelle.",
-      icon: <Sparkles className="h-10 w-10" />,
+      icon: <Shell className="h-10 w-10" />,
       color: "from-blue-600 to-cyan-500",
       bgColor: "bg-blue-500/10",
       rotation: 1,
@@ -191,11 +191,9 @@ export default function AboutPage() {
                   transition={{ delay: 0.4 }}
                   className="inline-flex items-center justify-center gap-3 mb-4"
                 >
-                  <Sparkle className="h-6 w-6 text-amber-500" />
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-linear-to-r from-amber-700 via-orange-600 to-rose-700 bg-clip-text text-transparent">
                     Atoum-Râ Mbianga
                   </h1>
-                  <Sparkle className="h-6 w-6 text-rose-500" />
                 </motion.div>
 
                 {/* Phrase d'accroche */}
@@ -216,7 +214,25 @@ export default function AboutPage() {
                   className="bg-linear-to-r from-amber-400/10 to-rose-400/10 backdrop-blur-sm rounded-xl p-6 border border-amber-300/30"
                 >
                   <p className="text-lg text-amber-900/90 leading-relaxed">
-                    Tout Ankh Mbianga Animisce traditionnelle lumière en conscience majestueuse une guérisseuse soignante en thérapie Élémentaux médicinale aux multiples faveur radical les malaise qui justifier que l'on s'arrête un instant pour l'observer écouter sous le soleil levant au rythme du souffle l'universel. Les plantes méritent ce considérations ! Pierre précieuse naturelle aux couleurs de l'arc en ciel, ses fleurs qui fane annoncent en quelque sorte la fin de l'été. La verge nous fait offrande de ses propriétés et nous gagnons fortement à l'adopter dans notre Pharma~Copée verte puisqu'elle s'avère assez polyvalente. Retour de la tradition authentique depuis la nuit de temps. par des plantes existence de notre âme et cœur haty bienveillant. Je vie pour la lumière immortel et tout ma reconnaissance au Seigneur de ma destinée guidé par sa volonté je suis la totalité … Gratitude à l'univers pour cette cycle nouvelle l'ampire de la souveraineté terre floraison reçois avec ma maison les bénédiction des mânes supérieurs aujourd'hui demain dans éternité immortel.
+                    Tout Ankh Mbianga Animisce traditionnelle lumière en
+                    conscience majestueuse une guérisseuse soignante en thérapie
+                    Élémentaux médicinale aux multiples faveur radical les
+                    malaise qui justifier que l'on s'arrête un instant pour
+                    l'observer écouter sous le soleil levant au rythme du
+                    souffle l'universel. Les plantes méritent ce considérations
+                    ! Pierre précieuse naturelle aux couleurs de l'arc en ciel,
+                    ses fleurs qui fane annoncent en quelque sorte la fin de
+                    l'été. La verge nous fait offrande de ses propriétés et nous
+                    gagnons fortement à l'adopter dans notre Pharma~Copée verte
+                    puisqu'elle s'avère assez polyvalente. Retour de la
+                    tradition authentique depuis la nuit de temps. par des
+                    plantes existence de notre âme et cœur haty bienveillant. Je
+                    vie pour la lumière immortel et tout ma reconnaissance au
+                    Seigneur de ma destinée guidé par sa volonté je suis la
+                    totalité … Gratitude à l'univers pour cette cycle nouvelle
+                    l'ampire de la souveraineté terre floraison reçois avec ma
+                    maison les bénédiction des mânes supérieurs aujourd'hui
+                    demain dans éternité immortel.
                   </p>
                 </motion.div>
               </motion.div>
