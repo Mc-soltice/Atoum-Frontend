@@ -1,8 +1,8 @@
 // components/customer/BanieresCariusel.tsx
-"use client"
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+"use client";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 export default function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,7 +10,8 @@ export default function Hero() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [isScrollingProgrammatically, setIsScrollingProgrammatically] = useState(false);
+  const [isScrollingProgrammatically, setIsScrollingProgrammatically] =
+    useState(false);
   const [isFading, setIsFading] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -59,7 +60,8 @@ export default function Hero() {
   const goToPreviousWithFade = () => {
     setIsFading(true);
     setTimeout(() => {
-      const newIndex = currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
+      const newIndex =
+        currentIndex === 0 ? slides.length - 1 : currentIndex - 1;
       setCurrentIndex(newIndex);
       scrollToSlide(newIndex);
       setIsFading(false);
@@ -92,7 +94,7 @@ export default function Hero() {
       const slideWidth = carouselRef.current.clientWidth;
       carouselRef.current.scrollTo({
         left: index * slideWidth,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
       setTimeout(() => {
         setIsScrollingProgrammatically(false);
@@ -106,7 +108,11 @@ export default function Hero() {
       const scrollPosition = carouselRef.current.scrollLeft;
       const slideWidth = carouselRef.current.clientWidth;
       const newIndex = Math.round(scrollPosition / slideWidth);
-      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < slides.length) {
+      if (
+        newIndex !== currentIndex &&
+        newIndex >= 0 &&
+        newIndex < slides.length
+      ) {
         setCurrentIndex(newIndex);
       }
     }
@@ -156,12 +162,15 @@ export default function Hero() {
   const currentSlide = slides[currentIndex];
 
   return (
-    <section className="relative w-full h-[75vh] overflow-hidden -mt-16">
+    <section className="relative w-full overflow-hidden -mt-16 md:h-[75vh]">
       {/* Conteneur des images avec défilement horizontal */}
       <div
         ref={carouselRef}
         className="absolute inset-0 w-full h-full overflow-x-auto scroll-smooth hide-scrollbar"
-        style={{ scrollSnapType: 'x mandatory', cursor: isDragging ? 'grabbing' : 'grab' }}
+        style={{
+          scrollSnapType: "x mandatory",
+          cursor: isDragging ? "grabbing" : "grab",
+        }}
         onScroll={handleScroll}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -180,7 +189,7 @@ export default function Hero() {
             <div
               key={index}
               className="relative shrink-0 w-full h-full"
-              style={{ scrollSnapAlign: 'start' }}
+              style={{ scrollSnapAlign: "start" }}
             >
               <Image
                 src={slide.image}
@@ -202,27 +211,30 @@ export default function Hero() {
       <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 md:pb-12 flex flex-col gap-3 sm:gap-4 z-20">
         {/* Badge dynamique avec animation */}
         <span
-          className={`w-fit text-white text-xs sm:text-sm font-medium bg-white/20 backdrop-blur-sm border border-white/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all duration-700 ${isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
-            }`}
+          className={`w-fit text-white text-xs sm:text-sm font-medium bg-white/20 backdrop-blur-sm border border-white/30 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full transition-all duration-700 ${
+            isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
+          }`}
         >
           {currentSlide.badge}
         </span>
 
-        {/* Titre dynamique avec animation */}
+        {/* Titre dynamique avec animation
         <h1
-          className={`text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl transition-all duration-700 ${isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
-            }`}
+          className={`text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl transition-all duration-700 ${
+            isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
+          }`}
         >
           {currentSlide.title}
-        </h1>
+        </h1> */}
 
         {/* Description dynamique avec animation */}
-        <p
-          className={`text-white/80 text-sm sm:text-base max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg leading-relaxed transition-all duration-700 ${isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
-            }`}
+        {/* <p
+          className={`text-white/80 text-sm sm:text-base max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg leading-relaxed transition-all duration-700 ${
+            isFading ? "opacity-0 translate-y-3" : "opacity-100 translate-y-0"
+          }`}
         >
           {currentSlide.description}
-        </p>
+        </p> */}
 
         {/* Dots et boutons de navigation */}
         <div className="flex items-center justify-between mt-2 sm:mt-4">
@@ -231,10 +243,11 @@ export default function Hero() {
               <button
                 key={i}
                 onClick={() => goToSlideWithFade(i)}
-                className={`transition-all duration-500 ${i === currentIndex
-                  ? "w-6 sm:w-8 bg-white"
-                  : "w-2 sm:w-2.5 bg-white/40 hover:bg-white/60"
-                  } h-1.5 sm:h-2 rounded-full`}
+                className={`transition-all duration-500 ${
+                  i === currentIndex
+                    ? "w-6 sm:w-8 bg-white"
+                    : "w-2 sm:w-2.5 bg-white/40 hover:bg-white/60"
+                } h-1.5 sm:h-2 rounded-full`}
                 aria-label={`Aller au slide ${i + 1}`}
               />
             ))}
@@ -268,6 +281,14 @@ export default function Hero() {
         }
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
+        }
+
+        /* Styles spécifiques pour mobile (max-width: 768px) */
+        @media (max-width: 768px) {
+          section {
+            aspect-ratio: 16 / 9;
+            height: auto !important;
+          }
         }
       `}</style>
     </section>

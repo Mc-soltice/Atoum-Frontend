@@ -50,15 +50,18 @@ const handler = NextAuth({
       // ✅ Premier appel après login Google
       if (account?.provider === "google" && user) {
         try {
-          const res = await fetch(`${process.env.API_URL}/social-login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: user.name,
-              email: user.email,
-              google_id: account.providerAccountId,
-            }),
-          });
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/social-login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: user.name,
+                email: user.email,
+                google_id: account.providerAccountId,
+              }),
+            },
+          );
 
           if (!res.ok) {
             console.error("Backend social-login failed:", res.status);
@@ -92,7 +95,7 @@ const handler = NextAuth({
     // ✅ Gérer la redirection séparément
     async redirect({ url, baseUrl }) {
       // Si c'est un callback Google, forcer /home
-      if (url.includes('/api/auth/callback/google')) {
+      if (url.includes("/api/auth/callback/google")) {
         return `${baseUrl}/home`;
       }
       if (url.startsWith("/")) return `${baseUrl}${url}`;

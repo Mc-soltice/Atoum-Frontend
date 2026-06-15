@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Facebook,
-  Instagram, Mail,
-  MapPin,
-  Phone,
-  X
-} from "lucide-react";
+import { Facebook, Instagram, Mail, MapPin, Phone, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -50,7 +44,7 @@ const Footer = () => {
 
   return (
     <footer
-      className="bg-linear-to-br from-amber-800 via-amber-500 to-amber-700 text-amber-50"
+      className="bg-linear-to-br from-[#558B2F] via-[#8BC34A] to-[#558B2F] text-white"
       role="contentinfo"
       aria-label="Pied de page"
     >
@@ -61,7 +55,7 @@ const Footer = () => {
             {/* Colonne gauche : Logo + Réseaux + Contact */}
             <div className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="relative h-16 w-16 rounded-full overflow-hidden shrink-0 ring-2 ring-amber-300/30">
+                <div className="relative h-16 w-16 rounded-full overflow-hidden shrink-0 ring-2 ring-[#8BC34A]/30">
                   <Image
                     src="/images/Logo.png"
                     alt="Logo Atoum-ra"
@@ -71,45 +65,68 @@ const Footer = () => {
                   />
                 </div>
                 <div>
-                  <span className="font-bold text-2xl text-amber-50 block leading-tight drop-shadow-lg">
+                  <span className="font-bold text-2xl text-white block leading-tight drop-shadow-lg">
                     Atoum-ra
                   </span>
-                  <span className="text-sm text-amber-200/90">
+                  <span className="text-sm text-[#8BC34A]/90">
                     Excellence en bois
                   </span>
                 </div>
               </div>
 
-              <p className="text-amber-100/90 text-sm leading-relaxed max-w-sm drop-shadow">
-                Solutions naturelles de guérison et d’harmonie spirituelle inspirées des plantes médicinales, de la mémoire ancestrale et de l’énergie sacrée.
+              <p className="text-white/90 text-sm leading-relaxed max-w-sm drop-shadow">
+                Solutions naturelles de guérison et d’harmonie spirituelle
+                inspirées des plantes médicinales, de la mémoire ancestrale et
+                de l’énergie sacrée.
               </p>
 
               <div className="flex space-x-2">
-                <SocialLink href={contactInfo.social.facebook} label="Facebook" ariaLabel="Facebook">
+                <SocialLink
+                  href={contactInfo.social.facebook}
+                  label="Facebook"
+                  ariaLabel="Facebook"
+                >
                   <Facebook size={18} />
                 </SocialLink>
-                <SocialLink href={contactInfo.social.twitter} label="Twitter" ariaLabel="X (Twitter)">
+                <SocialLink
+                  href={contactInfo.social.twitter}
+                  label="Twitter"
+                  ariaLabel="X (Twitter)"
+                >
                   <X size={18} />
                 </SocialLink>
-                <SocialLink href={contactInfo.social.instagram} label="Instagram" ariaLabel="Instagram">
+                <SocialLink
+                  href={contactInfo.social.instagram}
+                  label="Instagram"
+                  ariaLabel="Instagram"
+                >
                   <Instagram size={18} />
                 </SocialLink>
-
               </div>
 
               {/* Contacts compacts mais visibles */}
               <div className="grid grid-cols-1 gap-2 pt-1">
-                <a href={`tel:${contactInfo.phone.replace(/\s/g, "")}`}
-                  className="flex items-center gap-2 text-amber-100/90 hover:text-amber-50 transition-colors text-sm group">
-                  <Phone size={16} className="group-hover:scale-110 transition-transform" />
+                <a
+                  href={`tel:${contactInfo.phone.replace(/\s/g, "")}`}
+                  className="flex items-center gap-2 text-white/90 hover:text-[#8BC34A] transition-colors text-sm group"
+                >
+                  <Phone
+                    size={16}
+                    className="group-hover:scale-110 transition-transform"
+                  />
                   <span>{contactInfo.phone}</span>
                 </a>
-                <a href={`mailto:${contactInfo.email}`}
-                  className="flex items-center gap-2 text-amber-100/90 hover:text-amber-50 transition-colors text-sm group">
-                  <Mail size={16} className="group-hover:scale-110 transition-transform" />
+                <a
+                  href={`mailto:${contactInfo.email}`}
+                  className="flex items-center gap-2 text-white/90 hover:text-[#8BC34A] transition-colors text-sm group"
+                >
+                  <Mail
+                    size={16}
+                    className="group-hover:scale-110 transition-transform"
+                  />
                   <span className="truncate">{contactInfo.email}</span>
                 </a>
-                <span className="flex items-center gap-2 text-amber-100/90 text-sm">
+                <span className="flex items-center gap-2 text-white/90 text-sm">
                   <MapPin size={16} />
                   <span className="truncate">Douala, Cameroon</span>
                 </span>
@@ -120,7 +137,7 @@ const Footer = () => {
             <div className="grid grid-cols-2 gap-3 md:gap-4">
               {/* Navigation */}
               <div>
-                <h3 className="text-base font-semibold mb-3 text-amber-50 border-b border-amber-300/40 pb-1 drop-shadow">
+                <h3 className="text-base font-semibold mb-3 text-white border-b border-[#8BC34A]/40 pb-1 drop-shadow">
                   Navigation
                 </h3>
                 <ul className="space-y-2" role="list">
@@ -134,7 +151,7 @@ const Footer = () => {
 
               {/* Engagements */}
               <div>
-                <h3 className="text-base font-semibold mb-3 text-amber-50 border-b border-amber-300/40 pb-1 drop-shadow">
+                <h3 className="text-base font-semibold mb-3 text-white border-b border-[#8BC34A]/40 pb-1 drop-shadow">
                   Engagements
                 </h3>
                 <ul className="space-y-3" role="list">
@@ -152,10 +169,12 @@ const Footer = () => {
           </div>
 
           {/* Séparateur et copyright */}
-          <div className="border-t border-amber-300/30 mt-8 pt-6">
+          <div className="border-t border-[#8BC34A]/30 mt-8 pt-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-              <p className="text-amber-100/80 text-sm order-2 md:order-1 drop-shadow">
-                © {new Date().getFullYear()} <span className="font-semibold text-amber-50">Atoum-ra</span>. Tous droits réservés.
+              <p className="text-white/80 text-sm order-2 md:order-1 drop-shadow">
+                © {new Date().getFullYear()}{" "}
+                <span className="font-semibold text-[#8BC34A]">Atoum-ra</span>.
+                Tous droits réservés.
               </p>
 
               {/* Liens légaux */}
@@ -167,10 +186,13 @@ const Footer = () => {
               {/* Retour en haut compact */}
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="text-amber-100/80 font-medium text-lg  hover:text-amber-50 transition-colors flex items-center gap-1 order-3 group"
+                className="text-white/80 font-medium text-lg hover:text-[#8BC34A] transition-colors flex items-center gap-1 order-3 group"
                 aria-label="Retour en haut"
               >
-                <span className="group-hover:-translate-y-1 transition-transform animate-bounce bounce-up ">↑</span> Retour en haut
+                <span className="group-hover:-translate-y-1 transition-transform animate-bounce bounce-up ">
+                  ↑
+                </span>{" "}
+                Retour en haut
               </button>
             </div>
           </div>
@@ -199,7 +221,7 @@ function SocialLink({
       rel="noopener noreferrer nofollow"
       aria-label={ariaLabel}
       title={label}
-      className="text-amber-100/90 hover:text-amber-50 transition-all duration-300 p-2 hover:bg-amber-600/40 rounded-full active:scale-95"
+      className="text-white/90 hover:text-[#8BC34A] transition-all duration-300 p-2 hover:bg-[#558B2F]/40 rounded-full active:scale-95"
     >
       {children}
     </a>
@@ -216,7 +238,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group text-amber-100/90 hover:text-amber-50 transition-all duration-300 block text-sm"
+      className="group text-white/90 hover:text-[#8BC34A] transition-all duration-300 block text-sm"
     >
       <span className="inline-block group-hover:translate-x-1 transition-transform duration-300">
         → {children}
@@ -233,15 +255,15 @@ function EngagementItemCompact({
   description: string;
 }) {
   return (
-    <div className="group flex items-start text-amber-100/90 hover:text-amber-50 transition-colors duration-300">
-      <span className="mr-2 text-amber-300 text-base shrink-0 drop-shadow">✓</span>
+    <div className="group flex items-start text-white/90 hover:text-[#8BC34A] transition-colors duration-300">
+      <span className="mr-2 text-[#8BC34A] text-base shrink-0 drop-shadow">
+        ✓
+      </span>
       <div className="transition-all duration-300 group-hover:translate-x-0.5">
         <span className="font-medium text-white block text-sm leading-tight drop-shadow">
           {title}
         </span>
-        <p className="text-xs text-amber-200/90 mt-0.5">
-          {description}
-        </p>
+        <p className="text-xs text-[#8BC34A]/80 mt-0.5">{description}</p>
       </div>
     </div>
   );
@@ -257,7 +279,7 @@ function LegalLink({
   return (
     <Link
       href={href}
-      className="hover:text-amber-50 transition-colors duration-300 text-amber-100/80 text-sm drop-shadow"
+      className="hover:text-[#8BC34A] transition-colors duration-300 text-white/80 text-sm drop-shadow"
     >
       {children}
     </Link>

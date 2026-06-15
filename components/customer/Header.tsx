@@ -2,7 +2,19 @@
 
 import { useAuthContext } from "@/contexte/AuthContext";
 import { useCart } from "@/contexte/panier/CartContext";
-import { Globe, LayoutDashboard, LogOut, Menu, Package, Search, Settings, ShoppingBag, User, UserCircle, X } from "lucide-react";
+import {
+  Globe,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Package,
+  Search,
+  Settings,
+  ShoppingBag,
+  User,
+  UserCircle,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -50,7 +62,7 @@ export default function Header() {
 
   // Mettre à jour l'élément actif basé sur le chemin
   useEffect(() => {
-    const currentLink = navLinks.find(link => link.path === pathname);
+    const currentLink = navLinks.find((link) => link.path === pathname);
     if (currentLink) {
       setActive(currentLink.name);
     }
@@ -67,7 +79,10 @@ export default function Header() {
   // Fermer le dropdown menu quand on clique en dehors
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
         setIsUserMenuOpen(false);
       }
     };
@@ -106,17 +121,21 @@ export default function Header() {
   // Déterminer la couleur de fond en fonction de la page et du scroll
   const getNavbarStyle = () => {
     if (!isHomePage) {
-      // Sur toutes les autres pages : fond vert fixe
-      return "bg-amber-600 border-amber-500/20 shadow-lg shadow-amber-500/20";
+      // Sur toutes les autres pages : fond prairie verte fixe
+      return "bg-[#8bc34a] border-[#8bc34a]/20 shadow-lg shadow-[#8bc34a]/20";
     }
     // Sur la page d'accueil : comportement original (transparent au début, vert au scroll)
     return scrolled
-      ? "bg-linear-to-r from-amber-400 to-rose-500 backdrop-blur-sm border-amber-500/20 shadow-lg shadow-amber-500/20"
+      ? "bg-linear-to-r from-[#8bc34a] to-[#558b2f] backdrop-blur-sm border-[#8bc34a]/20 shadow-lg shadow-[#8bc34a]/20"
       : "bg-transparent backdrop-blur-0 border-transparent shadow-none";
   };
 
   // Déterminer la couleur du texte et des éléments en fonction de la page
-  const getTextColor = (defaultColor: string, scrolledColor: string, homeScrolledColor: string) => {
+  const getTextColor = (
+    defaultColor: string,
+    scrolledColor: string,
+    homeScrolledColor: string,
+  ) => {
     if (!isHomePage) {
       return "text-white";
     }
@@ -132,20 +151,53 @@ export default function Header() {
         {/* Container principal */}
         <div className="flex items-center justify-between gap-2">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0 group" onClick={closeAllMenus}>
-            <div className={`w-4 h-4 sm:w-8 sm:h-8 rounded-md flex items-center justify-center shadow-md transition-all duration-500 ${!isHomePage
-              ? "bg-white/20 shadow-white/10"
-              : scrolled
-                ? "bg-white/20 shadow-white/10"
-                : "bg-amber-600 shadow-amber-600/20"
-              }`}>
-              <span className={`font-bold text-base transition-all duration-500 ${!isHomePage ? "text-white" : scrolled ? "text-white" : "text-white"
-                }`}>A</span>
+          <Link
+            href="/"
+            className="flex items-center gap-2 shrink-0 group"
+            onClick={closeAllMenus}
+          >
+            <div
+              className={`w-4 h-4 sm:w-8 sm:h-8 rounded-md flex items-center justify-center shadow-md transition-all duration-500 ${
+                !isHomePage
+                  ? "bg-white/20 shadow-white/10"
+                  : scrolled
+                    ? "bg-white/20 shadow-white/10"
+                    : "bg-linear-to-t from-[#8bc34a] to-[#558b2f]"
+              }`}
+            >
+              <span
+                className={`font-bold text-base transition-all duration-500 ${
+                  !isHomePage
+                    ? "text-white"
+                    : scrolled
+                      ? "text-white"
+                      : "text-white"
+                }`}
+              >
+                A
+              </span>
             </div>
-            <span className={`text-base sm:text-[17px] font-semibold tracking-tight transition-all duration-500 ${!isHomePage ? "text-white" : scrolled ? "text-white" : "text-white"
-              }`}>
-              Atoum<span className={`transition-colors duration-500 ${!isHomePage ? "text-amber-200" : scrolled ? "text-amber-200" : "text-amber-200"
-                }`}>-ra</span>
+            <span
+              className={`text-base sm:text-[17px] font-semibold tracking-tight transition-all duration-500 ${
+                !isHomePage
+                  ? "text-white"
+                  : scrolled
+                    ? "text-white"
+                    : "text-white"
+              }`}
+            >
+              Atoum
+              <span
+                className={`transition-colors duration-500 ${
+                  !isHomePage
+                    ? "text-[#dceaa8]"
+                    : scrolled
+                      ? "text-[#dceaa8]"
+                      : "text-[#dceaa8]"
+                }`}
+              >
+                -ra
+              </span>
             </span>
           </Link>
 
@@ -156,18 +208,19 @@ export default function Header() {
                 <Link
                   href={link.path}
                   onClick={() => setActive(link.name)}
-                  className={`text-sm font-medium px-3.5 py-1.5 rounded-lg transition-all duration-300 cursor-pointer whitespace-nowrap inline-block ${active === link.name
-                    ? !isHomePage
-                      ? "bg-white/20 text-white shadow-sm"
-                      : scrolled
+                  className={`text-sm font-medium px-3.5 py-1.5 rounded-lg transition-all duration-300 cursor-pointer whitespace-nowrap inline-block ${
+                    active === link.name
+                      ? !isHomePage
                         ? "bg-white/20 text-white shadow-sm"
-                        : "bg-white/20 text-white shadow-sm backdrop-blur-sm"
-                    : !isHomePage
-                      ? "text-white/70 hover:bg-white/10 hover:text-white"
-                      : scrolled
+                        : scrolled
+                          ? "bg-white/20 text-white shadow-sm"
+                          : "bg-white/20 text-white shadow-sm backdrop-blur-sm"
+                      : !isHomePage
                         ? "text-white/70 hover:bg-white/10 hover:text-white"
-                        : "text-white/80 hover:bg-white/10 hover:text-white"
-                    }`}
+                        : scrolled
+                          ? "text-white/70 hover:bg-white/10 hover:text-white"
+                          : "text-white/80 hover:bg-white/10 hover:text-white"
+                  }`}
                 >
                   {link.name}
                 </Link>
@@ -178,23 +231,30 @@ export default function Header() {
           {/* Search Bar - Desktop */}
           <div className="hidden sm:flex flex-1 max-w-70 mx-3 md:mx-5">
             <form onSubmit={handleSearch} className="w-full">
-              <div className={`flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all duration-500 group w-full ${!isHomePage || scrolled
-                ? "bg-white/10 border border-white/20 focus-within:bg-white/20 focus-within:border-white/40 backdrop-blur-sm"
-                : "bg-white/10 border border-white/20 focus-within:bg-white/20 focus-within:border-white/40 backdrop-blur-sm"
-                }`}>
-                <Search className={`w-4 h-4 shrink-0 transition-all duration-500 ${!isHomePage || scrolled
-                  ? "text-white/60 group-focus-within:text-white"
-                  : "text-white/60 group-focus-within:text-white"
-                  }`} />
+              <div
+                className={`flex items-center gap-2 rounded-xl px-3.5 py-2 transition-all duration-500 group w-full ${
+                  !isHomePage || scrolled
+                    ? "bg-white/10 border border-white/20 focus-within:bg-white/20 focus-within:border-white/40 backdrop-blur-sm"
+                    : "bg-white/10 border border-white/20 focus-within:bg-white/20 focus-within:border-white/40 backdrop-blur-sm"
+                }`}
+              >
+                <Search
+                  className={`w-4 h-4 shrink-0 transition-all duration-500 ${
+                    !isHomePage || scrolled
+                      ? "text-white/60 group-focus-within:text-white"
+                      : "text-white/60 group-focus-within:text-white"
+                  }`}
+                />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Rechercher des produits..."
-                  className={`bg-transparent outline-none text-sm w-full font-[inherit] transition-all duration-500 ${!isHomePage || scrolled
-                    ? "text-white placeholder:text-white/50 focus:text-white"
-                    : "text-white placeholder:text-white/50 focus:text-white"
-                    }`}
+                  className={`bg-transparent outline-none text-sm w-full font-[inherit] transition-all duration-500 ${
+                    !isHomePage || scrolled
+                      ? "text-white placeholder:text-white/50 focus:text-white"
+                      : "text-white placeholder:text-white/50 focus:text-white"
+                  }`}
                 />
               </div>
             </form>
@@ -203,28 +263,34 @@ export default function Header() {
           {/* Right Side Actions */}
           <div className="hidden sm:flex items-center gap-2.5 shrink-0">
             {/* Language */}
-            <button className={`flex items-center gap-1.5 text-sm font-medium px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${!isHomePage || scrolled
-              ? "text-white/80 hover:bg-white/10"
-              : "text-white/80 hover:bg-white/10"
-              }`}>
+            <button
+              className={`flex items-center gap-1.5 text-sm font-medium px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
+                !isHomePage || scrolled
+                  ? "text-white/80 hover:bg-white/10"
+                  : "text-white/80 hover:bg-white/10"
+              }`}
+            >
               <Globe className="w-4 h-4" />
               <span className="hidden sm:inline">FR</span>
             </button>
 
-            <div className={`w-px h-5 ${!isHomePage || scrolled ? "bg-white/20" : "bg-white/20"}`} />
+            <div
+              className={`w-px h-5 ${!isHomePage || scrolled ? "bg-white/20" : "bg-white/20"}`}
+            />
 
             {/* Cart */}
             <Link
               href="/panier"
-              className={`relative p-2 transition-colors ${!isHomePage || scrolled
-                ? "text-white/80 hover:text-white"
-                : "text-white/80 hover:text-white"
-                }`}
+              className={`relative p-2 transition-colors ${
+                !isHomePage || scrolled
+                  ? "text-white/80 hover:text-white"
+                  : "text-white/80 hover:text-white"
+              }`}
               onClick={closeAllMenus}
             >
               <ShoppingBag className="w-5 h-5" />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">
+                <span className="absolute -top-1 -right-1 bg-[#8bc34a] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white">
                   {cartItemCount > 9 ? "9+" : cartItemCount}
                 </span>
               )}
@@ -234,10 +300,11 @@ export default function Header() {
             {!loading && user && (
               <Link
                 href="/historique"
-                className={`p-2 transition-colors ${!isHomePage || scrolled
-                  ? "text-white/80 hover:text-white"
-                  : "text-white/80 hover:text-white"
-                  }`}
+                className={`p-2 transition-colors ${
+                  !isHomePage || scrolled
+                    ? "text-white/80 hover:text-white"
+                    : "text-white/80 hover:text-white"
+                }`}
                 onClick={closeAllMenus}
               >
                 <Package className="w-5 h-5" />
@@ -253,12 +320,13 @@ export default function Header() {
                       e.stopPropagation();
                       setIsUserMenuOpen(!isUserMenuOpen);
                     }}
-                    className={`flex items-center gap-2 text-sm font-medium px-2 py-1 rounded-lg transition-colors cursor-pointer ${!isHomePage || scrolled
-                      ? "text-white/80 hover:bg-white/10"
-                      : "text-white/80 hover:bg-white/10"
-                      }`}
+                    className={`flex items-center gap-2 text-sm font-medium px-2 py-1 rounded-lg transition-colors cursor-pointer ${
+                      !isHomePage || scrolled
+                        ? "text-white/80 hover:bg-white/10"
+                        : "text-white/80 hover:bg-white/10"
+                    }`}
                   >
-                    <div className="w-7 h-7 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white text-xs font-semibold shadow-md">
+                    <div className="w-7 h-7 rounded-full bg-linear-to-r from-[#8bc34a] to-[#558b2f] flex items-center justify-center text-white text-xs font-semibold shadow-md">
                       {getUserInitials()}
                     </div>
                     <span className="hidden lg:inline">
@@ -268,10 +336,11 @@ export default function Header() {
                 ) : (
                   <Link
                     href="/login"
-                    className={`text-sm font-semibold px-3.5 py-1.5 rounded-lg transition-colors ${!isHomePage || scrolled
-                      ? "text-white bg-amber-700 hover:bg-amber-800"
-                      : "text-white bg-amber-600 hover:bg-amber-700"
-                      }`}
+                    className={`text-sm font-semibold px-3.5 py-1.5 rounded-lg transition-colors ${
+                      !isHomePage || scrolled
+                        ? "text-white bg-[#558b2f] hover:bg-[#45651f]"
+                        : "text-white bg-[#6b8e23] hover:bg-[#556f1c]"
+                    }`}
                     onClick={closeAllMenus}
                   >
                     Connexion
@@ -285,9 +354,9 @@ export default function Header() {
                       className="fixed inset-0 z-40"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-amber-100 z-50 py-1">
-                      <div className="px-4 py-3 border-b border-amber-100">
-                        <p className="text-sm font-semibold text-amber-900 truncate">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#dfeac4] z-50 py-1">
+                      <div className="px-4 py-3 border-b border-[#dfeac4]">
+                        <p className="text-sm font-semibold text-[#556b1a] truncate">
                           {user.first_name} {user.last_name}
                         </p>
                         <p className="text-xs text-stone-500 truncate mt-0.5">
@@ -297,7 +366,7 @@ export default function Header() {
 
                       <Link
                         href="/profil"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-[#f2f9df] transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <UserCircle className="w-4 h-4" />
@@ -307,7 +376,7 @@ export default function Header() {
                       {canAccessDashboard && (
                         <Link
                           href="/admin"
-                          className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-[#f2f9df] transition-colors"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <LayoutDashboard className="w-4 h-4" />
@@ -317,17 +386,17 @@ export default function Header() {
 
                       <Link
                         href="/parametres"
-                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-amber-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-2 text-sm text-stone-700 hover:bg-[#f2f9df] transition-colors"
                         onClick={() => setIsUserMenuOpen(false)}
                       >
                         <Settings className="w-4 h-4" />
                         Paramètres
                       </Link>
 
-                      <div className="border-t border-amber-100 mt-1 pt-1">
+                      <div className="border-t border-[#dfeac4] mt-1 pt-1">
                         <button
                           onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-amber-50 transition-colors flex items-center gap-3"
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-[#f2f9df] transition-colors flex items-center gap-3"
                         >
                           <LogOut className="w-4 h-4" />
                           Déconnexion
@@ -343,10 +412,11 @@ export default function Header() {
           {/* Menu Burger Mobile */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden relative z-50 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-300 ${isMobileMenuOpen
-              ? "opacity-0 invisible scale-75"
-              : "opacity-100 visible scale-100 bg-white/10 backdrop-blur-sm hover:bg-white/20"
-              }`}
+            className={`md:hidden relative z-50 flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-300 ${
+              isMobileMenuOpen
+                ? "opacity-0 invisible scale-75"
+                : "opacity-100 visible scale-100 bg-white/10 backdrop-blur-sm hover:bg-white/20"
+            }`}
             aria-label="Menu"
           >
             <Menu className="w-5 h-5 text-white" />
@@ -359,9 +429,10 @@ export default function Header() {
         className={`
           fixed inset-0 z-100 md:hidden
           transition-all duration-300 ease-in-out
-          ${isMobileMenuOpen
-            ? "bg-amber-900/60 backdrop-blur-sm opacity-100 visible"
-            : "bg-amber-900/0 backdrop-blur-none opacity-0 invisible pointer-events-none"
+          ${
+            isMobileMenuOpen
+              ? "bg-[#264d10]/60 backdrop-blur-sm opacity-100 visible"
+              : "bg-[#264d10]/0 backdrop-blur-none opacity-0 invisible pointer-events-none"
           }
         `}
         onClick={closeAllMenus}
@@ -381,10 +452,10 @@ export default function Header() {
             {/* Fermeture */}
             <button
               onClick={closeAllMenus}
-              className="absolute top-4 right-4 p-2 rounded-lg bg-amber-50 hover:bg-amber-100 transition-colors z-10"
+              className="absolute top-4 right-4 p-2 rounded-lg bg-[#f2f9df] hover:bg-[#e7f3cd] transition-colors z-10"
               aria-label="Fermer"
             >
-              <X className="w-5 h-5 text-amber-600" />
+              <X className="w-5 h-5 text-[#558b2f]" />
             </button>
 
             {/* Section Utilisateur */}
@@ -392,7 +463,7 @@ export default function Header() {
               <div
                 className={`
                   relative pt-10 pb-6 px-4
-                  border-b border-amber-100
+                  border-b border-[#dfeac4]
                   transition-all duration-500 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"}
                 `}
@@ -400,27 +471,39 @@ export default function Header() {
               >
                 <div className="relative flex justify-center">
                   <div className="absolute inset-0 flex justify-center">
-                    <div className="w-24 h-24 rounded-full bg-amber-500/20 blur-xl"></div>
+                    <div className="w-24 h-24 rounded-full bg-[#8bc34a]/20 blur-xl"></div>
                   </div>
-                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-amber-200">
+                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-[#8bc34a] to-[#558b2f] flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-[#d4e8a9]">
                     {getUserInitials()}
                   </div>
                 </div>
 
                 <div className="text-center mt-4">
                   <div className="flex items-center justify-center gap-2 mb-1">
-                    <div className="h-px w-6 bg-linear-to-r from-transparent to-amber-300"></div>
-                    <h3 className="text-amber-900 font-bold text-base">
+                    <div className="h-px w-6 bg-linear-to-r from-transparent to-[#cfe3a6]"></div>
+                    <h3 className="text-[#556b1a] font-bold text-base">
                       {user.first_name} {user.last_name}
                     </h3>
-                    <div className="h-px w-6 bg-linear-to-l from-transparent to-amber-300"></div>
+                    <div className="h-px w-6 bg-linear-to-l from-transparent to-[#cfe3a6]"></div>
                   </div>
 
                   <div className="flex items-center justify-center gap-1.5 mt-1.5">
-                    <svg className="w-3 h-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <svg
+                      className="w-3 h-3 text-stone-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
                     </svg>
-                    <p className="text-stone-500 text-xs truncate max-w-45">{user.email}</p>
+                    <p className="text-stone-500 text-xs truncate max-w-45">
+                      {user.email}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -428,7 +511,7 @@ export default function Header() {
               <div
                 className={`
                   pt-10 pb-6 px-4
-                  border-b border-amber-100
+                  border-b border-[#dfeac4]
                   transition-all duration-500 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"}
                 `}
@@ -436,16 +519,17 @@ export default function Header() {
               >
                 <div className="relative flex justify-center">
                   <div className="absolute inset-0 flex justify-center">
-                    <div className="w-24 h-24 rounded-full bg-amber-500/10 blur-xl"></div>
+                    <div className="w-24 h-24 rounded-full bg-[#8bc34a]/10 blur-xl"></div>
                   </div>
-                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-lg ring-4 ring-amber-200">
+                  <div className="relative w-20 h-20 rounded-full bg-linear-to-r from-[#8bc34a] to-[#558b2f] flex items-center justify-center text-white shadow-lg ring-4 ring-[#d4e8a9]">
                     <User className="w-10 h-10" />
                   </div>
                 </div>
                 <div className="text-center mt-4">
-                  <h3 className="text-amber-900 font-bold text-base">Invité</h3>
+                  <h3 className="text-[#556b1a] font-bold text-base">Invité</h3>
                   <p className="text-stone-400 text-xs mt-1">
-                    Connectez-vous pour accéder<br />à votre compte
+                    Connectez-vous pour accéder
+                    <br />à votre compte
                   </p>
                 </div>
               </div>
@@ -462,10 +546,11 @@ export default function Header() {
                         setActive(link.name);
                         closeAllMenus();
                       }}
-                      className={`block text-sm font-medium px-3.5 py-2 rounded-lg transition-all w-full ${active === link.name
-                        ? "bg-amber-50 text-amber-600"
-                        : "text-stone-600 hover:bg-amber-50 hover:text-amber-600"
-                        }`}
+                      className={`block text-sm font-medium px-3.5 py-2 rounded-lg transition-all w-full ${
+                        active === link.name
+                          ? "bg-[#f2f9df] text-[#558b2f]"
+                          : "text-stone-600 hover:bg-[#f2f9df] hover:text-[#558b2f]"
+                      }`}
                     >
                       {link.name}
                     </Link>
@@ -475,7 +560,7 @@ export default function Header() {
 
               <div
                 className={`
-                  h-px bg-amber-100 my-3 transition-all duration-500
+                  h-px bg-[#ecf5d0] my-3 transition-all duration-500
                   ${isMobileMenuOpen ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"}
                 `}
                 style={{ transitionDelay: isMobileMenuOpen ? "400ms" : "0ms" }}
@@ -483,8 +568,8 @@ export default function Header() {
 
               {/* Recherche Mobile */}
               <form onSubmit={handleSearch} className="mb-3">
-                <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2">
-                  <Search className="w-4 h-4 text-amber-400" />
+                <div className="flex items-center gap-2 bg-[#f2f9df] border border-[#dfeac4] rounded-xl px-3.5 py-2">
+                  <Search className="w-4 h-4 text-[#7c9a42]" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -498,7 +583,7 @@ export default function Header() {
               <button
                 className={`
                   flex items-center gap-2 w-full px-4 py-3 rounded-lg 
-                  text-stone-600 hover:bg-amber-50 transition-all duration-300 ease-out
+                  text-stone-600 hover:bg-[#f2f9df] transition-all duration-300 ease-out
                   ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                 `}
                 style={{ transitionDelay: isMobileMenuOpen ? "460ms" : "0ms" }}
@@ -514,11 +599,13 @@ export default function Header() {
                     href="/login"
                     onClick={closeAllMenus}
                     className={`
-                      w-full block px-4 py-3 rounded-lg text-amber-600 bg-amber-50
+                      w-full block px-4 py-3 rounded-lg text-[#558b2f] bg-[#f2f9df]
                       transition-all duration-300 ease-out text-center text-base font-medium
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                     `}
-                    style={{ transitionDelay: isMobileMenuOpen ? "520ms" : "0ms" }}
+                    style={{
+                      transitionDelay: isMobileMenuOpen ? "520ms" : "0ms",
+                    }}
                   >
                     Connexion
                   </Link>
@@ -528,12 +615,14 @@ export default function Header() {
                     onClick={closeAllMenus}
                     className={`
                       w-full block px-4 py-3 mt-2 text-center text-white 
-                      bg-linear-to-r from-amber-500 to-amber-600
+                      bg-linear-to-r from-[#8bc34a] to-[#558b2f]
                       transition-all duration-300 ease-out text-base font-semibold 
                       rounded-xl shadow-md
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                     `}
-                    style={{ transitionDelay: isMobileMenuOpen ? "580ms" : "0ms" }}
+                    style={{
+                      transitionDelay: isMobileMenuOpen ? "580ms" : "0ms",
+                    }}
                   >
                     Créer un compte
                   </Link>
@@ -543,18 +632,20 @@ export default function Header() {
 
             {/* Liens pour utilisateur connecté */}
             {!loading && user && (
-              <div className="border-t border-amber-100 pt-3 pb-6 px-4">
+              <div className="border-t border-[#dfeac4] pt-3 pb-6 px-4">
                 <Link
                   href="/profil"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-[#f2f9df] 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
-                  style={{ transitionDelay: isMobileMenuOpen ? "640ms" : "0ms" }}
+                  style={{
+                    transitionDelay: isMobileMenuOpen ? "640ms" : "0ms",
+                  }}
                 >
-                  <UserCircle className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
+                  <UserCircle className="w-4 h-4 text-stone-400 group-hover:text-[#558b2f] transition-colors" />
                   <span>Mon Profil</span>
                 </Link>
 
@@ -562,16 +653,18 @@ export default function Header() {
                   href="/panier"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-[#f2f9df] 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
-                  style={{ transitionDelay: isMobileMenuOpen ? "700ms" : "0ms" }}
+                  style={{
+                    transitionDelay: isMobileMenuOpen ? "700ms" : "0ms",
+                  }}
                 >
-                  <ShoppingBag className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
+                  <ShoppingBag className="w-4 h-4 text-stone-400 group-hover:text-[#558b2f] transition-colors" />
                   <span>Mon Panier</span>
                   {cartItemCount > 0 && (
-                    <span className="ml-auto bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">
+                    <span className="ml-auto bg-[#8bc34a] text-white text-xs px-2 py-0.5 rounded-full">
                       {cartItemCount}
                     </span>
                   )}
@@ -581,13 +674,15 @@ export default function Header() {
                   href="/historique"
                   onClick={closeAllMenus}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-amber-50 
+                    w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-stone-700 hover:bg-[#f2f9df] 
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
-                  style={{ transitionDelay: isMobileMenuOpen ? "760ms" : "0ms" }}
+                  style={{
+                    transitionDelay: isMobileMenuOpen ? "760ms" : "0ms",
+                  }}
                 >
-                  <Package className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
+                  <Package className="w-4 h-4 text-stone-400 group-hover:text-[#558b2f] transition-colors" />
                   <span>Mes Commandes</span>
                 </Link>
 
@@ -600,14 +695,16 @@ export default function Header() {
                       transition-all duration-300 ease-out text-left text-sm font-medium group
                       ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                     `}
-                    style={{ transitionDelay: isMobileMenuOpen ? "820ms" : "0ms" }}
+                    style={{
+                      transitionDelay: isMobileMenuOpen ? "820ms" : "0ms",
+                    }}
                   >
-                    <LayoutDashboard className="w-4 h-4 text-stone-400 group-hover:text-amber-500 transition-colors" />
+                    <LayoutDashboard className="w-4 h-4 text-stone-400 group-hover:text-[#558b2f] transition-colors" />
                     <span>Tableau de bord</span>
                   </Link>
                 )}
 
-                <div className="h-px bg-amber-100 my-2"></div>
+                <div className="h-px bg-[#ecf5d0] my-2"></div>
 
                 <button
                   onClick={() => {
@@ -619,7 +716,9 @@ export default function Header() {
                     transition-all duration-300 ease-out text-left text-sm font-medium group
                     ${isMobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   `}
-                  style={{ transitionDelay: isMobileMenuOpen ? "880ms" : "0ms" }}
+                  style={{
+                    transitionDelay: isMobileMenuOpen ? "880ms" : "0ms",
+                  }}
                 >
                   <LogOut className="w-4 h-4 text-red-500" />
                   <span>Déconnexion</span>

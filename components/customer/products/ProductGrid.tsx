@@ -32,7 +32,7 @@ export default function ProductGrid({ initialProducts }: Props) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -47,33 +47,28 @@ export default function ProductGrid({ initialProducts }: Props) {
       >
         <div className="flex gap-4 md:gap-6">
           {/* Bulle "Nos produits" */}
-          <Link
-            href="/produits"
-            className="group relative"
-          >
+          <Link href="/produits" className="group relative">
             <div className="relative">
-              {/* Effet de glow */}
-              <div className="absolute inset-0 bg-amber-500 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+              {/* Effet de glow avec le dégradé */}
+              <div className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-500 bg-linear-to-t from-[#558B2F] to-[#8BC34A]" />
 
               {/* Bulle principale */}
-              <div className="relative flex items-center gap-2 sm:gap-3 px-3 sm:px-5 md:px-6 py-2 sm:py-3 bg-white rounded-full shadow-md sm:shadow-lg border border-gray-100 hover:border-amber-500 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 max-w-full">
-
+              <div className="relative flex items-center gap-2 sm:gap-3 px-3 sm:px-5 md:px-6 py-2 sm:py-3 bg-white rounded-full shadow-md sm:shadow-lg border border-gray-100 hover:border-[#8BC34A] transition-all duration-300 hover:shadow-xl hover:scale-[1.02] sm:hover:scale-105 max-w-full">
                 {/* Icône */}
                 <div className="relative shrink-0">
-                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
-                  <div className="absolute inset-0 bg-amber-500 rounded-full blur-md opacity-0 group-hover:opacity-50 animate-ping" />
+                  <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-[#558B2F]" />
+                  <div className="absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-50 animate-ping bg-[#558B2F]" />
                 </div>
 
                 {/* Texte */}
-                <span className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base group-hover:text-amber-600 transition-colors duration-300 truncate">
+                <span className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base group-hover:text-[#8BC34A] transition-colors duration-300 truncate">
                   Découvrez notre grande variété de produits
                 </span>
 
-                {/* Badge */}
-                <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-amber-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md sm:shadow-lg">
+                {/* Badge avec dégradé */}
+                <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center shadow-md sm:shadow-lg bg-linear-to-t from-[#558B2F] to-[#8BC34A]">
                   {products.length}
                 </div>
-
               </div>
             </div>
           </Link>
@@ -92,10 +87,7 @@ export default function ProductGrid({ initialProducts }: Props) {
             threshold={0.1}
             scale={0.95}
           >
-            <ProductCard
-              product={product}
-              onCartClick={handleCartClick}
-            />
+            <ProductCard product={product} onCartClick={handleCartClick} />
           </AnimatedContent>
         ))}
       </div>
@@ -115,9 +107,10 @@ export default function ProductGrid({ initialProducts }: Props) {
               disabled={currentPage === 1}
               className={`
                 px-4 py-2 rounded-lg border transition-all duration-300
-                ${currentPage === 1
-                  ? 'opacity-50 cursor-not-allowed border-gray-200 text-gray-400'
-                  : 'border-gray-300 hover:border-amber-500 hover:text-amber-600 hover:shadow-md'
+                ${
+                  currentPage === 1
+                    ? "opacity-50 cursor-not-allowed border-gray-200 text-gray-400"
+                    : "border-gray-300 hover:border-[#8BC34A] hover:text-[#558B2F] hover:shadow-md"
                 }
               `}
             >
@@ -125,21 +118,24 @@ export default function ProductGrid({ initialProducts }: Props) {
             </button>
 
             <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`
                     w-10 h-10 rounded-lg border transition-all duration-300
-                    ${currentPage === page
-                      ? 'bg-amber-500 text-white border-amber-500 shadow-md'
-                      : 'border-gray-300 hover:border-amber-500 hover:text-amber-600'
+                    ${
+                      currentPage === page
+                        ? "bg-linear-to-t from-[#558B2F] to-[#8BC34A] text-white border-[#558B2F] shadow-md"
+                        : "border-gray-300 hover:border-[#8BC34A] hover:text-[#8BC34A]"
                     }
                   `}
-                >
-                  {page}
-                </button>
-              ))}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
             </div>
 
             <button
@@ -147,9 +143,10 @@ export default function ProductGrid({ initialProducts }: Props) {
               disabled={currentPage === totalPages}
               className={`
                 px-4 py-2 rounded-lg border transition-all duration-300
-                ${currentPage === totalPages
-                  ? 'opacity-50 cursor-not-allowed border-gray-200 text-gray-400'
-                  : 'border-gray-300 hover:border-amber-500 hover:text-amber-600 hover:shadow-md'
+                ${
+                  currentPage === totalPages
+                    ? "opacity-50 cursor-not-allowed border-gray-200 text-gray-400"
+                    : "border-gray-300 hover:border-[#8BC34A] hover:text-[#558B2F] hover:shadow-md"
                 }
               `}
             >
