@@ -9,12 +9,14 @@ interface ProductImageProps {
   className?: string;
   width?: number;
   height?: number;
+  onLoad?: () => void;
 }
 
 export default function ProductImage({
   src,
   alt,
   className = "object-cover rounded",
+  onLoad,
 }: ProductImageProps) {
   const [hasError, setHasError] = useState(false);
 
@@ -45,6 +47,7 @@ export default function ProductImage({
         className={className}
         unoptimized={needsUnoptimized}
         onError={() => setHasError(true)}
+        onLoadingComplete={() => onLoad?.()}
         loading="lazy"
         quality={75}
       />

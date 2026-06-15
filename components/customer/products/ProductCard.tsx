@@ -1,5 +1,6 @@
 "use client";
 
+import ProductImage from "@/components/admin/produit/ProductImage";
 import { useCart } from "@/contexte/panier/CartContext";
 import { Product } from "@/types/product";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +11,6 @@ import {
   Package,
   ShoppingBag,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { memo, useCallback, useState } from "react";
 
@@ -86,19 +86,17 @@ export default memo(function ProductCard({
           <div className="absolute inset-0 bg-gray-100 animate-pulse rounded-3xl" />
         )}
 
-        {/* Image principale (effet filtre) */}
+        {/* Image principale utilisant ProductImage */}
         <div className="absolute inset-0">
-          <Image
+          <ProductImage
             src={product.main_image}
             alt={product.name}
-            width={400}
-            height={400}
-            loading={priority ? "eager" : "lazy"}
             onLoad={() => setImageLoaded(true)}
-            className={`object-cover w-full h-full transition-all duration-700 group-hover:scale-110 group-hover:rotate-1 ${
+            className={`object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
+          {/* Note: L'événement onLoad est géré différemment avec ProductImage */}
         </div>
 
         {/* Badges */}
